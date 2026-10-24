@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => toast.remove(), 300);
     }, 3200);
   }
+  window.showToast = showToast;
 
   // --------------------------------------------------------------------------
   // WEB PERFORMANCE OPTIMIZATION HELPERS
@@ -1456,18 +1457,39 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
       }).join("");
 
-      // Wire cancel buttons
+      // Wire cancel buttons with inline two-step confirmation (no intrusive browser confirm)
       document.querySelectorAll(".cancel-order-btn").forEach(btn => {
         btn.addEventListener("click", async () => {
           const id = btn.dataset.orderId;
-          if (confirm(`Are you sure you want to cancel order #${id}? Inventory will be restored.`)) {
-            try {
-              await API.orders.cancel(id);
-              showToast(`Order #${id} has been cancelled.`, "success");
-              renderAccountOrders();
-            } catch (err) {
-              showToast(err.message || "Could not cancel order.", "danger");
-            }
+          if (!btn.dataset.confirming) {
+            btn.dataset.confirming = "true";
+            const originalText = btn.textContent;
+            btn.textContent = "CONFIRM CANCEL? (TAP AGAIN)";
+            btn.style.borderColor = "var(--danger)";
+            btn.style.color = "var(--danger)";
+            showToast(`Tap 'CONFIRM CANCEL' again to confirm cancelling order #${id}.`, "info");
+            setTimeout(() => {
+              if (btn && btn.dataset.confirming) {
+                delete btn.dataset.confirming;
+                btn.textContent = originalText;
+                btn.style.borderColor = "";
+                btn.style.color = "";
+              }
+            }, 4000);
+            return;
+          }
+
+          delete btn.dataset.confirming;
+          btn.disabled = true;
+          btn.textContent = "CANCELLING...";
+          try {
+            await API.orders.cancel(id);
+            showToast(`Order #${id} has been cancelled. Inventory restored.`, "success");
+            renderAccountOrders();
+          } catch (err) {
+            showToast(err.message || "Could not cancel order.", "danger");
+            btn.disabled = false;
+            btn.textContent = "CANCEL ORDER";
           }
         });
       });
@@ -1970,6 +1992,32 @@ document.addEventListener("DOMContentLoaded", () => {
     loadPdpReviews(productId);
   };
   window.openPdp = openPdp;
+
+  // Global Escape Key Handler to dismiss open modals/drawers cleanly without stuck overlays
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" || e.keyCode === 27) {
+      if (authModal && authModal.classList.contains("open")) {
+        closeAuthModal();
+      } else if (pdpModal && pdpModal.classList.contains("active")) {
+        closePdp();
+      } else if (sizeGuideModal && sizeGuideModal.classList.contains("active")) {
+        sizeGuideModal.classList.remove("active");
+        SoundEngine.click();
+      } else if (checkoutModal && checkoutModal.classList.contains("active")) {
+        checkoutModal.classList.remove("active");
+        document.body.style.overflow = "";
+        SoundEngine.click();
+      } else if (searchModal && searchModal.classList.contains("active")) {
+        closeSearch();
+      } else if (cartDrawer && cartDrawer.classList.contains("active")) {
+        closeCart();
+      } else if (wishlistDrawer && wishlistDrawer.classList.contains("active")) {
+        closeWishlist();
+      } else if (mobileMenuDrawer && mobileMenuDrawer.classList.contains("active")) {
+        toggleMobileMenu(false);
+      }
+    }
+  });
 
   // ==========================================================================
   // INITIAL APPLICATION BOOT
