@@ -435,10 +435,14 @@ img {
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 600;
-  padding: 0.38rem 0.6rem;
+  height: 38px;
+  padding: 0 0.65rem;
   border-radius: var(--radius-xs);
   outline: none;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
   transition: border-color var(--transition-fast);
 }
 
@@ -449,21 +453,38 @@ img {
 
 .sound-toggle-btn {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  padding: 0.35rem 0.6rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  height: 38px;
+  padding: 0 0.75rem;
   border: 1px solid var(--border-light);
   background: var(--bg-surface);
   color: var(--text-secondary);
   border-radius: var(--radius-xs);
   display: none;
+  align-items: center;
+  gap: 0.45rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  line-height: 1;
+  transition: all var(--transition-fast);
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1100px) {
   .sound-toggle-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
+    display: inline-flex;
   }
+}
+
+.sound-toggle-btn:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+.sound-toggle-btn .sound-status-text {
+  white-space: nowrap;
+  letter-spacing: 0.05em;
 }
 
 .sound-toggle-btn.sound-on {

@@ -22,8 +22,8 @@
   <!-- Preload Critical LCP Hero Campaign Image -->
   <link rel="preload" as="image" href="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&auto=format&fit=crop&q=75&fm=webp" fetchpriority="high" />
 
-  <!-- Core Stylesheet -->
-  <link rel="stylesheet" href="css/main.css" />
+  <!-- Core Stylesheet (Versioned for cache invalidation) -->
+  <link rel="stylesheet" href="css/main.css?v=1.1.0" />
 </head>
 <body>
 
@@ -72,12 +72,12 @@
         </select>
 
         <!-- Sound Toggle -->
-        <button class="sound-toggle-btn" aria-label="Toggle Sound Effects">
-          <svg style="width:14px; height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <button class="sound-toggle-btn" aria-label="Toggle Sound Effects" style="white-space: nowrap; flex-shrink: 0;">
+          <svg style="width:14px; height:14px; flex-shrink: 0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
             <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
           </svg>
-          <span class="sound-status-text">SOUND: OFF</span>
+          <span class="sound-status-text" style="white-space: nowrap;">SOUND: OFF</span>
         </button>
 
         <!-- Search Icon Trigger -->
