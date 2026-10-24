@@ -180,6 +180,11 @@ function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
     CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at);
     CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id);
+    CREATE INDEX IF NOT EXISTS idx_cart_user ON cart_items(user_id);
+    CREATE INDEX IF NOT EXISTS idx_cart_session ON cart_items(session_id);
+    CREATE INDEX IF NOT EXISTS idx_wishlist_user ON wishlist_items(user_id);
+    CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
+    CREATE INDEX IF NOT EXISTS idx_addresses_user ON addresses(user_id);
   `);
 }
 

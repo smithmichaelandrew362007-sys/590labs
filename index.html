@@ -10,9 +10,17 @@
   <!-- Favicon Icon (Vector SVG with 590.labs star mark) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23111111'/><text x='44' y='60' font-size='28' font-weight='900' font-style='italic' font-family='sans-serif' fill='%23FFFFFF' text-anchor='middle'>590</text><path d='M 80 24 Q 80 32 88 32 Q 80 32 80 40 Q 80 32 72 32 Q 80 32 80 24 Z' fill='%238CE005'/></svg>" />
 
-  <!-- Preconnect to Google Fonts -->
+  <!-- Preconnect to Google Fonts and Image CDN -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="dns-prefetch" href="https://images.unsplash.com" />
+
+  <!-- Google Fonts Stylesheet (Loaded in parallel with font-display: swap) -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" />
+
+  <!-- Preload Critical LCP Hero Campaign Image -->
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&auto=format&fit=crop&q=75&fm=webp" fetchpriority="high" />
 
   <!-- Core Stylesheet -->
   <link rel="stylesheet" href="css/main.css" />
@@ -37,7 +45,7 @@
     <header class="main-header container">
       <!-- Brand Logo -->
       <a href="#home" class="brand-logo-wrap" aria-label="590.labs Home">
-        <img src="assets/logo-black.svg" alt="590.labs" class="brand-logo-img" />
+        <img src="assets/logo-black.svg" alt="590.labs" class="brand-logo-img" width="160" height="28" />
         <span class="brand-tagline">INDEPENDENT STREETWEAR // TIRUPUR ARCHIVE</span>
       </a>
 
@@ -132,7 +140,17 @@
       <!-- HERO CAMPAIGN -->
       <section class="hero-section" id="heroCampaign">
         <div class="hero-bg-overlay"></div>
-        <img class="hero-image-backdrop" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1600&auto=format&fit=crop&q=85" alt="590 LABS Editorial Streetwear Campaign" />
+        <img class="hero-image-backdrop" 
+             src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&auto=format&fit=crop&q=75&fm=webp" 
+             srcset="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=640&auto=format&fit=crop&q=75&fm=webp 640w,
+                     https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1080&auto=format&fit=crop&q=75&fm=webp 1080w,
+                     https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1600&auto=format&fit=crop&q=75&fm=webp 1600w"
+             sizes="(max-width: 768px) 100vw, 1380px"
+             width="1600" 
+             height="900" 
+             fetchpriority="high" 
+             decoding="async" 
+             alt="590 LABS Editorial Streetwear Campaign" />
         
         <div class="container">
           <div class="hero-content">
@@ -206,7 +224,7 @@
         <div class="category-grid">
           <!-- Category 1: Tops -->
           <a href="#tops" class="category-tile">
-            <img class="category-tile-img" src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80" alt="Streetwear Tops" />
+            <img class="category-tile-img" src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600&auto=format&fit=crop&q=75&fm=webp" alt="Streetwear Tops" loading="lazy" decoding="async" width="500" height="460" />
             <div class="category-tile-overlay">
               <span class="category-tile-tag">ARCHIVE 01</span>
               <h3 class="category-tile-name">TOPS & HOODIES</h3>
@@ -217,7 +235,7 @@
 
           <!-- Category 2: Bottoms -->
           <a href="#bottoms" class="category-tile">
-            <img class="category-tile-img" src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=900&auto=format&fit=crop&q=80" alt="Streetwear Bottoms" />
+            <img class="category-tile-img" src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&auto=format&fit=crop&q=75&fm=webp" alt="Streetwear Bottoms" loading="lazy" decoding="async" width="500" height="460" />
             <div class="category-tile-overlay">
               <span class="category-tile-tag">ARCHIVE 02</span>
               <h3 class="category-tile-name">BOTTOMS & CARGOS</h3>
@@ -228,7 +246,7 @@
 
           <!-- Category 3: Accessories -->
           <a href="#accessories" class="category-tile">
-            <img class="category-tile-img" src="https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=900&auto=format&fit=crop&q=80" alt="Streetwear Accessories" />
+            <img class="category-tile-img" src="https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=600&auto=format&fit=crop&q=75&fm=webp" alt="Streetwear Accessories" loading="lazy" decoding="async" width="500" height="460" />
             <div class="category-tile-overlay">
               <span class="category-tile-tag">ARCHIVE 03</span>
               <h3 class="category-tile-name">TACTICAL & HEADWEAR</h3>
@@ -264,10 +282,10 @@
             <!-- Left: Editorial Dual Collage -->
             <div class="editorial-imagery">
               <div class="editorial-img-wrap">
-                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&auto=format&fit=crop&q=80" alt="590 LABS Campaign Model" />
+                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=75&fm=webp" alt="590 LABS Campaign Model" loading="lazy" decoding="async" width="450" height="600" />
               </div>
               <div class="editorial-img-wrap">
-                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&auto=format&fit=crop&q=80" alt="590 LABS Street Portrait" />
+                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=600&auto=format&fit=crop&q=75&fm=webp" alt="590 LABS Street Portrait" loading="lazy" decoding="async" width="450" height="600" />
               </div>
               <div class="editorial-badge-stamp">
                 <strong>590 LABS®</strong><br />
@@ -383,7 +401,7 @@
 
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:2rem;">
           <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface);">
-            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1000&auto=format&fit=crop&q=80" alt="Look 01" style="width:100%; height:520px; object-fit:cover;" />
+            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&auto=format&fit=crop&q=75&fm=webp" alt="Look 01" loading="lazy" decoding="async" width="450" height="520" style="width:100%; height:520px; object-fit:cover;" />
             <div style="padding:1.25rem; background:var(--bg-surface); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <h4 style="font-size:0.95rem; color:var(--text-primary);">LOOK 01 // OBSIDIAN PROTOCOL</h4>
@@ -394,7 +412,7 @@
           </div>
 
           <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface);">
-            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=1000&auto=format&fit=crop&q=80" alt="Look 02" style="width:100%; height:520px; object-fit:cover;" />
+            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=75&fm=webp" alt="Look 02" loading="lazy" decoding="async" width="450" height="520" style="width:100%; height:520px; object-fit:cover;" />
             <div style="padding:1.25rem; background:var(--bg-surface); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <h4 style="font-size:0.95rem; color:var(--text-primary);">LOOK 02 // BRUTALIST DRAPE</h4>
@@ -405,7 +423,7 @@
           </div>
 
           <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface);">
-            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1000&auto=format&fit=crop&q=80" alt="Look 03" style="width:100%; height:520px; object-fit:cover;" />
+            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=75&fm=webp" alt="Look 03" loading="lazy" decoding="async" width="450" height="520" style="width:100%; height:520px; object-fit:cover;" />
             <div style="padding:1.25rem; background:var(--bg-surface); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <h4 style="font-size:0.95rem; color:var(--text-primary);">LOOK 03 // TACTICAL TRANSIT</h4>
@@ -427,7 +445,7 @@
           <span class="section-label">ORIGINS & ETHOS // 590 LABS®</span>
           <h1 class="section-title" style="margin-bottom:1.5rem;">STREETWEAR AS A COUNTER-CULTURE CANVAS.</h1>
           
-          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&auto=format&fit=crop&q=85" alt="590 LABS Studio" style="width:100%; height:460px; object-fit:cover; border-radius:var(--radius-xs); margin-bottom:2.5rem; border:1px solid var(--border-light);" />
+          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1000&auto=format&fit=crop&q=75&fm=webp" alt="590 LABS Studio" loading="lazy" decoding="async" width="1200" height="460" style="width:100%; height:460px; object-fit:cover; border-radius:var(--radius-xs); margin-bottom:2.5rem; border:1px solid var(--border-light);" />
 
           <blockquote class="story-archival-quote">
             "We build clothing for people who treat getting dressed as an act of personal autonomy rather than corporate compliance."
@@ -885,7 +903,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="assets/logo-white.svg" alt="590.labs" class="brand-logo-img brand-logo-footer" />
+          <img src="assets/logo-white.svg" alt="590.labs" class="brand-logo-img brand-logo-footer" width="180" height="34" />
           <p>
             Independent streetwear label engineered for unisex fits, everyday rebellion, and brutalist aesthetics.
           </p>
@@ -1461,7 +1479,7 @@
   <div class="drawer-backdrop" id="mobileMenuBackdrop"></div>
   <aside class="drawer-panel" id="mobileMenuDrawer" style="left:0; right:auto; transform:translateX(-100%);" aria-label="Mobile Navigation">
     <div class="drawer-header">
-      <img src="assets/logo-black.svg" alt="590.labs" class="brand-logo-img brand-logo-mobile" />
+      <img src="assets/logo-black.svg" alt="590.labs" class="brand-logo-img brand-logo-mobile" width="140" height="24" />
       <button class="drawer-close-btn" id="mobileMenuCloseBtn" aria-label="Close Menu">✕</button>
     </div>
     <div class="drawer-body" style="padding: 2rem 1.5rem;">
@@ -1594,12 +1612,11 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/products.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/cart.js"></script>
-  <script src="js/app.js"></script>
+  <!-- Scripts (Loaded with defer for non-blocking rendering) -->
+  <script src="js/api.js" defer></script>
+  <script src="js/products.js" defer></script>
+  <script src="js/audio.js" defer></script>
+  <script src="js/cart.js" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>

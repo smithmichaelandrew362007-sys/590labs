@@ -5,6 +5,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 const db = require('./db');
+const compression = require('./middleware/compression');
 const { authenticateToken } = require('./middleware/auth');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -20,6 +21,9 @@ const adminRoutes = require('./routes/admin');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// High-Performance Native HTTP Compression (Brotli & Gzip)
+app.use(compression);
+
 // Security & Parsing Middleware
 app.use(cors({
   origin: true,
@@ -31,6 +35,14 @@ app.use(express.urlencoded({ extended: true }));
 
 // Global authentication extractor (attaches req.user if token present)
 app.use(authenticateToken);
+
+// Safe Caching Policy: NEVER cache private API endpoints (cart, user, orders, auth)
+app.use('/api', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+});
 
 // API Health Check
 app.get('/api/health', (req, res) => {
@@ -53,9 +65,22 @@ app.use('/api/orders', ordersRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Serve static frontend files from project root
+// Serve static frontend files with intelligent asset caching
 const staticDir = path.resolve(__dirname, '..');
-app.use(express.static(staticDir));
+app.use(express.static(staticDir, {
+  maxAge: '1d',
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      // HTML documents should revalidate so updates are immediately picked up
+      res.setHeader('Cache-Control', 'no-cache');
+    } else if (/\.(css|js|svg|png|jpg|jpeg|webp|woff2?|ico)$/i.test(filePath)) {
+      // Static design assets, fonts, stylesheets and scripts can be safely cached
+      res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+    }
+  }
+}));
 
 // Fallback to index.html for Single-Page Application client routing
 app.use((req, res, next) => {

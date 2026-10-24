@@ -53,12 +53,52 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // --------------------------------------------------------------------------
-  // PRODUCT CARD GENERATOR
+  // WEB PERFORMANCE OPTIMIZATION HELPERS
+  // --------------------------------------------------------------------------
+  function optimizeImageUrl(url, width = 500, quality = 75) {
+    if (!url || typeof url !== "string") return url;
+    if (url.includes("images.unsplash.com")) {
+      const cleanUrl = url.split("?")[0];
+      return `${cleanUrl}?w=${width}&auto=format&fit=crop&q=${quality}&fm=webp`;
+    }
+    return url;
+  }
+
+  function debounce(fn, wait = 160) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn.apply(this, args), wait);
+    };
+  }
+
+  let _razorpayLoaderPromise = null;
+  function loadRazorpaySdk() {
+    if (typeof window.Razorpay === "function") {
+      return Promise.resolve(window.Razorpay);
+    }
+    if (_razorpayLoaderPromise) return _razorpayLoaderPromise;
+    _razorpayLoaderPromise = new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => resolve(window.Razorpay);
+      script.onerror = () => {
+        console.warn("Razorpay SDK could not be loaded from CDN.");
+        resolve(null);
+      };
+      document.head.appendChild(script);
+    });
+    return _razorpayLoaderPromise;
+  }
+
+  // --------------------------------------------------------------------------
+  // PRODUCT CARD GENERATOR (HIGH EFFICIENCY)
   // --------------------------------------------------------------------------
   function createProductCardHTML(product) {
     const isWishlisted = Store.isInWishlist(product.id);
-    const primaryImg = product.images[0];
-    const secondaryImg = product.images[1] || product.images[0];
+    const primaryImg = optimizeImageUrl(product.images[0], 500, 75);
+    const secondaryImg = optimizeImageUrl(product.images[1] || product.images[0], 500, 75);
 
     const badgesHTML = product.badges.map(badge => {
       const isLime = badge.includes("DROP") || badge.includes("VIRAL") || badge.includes("LOW");
@@ -88,8 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
     return `
       <article class="product-card" data-product-id="${product.id}">
         <div class="product-media-wrap" data-action="open-pdp">
-          <img class="product-img product-img-primary" src="${primaryImg}" alt="${product.title}" loading="lazy" />
-          <img class="product-img product-img-secondary" src="${secondaryImg}" alt="${product.title} alternative" loading="lazy" />
+          <img class="product-img product-img-primary" src="${primaryImg}" alt="${product.title}" loading="lazy" decoding="async" width="400" height="533" />
+          <img class="product-img product-img-secondary" src="${secondaryImg}" alt="${product.title} alternative" loading="lazy" decoding="async" width="400" height="533" />
           
           <div class="product-badges-stack">
             ${badgesHTML}
@@ -215,15 +255,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Gallery
     const mainImgEl = document.getElementById("pdpMainImg");
-    mainImgEl.src = product.images[0];
+    mainImgEl.src = optimizeImageUrl(product.images[0], 1000, 80);
     mainImgEl.alt = product.title;
+    mainImgEl.decoding = "async";
 
     const thumbsContainer = document.getElementById("pdpThumbs");
     thumbsContainer.innerHTML = product.images.map((imgUrl, i) => `
       <img class="pdp-thumb-img ${i === 0 ? 'active' : ''}" 
-           src="${imgUrl}" 
+           src="${optimizeImageUrl(imgUrl, 160, 75)}" 
            data-index="${i}" 
-           alt="Thumbnail ${i + 1}" />
+           alt="Thumbnail ${i + 1}"
+           loading="lazy"
+           decoding="async"
+           width="60"
+           height="75" />
     `).join("");
 
     // Colors
@@ -362,7 +407,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Render items
     cartItemsList.innerHTML = summary.items.map(item => `
       <div class="cart-item-row" data-cart-id="${item.id}">
-        <img class="cart-item-img" src="${item.image}" alt="${item.title}" />
+        <img class="cart-item-img" src="${optimizeImageUrl(item.image, 140, 75)}" alt="${item.title}" loading="lazy" decoding="async" width="60" height="75" />
         <div class="cart-item-details">
           <div>
             <h4 class="cart-item-title">${item.title}</h4>
@@ -496,6 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await API.orders.create(orderPayload);
 
       if (paymentMethod === "razorpay") {
+        await loadRazorpaySdk();
         // If official Razorpay checkout script is available
         if (typeof window.Razorpay === "function" && res.razorpayOrder) {
           const options = {
@@ -618,7 +664,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     wishlistItemsList.innerHTML = items.map(p => `
       <div class="cart-item-row">
-        <img class="cart-item-img" src="${p.images[0]}" alt="${p.title}" />
+        <img class="cart-item-img" src="${optimizeImageUrl(p.images[0], 140, 75)}" alt="${p.title}" loading="lazy" decoding="async" width="60" height="75" />
         <div class="cart-item-details">
           <div>
             <h4 class="cart-item-title">${p.title}</h4>
@@ -683,7 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     resultsContainer.innerHTML = matches.map(p => `
       <div style="display:flex; gap:1rem; padding:0.75rem; background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:var(--radius-xs); cursor:pointer;" onclick="window.openPdp('${p.id}'); window.closeSearch();">
-        <img src="${p.images[0]}" alt="${p.title}" style="width:60px; height:75px; object-fit:cover; border-radius:2px;" />
+        <img src="${optimizeImageUrl(p.images[0], 120, 75)}" alt="${p.title}" loading="lazy" decoding="async" width="60" height="75" style="width:60px; height:75px; object-fit:cover; border-radius:2px;" />
         <div>
           <h4 style="font-size:0.85rem; font-family:var(--font-heading); color:var(--text-primary); margin-bottom:3px;">${p.title}</h4>
           <span style="font-family:var(--font-mono); font-size:0.7rem; color:var(--text-secondary);">${p.gsm}</span>
@@ -869,7 +915,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const thumb = e.target.closest(".pdp-thumb-img");
       if (thumb && activePdpProduct) {
         const idx = parseInt(thumb.dataset.index, 10);
-        document.getElementById("pdpMainImg").src = activePdpProduct.images[idx];
+        document.getElementById("pdpMainImg").src = optimizeImageUrl(activePdpProduct.images[idx], 1000, 80);
         document.querySelectorAll(".pdp-thumb-img").forEach((t, i) => t.classList.toggle("active", i === idx));
         SoundEngine.click();
         return;
@@ -976,9 +1022,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === searchModal) closeSearch();
   });
 
-  document.getElementById("searchModalInput")?.addEventListener("input", (e) => {
+  document.getElementById("searchModalInput")?.addEventListener("input", debounce((e) => {
     renderSearchResults(e.target.value);
-  });
+  }, 160));
 
   // Checkout Triggers
   document.getElementById("cartCheckoutBtn")?.addEventListener("click", openCheckout);
@@ -1770,7 +1816,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Admin Search & Filter
-  document.getElementById("admOrderSearchInput")?.addEventListener("input", renderAdminOrders);
+  document.getElementById("admOrderSearchInput")?.addEventListener("input", debounce(renderAdminOrders, 180));
   document.getElementById("admOrderFilterStatus")?.addEventListener("change", renderAdminOrders);
 
   // Admin Add Product Toggle & Submit

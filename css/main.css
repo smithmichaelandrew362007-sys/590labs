@@ -4,8 +4,6 @@
    Palette: Warm Off-White (#FAF9F6) | Clean White (#FFFFFF) | Near-Black (#111111) | Muted Grey (#777777) | Restrained Accent (#8CE005)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap');
-
 :root {
   /* Core Minimalist Color System */
   --bg-page: #FAF9F6;           /* Gallery-grade warm off-white */
@@ -865,6 +863,12 @@ img {
   opacity: 1;
 }
 
+@media (max-width: 640px) {
+  .category-tile {
+    height: 320px;
+  }
+}
+
 /* ==========================================================================
    Product Grid & Cards (Minimalist Shopping Component)
    ========================================================================== */
@@ -1225,6 +1229,7 @@ img {
 
 .editorial-img-wrap {
   position: relative;
+  aspect-ratio: 3 / 4;
   border-radius: var(--radius-xs);
   overflow: hidden;
   border: 1px solid var(--border-light);
