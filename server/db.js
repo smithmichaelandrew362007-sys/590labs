@@ -1,0 +1,188 @@
+const path = require('path');
+const { DatabaseSync } = require('node:sqlite');
+
+const dbPath = path.resolve(__dirname, '../database.sqlite');
+const db = new DatabaseSync(dbPath);
+
+// Enable foreign keys and WAL mode for high reliability and concurrency
+db.exec('PRAGMA foreign_keys = ON;');
+db.exec('PRAGMA journal_mode = WAL;');
+
+function initDatabase() {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL COLLATE NOCASE,
+      password_hash TEXT,
+      role TEXT NOT NULL DEFAULT 'customer',
+      google_id TEXT,
+      avatar TEXT,
+      phone TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS password_resets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      token TEXT NOT NULL UNIQUE,
+      expires_at TEXT NOT NULL,
+      used INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS addresses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      full_name TEXT NOT NULL,
+      phone TEXT NOT NULL,
+      address_line1 TEXT NOT NULL,
+      address_line2 TEXT,
+      locality TEXT,
+      city TEXT NOT NULL,
+      state TEXT NOT NULL,
+      pincode TEXT NOT NULL,
+      landmark TEXT,
+      is_default INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS products (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      subtitle TEXT,
+      category TEXT NOT NULL,
+      type TEXT,
+      price INTEGER NOT NULL,
+      compare_price INTEGER,
+      gsm TEXT,
+      fabric TEXT,
+      fit TEXT,
+      description TEXT,
+      care TEXT,
+      images TEXT NOT NULL, -- JSON array
+      badges TEXT, -- JSON array
+      specs TEXT, -- JSON array
+      colors TEXT NOT NULL, -- JSON array of {name, hex, code}
+      is_new_drop INTEGER DEFAULT 0,
+      is_bestseller INTEGER DEFAULT 0,
+      status TEXT DEFAULT 'published',
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS product_variants (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+      size TEXT NOT NULL,
+      color_code TEXT NOT NULL,
+      sku TEXT UNIQUE NOT NULL,
+      stock_quantity INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(product_id, size, color_code)
+    );
+
+    CREATE TABLE IF NOT EXISTS cart_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      session_id TEXT,
+      product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+      variant_size TEXT NOT NULL,
+      variant_color TEXT NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 1,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(user_id, product_id, variant_size, variant_color),
+      UNIQUE(session_id, product_id, variant_size, variant_color)
+    );
+
+    CREATE TABLE IF NOT EXISTS wishlist_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(user_id, product_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS orders (
+      id TEXT PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id),
+      customer_email TEXT NOT NULL,
+      customer_name TEXT NOT NULL,
+      customer_phone TEXT NOT NULL,
+      shipping_address TEXT NOT NULL, -- JSON snapshot
+      subtotal INTEGER NOT NULL,
+      discount INTEGER NOT NULL DEFAULT 0,
+      coupon_code TEXT,
+      shipping_charge INTEGER NOT NULL DEFAULT 0,
+      tax_amount INTEGER NOT NULL DEFAULT 0,
+      total_amount INTEGER NOT NULL,
+      payment_method TEXT NOT NULL, -- 'razorpay' | 'cod'
+      payment_status TEXT NOT NULL DEFAULT 'pending', -- 'pending' | 'paid' | 'failed' | 'refunded'
+      fulfillment_status TEXT NOT NULL DEFAULT 'confirmed', -- 'pending' | 'confirmed' | 'packing' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'cancelled'
+      razorpay_order_id TEXT,
+      razorpay_payment_id TEXT,
+      tracking_number TEXT,
+      carrier TEXT,
+      notes TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS order_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      order_id TEXT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+      product_id TEXT NOT NULL,
+      product_title TEXT NOT NULL,
+      size TEXT NOT NULL,
+      color TEXT NOT NULL,
+      price INTEGER NOT NULL,
+      quantity INTEGER NOT NULL,
+      image_url TEXT,
+      sku TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS coupons (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      code TEXT UNIQUE NOT NULL COLLATE NOCASE,
+      discount_type TEXT NOT NULL, -- 'percent' | 'fixed'
+      discount_value INTEGER NOT NULL,
+      min_order_value INTEGER DEFAULT 0,
+      max_discount INTEGER,
+      usage_limit INTEGER,
+      times_used INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      expires_at TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS reviews (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+      user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      author_name TEXT NOT NULL,
+      rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+      title TEXT,
+      comment TEXT NOT NULL,
+      verified_purchase INTEGER DEFAULT 0,
+      is_approved INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS store_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL
+    );
+
+    -- Indices for quick querying
+    CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+    CREATE INDEX IF NOT EXISTS idx_variants_product ON product_variants(product_id);
+    CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
+    CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at);
+    CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id);
+  `);
+}
+
+initDatabase();
+
+module.exports = db;

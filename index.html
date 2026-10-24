@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>590 LABS® — Independent Unisex Streetwear | Minimalist Editorial</title>
+  <meta name="description" content="590 LABS is an independent fashion label creating heavyweight unisex streetwear, brutalist graphic tees, tactical modular cargos, and oversized silhouettes. Built outside the lines." />
+  <meta name="theme-color" content="#FAF9F6" />
+  
+  <!-- Favicon Icon (Vector SVG with 590.labs star mark) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23111111'/><text x='44' y='60' font-size='28' font-weight='900' font-style='italic' font-family='sans-serif' fill='%23FFFFFF' text-anchor='middle'>590</text><path d='M 80 24 Q 80 32 88 32 Q 80 32 80 40 Q 80 32 72 32 Q 80 32 80 24 Z' fill='%238CE005'/></svg>" />
+
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+  <!-- ========================================================================
+       1. Announcement Bar
+       ======================================================================== -->
+  <div class="announcement-bar" id="announcementBar">
+    <div class="announcement-content">
+      <span class="badge badge-lime-dim badge-live-pulse">CONCEPT 01</span>
+      <span>THE NEW DROP IS LIVE — <strong>FREE SHIPPING</strong> ON ORDERS OVER ₹1,999</span>
+      <span class="announcement-timer" id="dropTimer">04D 18H 22M 14S</span>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       2. Sticky Navigation Header
+       ======================================================================== -->
+  <div class="header-sticky-wrapper">
+    <header class="main-header container">
+      <!-- Brand Logo -->
+      <a href="#home" class="brand-logo-wrap" aria-label="590.labs Home">
+        <img src="assets/logo-black.svg" alt="590.labs" class="brand-logo-img" />
+        <span class="brand-tagline">INDEPENDENT STREETWEAR // TIRUPUR ARCHIVE</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="main-nav" aria-label="Main Navigation">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#shop" class="nav-link highlight">New Drops</a>
+        <a href="#shop" class="nav-link">Shop All</a>
+        <a href="#tops" class="nav-link">Tops</a>
+        <a href="#bottoms" class="nav-link">Bottoms</a>
+        <a href="#lookbook" class="nav-link">Lookbook</a>
+        <a href="#story" class="nav-link">Our Story</a>
+        <a href="#account" class="nav-link" id="navAccountLink">Account</a>
+        <a href="#admin" class="nav-link" id="navAdminLink" style="display:none; color:var(--accent-lime); font-weight:700;">Admin</a>
+      </nav>
+
+      <!-- Utility Actions -->
+      <div class="header-actions">
+        <!-- Currency Switcher -->
+        <select class="currency-select" aria-label="Select Currency">
+          <option value="INR">₹ INR</option>
+          <option value="USD">$ USD</option>
+          <option value="EUR">€ EUR</option>
+        </select>
+
+        <!-- Sound Toggle -->
+        <button class="sound-toggle-btn" aria-label="Toggle Sound Effects">
+          <svg style="width:14px; height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <span class="sound-status-text">SOUND: OFF</span>
+        </button>
+
+        <!-- Search Icon Trigger -->
+        <button class="action-btn" id="openSearchBtn" aria-label="Search Catalog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+
+        <!-- Wishlist Icon Trigger -->
+        <button class="action-btn" id="openWishlistBtn" aria-label="Wishlist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span class="action-badge-count wishlist-count-badge" style="display: none;">0</span>
+        </button>
+
+        <!-- Customer Account Trigger -->
+        <button class="action-btn" id="openAccountBtn" aria-label="Customer Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span id="headerUserDot" style="display:none; position:absolute; top:4px; right:4px; width:7px; height:7px; background:var(--accent-lime); border-radius:50%;"></span>
+        </button>
+
+        <!-- Cart Bag Trigger -->
+        <button class="action-btn" id="openCartBtn" aria-label="Shopping Bag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="action-badge-count cart-count-badge" style="display: none;">0</span>
+        </button>
+
+        <!-- Mobile Menu Hamburger -->
+        <button class="action-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Mobile Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+  </div>
+
+  <!-- ========================================================================
+       MAIN APP CONTAINER (SPA VIEWS)
+       ======================================================================== -->
+  <main id="appMain">
+
+    <!-- ======================================================================
+         VIEW 1: HOME PAGE
+         ====================================================================== -->
+    <div id="homeView">
+      
+      <!-- HERO CAMPAIGN -->
+      <section class="hero-section" id="heroCampaign">
+        <div class="hero-bg-overlay"></div>
+        <img class="hero-image-backdrop" src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1600&auto=format&fit=crop&q=85" alt="590 LABS Editorial Streetwear Campaign" />
+        
+        <div class="container">
+          <div class="hero-content">
+            <div class="hero-meta-tag">
+              <span class="badge badge-lime">DROP 04 / LIMITED RUN</span>
+              <span class="badge">UNISEX ARCHIVE</span>
+            </div>
+
+            <h1 class="hero-title">
+              BUILT OUTSIDE <br />
+              <span class="highlight-text">THE LINES.</span>
+            </h1>
+
+            <p class="hero-subtitle">
+              Streetwear without the uniform. 280–450 GSM heavyweight cottons, brutalist silhouettes, and technical utility built for independent daily rebellion.
+            </p>
+
+            <div class="hero-cta-group">
+              <a href="#shop" class="btn btn-lime btn-lg">
+                SHOP NEW DROPS
+                <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </a>
+              <a href="#lookbook" class="btn btn-outline btn-lg">
+                EXPLORE LOOKBOOK
+              </a>
+            </div>
+
+            <div class="hero-tech-specs">
+              <span>BATCH: <strong>001 // 590 PCS</strong></span>
+              <span>FABRIC: <strong>CUSTOM COMBED TERRY</strong></span>
+              <span>CUT: <strong>BOXY RELAXED UNISEX</strong></span>
+              <span>ORIGIN: <strong>DESIGNED IN LAB</strong></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MARQUEE TICKER -->
+      <div class="marquee-strip" aria-hidden="true">
+        <div class="marquee-inner">
+          <div class="marquee-item">NOT MADE TO BLEND IN <span class="dot"></span></div>
+          <div class="marquee-item">INDEPENDENT STREETWEAR <span class="dot"></span></div>
+          <div class="marquee-item">UNISEX FITS <span class="dot"></span></div>
+          <div class="marquee-item">EVERYDAY REBELLION <span class="dot"></span></div>
+          <div class="marquee-item">HEAVYWEIGHT 280–450 GSM <span class="dot"></span></div>
+          <div class="marquee-item">ZERO UNIFORM <span class="dot"></span></div>
+          <div class="marquee-item">590 LABS® CONCEPT 01 <span class="dot"></span></div>
+          <div class="marquee-item">NOT MADE TO BLEND IN <span class="dot"></span></div>
+          <div class="marquee-item">INDEPENDENT STREETWEAR <span class="dot"></span></div>
+          <div class="marquee-item">UNISEX FITS <span class="dot"></span></div>
+          <div class="marquee-item">EVERYDAY REBELLION <span class="dot"></span></div>
+          <div class="marquee-item">ZERO UNIFORM <span class="dot"></span></div>
+        </div>
+      </div>
+
+      <!-- SHOP BY CATEGORY -->
+      <section class="section-padding container">
+        <div class="section-header">
+          <div>
+            <span class="section-label">01 // DISCOVERY ARCHIVE</span>
+            <h2 class="section-title">SHOP BY CATEGORY</h2>
+          </div>
+          <p class="section-desc">
+            Explore architectural cuts and engineered silhouettes categorized for effortless daily rotation.
+          </p>
+        </div>
+
+        <div class="category-grid">
+          <!-- Category 1: Tops -->
+          <a href="#tops" class="category-tile">
+            <img class="category-tile-img" src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=900&auto=format&fit=crop&q=80" alt="Streetwear Tops" />
+            <div class="category-tile-overlay">
+              <span class="category-tile-tag">ARCHIVE 01</span>
+              <h3 class="category-tile-name">TOPS & HOODIES</h3>
+              <p class="category-tile-sub">Heavyweight Boxy Tees · 450 GSM Hoodies · Overshirts</p>
+              <span class="category-tile-arrow">EXPLORE TOPS ↗</span>
+            </div>
+          </a>
+
+          <!-- Category 2: Bottoms -->
+          <a href="#bottoms" class="category-tile">
+            <img class="category-tile-img" src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=900&auto=format&fit=crop&q=80" alt="Streetwear Bottoms" />
+            <div class="category-tile-overlay">
+              <span class="category-tile-tag">ARCHIVE 02</span>
+              <h3 class="category-tile-name">BOTTOMS & CARGOS</h3>
+              <p class="category-tile-sub">8-Pocket Utility Cargos · Parachute Pants · Raw Denim</p>
+              <span class="category-tile-arrow">EXPLORE BOTTOMS ↗</span>
+            </div>
+          </a>
+
+          <!-- Category 3: Accessories -->
+          <a href="#accessories" class="category-tile">
+            <img class="category-tile-img" src="https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?w=900&auto=format&fit=crop&q=80" alt="Streetwear Accessories" />
+            <div class="category-tile-overlay">
+              <span class="category-tile-tag">ARCHIVE 03</span>
+              <h3 class="category-tile-name">TACTICAL & HEADWEAR</h3>
+              <p class="category-tile-sub">Cordura® Slings · Fisherman Beanies · Unstructured Caps</p>
+              <span class="category-tile-arrow">EXPLORE ACCESSORIES ↗</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- NEW DROPS & BESTSELLERS (The Main Shopping Grid) -->
+      <section class="section-padding container" style="padding-top: 1rem;">
+        <div class="section-header">
+          <div>
+            <span class="section-label">02 // LIMITED RUNS</span>
+            <h2 class="section-title">NEW ARRIVALS & BESTSELLERS</h2>
+          </div>
+          <a href="#shop" class="btn btn-outline btn-sm">
+            VIEW ALL PIECES (12) ↗
+          </a>
+        </div>
+
+        <!-- 4-Column Desktop / 2-Column Mobile Grid -->
+        <div class="products-grid" id="productsGridHome">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </section>
+
+      <!-- EDITORIAL STORY & MANIFESTO -->
+      <section class="editorial-section section-padding">
+        <div class="container">
+          <div class="editorial-layout">
+            <!-- Left: Editorial Dual Collage -->
+            <div class="editorial-imagery">
+              <div class="editorial-img-wrap">
+                <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&auto=format&fit=crop&q=80" alt="590 LABS Campaign Model" />
+              </div>
+              <div class="editorial-img-wrap">
+                <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=900&auto=format&fit=crop&q=80" alt="590 LABS Street Portrait" />
+              </div>
+              <div class="editorial-badge-stamp">
+                <strong>590 LABS®</strong><br />
+                NOT MADE TO BLEND IN
+              </div>
+            </div>
+
+            <!-- Right: Brand Manifesto -->
+            <div class="editorial-text-col">
+              <span class="section-label">BRAND MANIFESTO // CONCEPT 01</span>
+              <h2 class="story-lead">
+                WE DON'T DO MASS PRODUCTION. <br />
+                WE BUILD <span class="lime-word">EVERYDAY REBELLION.</span>
+              </h2>
+
+              <p class="story-text">
+                590 LABS was founded on a simple dissatisfaction with generic streetwear uniform. Most commercial brands reduce clothing to disposable fashion—thin 160 GSM jerseys that shrink, flimsy stitching, and repetitive graphics.
+              </p>
+              <p class="story-text">
+                We design independent garments from scratch: custom heavyweight cotton knits weighing between 280 to 450 GSM, reinforced seam construction, brutalist architectural typography, and genderless boxy proportions tailored to drape naturally over sneakers.
+              </p>
+
+              <div class="story-pillars">
+                <div class="pillar-item">
+                  <h4>HEAVYWEIGHT FABRIC</h4>
+                  <p>280–450 GSM loopback terry & compact jersey engineered for decades of wear.</p>
+                </div>
+                <div class="pillar-item">
+                  <h4>UNISEX SILHOUETTES</h4>
+                  <p>Wide boxy draping crafted to flatter all bodies without gender restrictions.</p>
+                </div>
+              </div>
+
+              <a href="#story" class="btn btn-outline">READ FULL STORY ↗</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- DROP RADAR (VIP ALERTS) -->
+      <section class="drop-radar-section section-padding">
+        <div class="container">
+          <div class="radar-card">
+            <span class="badge" style="margin-bottom: 1rem;">RADAR ACCESS</span>
+            <h2>NEVER MISS A LIMITED DROP.</h2>
+            <p>
+              Our batches are limited to 590 pieces per colorway. Sign up for encrypted SMS / Email drop notifications 15 minutes before public release.
+            </p>
+            <form class="radar-form" id="dropRadarForm">
+              <input type="email" class="radar-input" id="radarEmailInput" placeholder="ENTER YOUR EMAIL ADDRESS" required />
+              <button type="submit" class="btn btn-lime">GET EARLY ACCESS</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ======================================================================
+         VIEW 2: SHOP ALL / CATALOG VIEW
+         ====================================================================== -->
+    <div id="shopView" style="display: none;">
+      <section class="section-padding container">
+        <div class="section-header">
+          <div>
+            <span class="section-label">590 LABS ARCHIVE // FULL INVENTORY</span>
+            <h1 class="section-title">ALL PIECES</h1>
+          </div>
+          <p class="section-desc" id="catalogCount">12 PIECES AVAILABLE</p>
+        </div>
+
+        <!-- Filter & Sort Bar -->
+        <div class="filter-bar">
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-category="all">ALL PIECES</button>
+            <button class="filter-tab" data-category="tops">TOPS</button>
+            <button class="filter-tab" data-category="bottoms">BOTTOMS</button>
+            <button class="filter-tab" data-category="accessories">ACCESSORIES</button>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <label for="shopSortSelect" class="font-mono" style="font-size:0.75rem; color:var(--text-secondary);">SORT:</label>
+            <select class="sort-select" id="shopSortSelect">
+              <option value="featured">Featured Drops</option>
+              <option value="newest">Newest Releases</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Shop Grid -->
+        <div class="products-grid" id="shopCatalogGrid">
+          <!-- Populated by app.js -->
+        </div>
+      </section>
+    </div>
+
+    <!-- ======================================================================
+         VIEW 3: LOOKBOOK / EDITORIAL VIEW
+         ====================================================================== -->
+    <div id="lookbookView" style="display: none;">
+      <section class="section-padding container">
+        <div class="section-header">
+          <div>
+            <span class="section-label">CAMPAIGN 01 // AUTONOMOUS SPACES</span>
+            <h1 class="section-title">EDITORIAL LOOKBOOK</h1>
+          </div>
+          <p class="section-desc">
+            Shot on location against brutalist concrete architecture. Raw urban documentation of Concept 01 in natural motion.
+          </p>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:2rem;">
+          <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface);">
+            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1000&auto=format&fit=crop&q=80" alt="Look 01" style="width:100%; height:520px; object-fit:cover;" />
+            <div style="padding:1.25rem; background:var(--bg-surface); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h4 style="font-size:0.95rem; color:var(--text-primary);">LOOK 01 // OBSIDIAN PROTOCOL</h4>
+                <p class="font-mono" style="font-size:0.72rem; color:var(--text-secondary);">Cyberpunk Acid Hoodie + Modular Utility Cargo</p>
+              </div>
+              <button class="btn btn-lime btn-sm" onclick="window.openPdp('cyberpunk-acid-hoodie')">SHOP LOOK</button>
+            </div>
+          </div>
+
+          <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface);">
+            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=1000&auto=format&fit=crop&q=80" alt="Look 02" style="width:100%; height:520px; object-fit:cover;" />
+            <div style="padding:1.25rem; background:var(--bg-surface); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h4 style="font-size:0.95rem; color:var(--text-primary);">LOOK 02 // BRUTALIST DRAPE</h4>
+                <p class="font-mono" style="font-size:0.72rem; color:var(--text-secondary);">Core Graphic Tee // 001 + Parachute Track Pant</p>
+              </div>
+              <button class="btn btn-lime btn-sm" onclick="window.openPdp('core-graphic-tee')">SHOP LOOK</button>
+            </div>
+          </div>
+
+          <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface);">
+            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=1000&auto=format&fit=crop&q=80" alt="Look 03" style="width:100%; height:520px; object-fit:cover;" />
+            <div style="padding:1.25rem; background:var(--bg-surface); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h4 style="font-size:0.95rem; color:var(--text-primary);">LOOK 03 // TACTICAL TRANSIT</h4>
+                <p class="font-mono" style="font-size:0.72rem; color:var(--text-secondary);">Stealth Flight Bomber + Tactical Cordura Sling</p>
+              </div>
+              <button class="btn btn-lime btn-sm" onclick="window.openPdp('stealth-flight-bomber')">SHOP LOOK</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ======================================================================
+         VIEW 4: OUR STORY VIEW (EDITORIAL LAYOUT)
+         ====================================================================== -->
+    <div id="storyView" style="display: none;">
+      <section class="section-padding container">
+        <div class="editorial-story-wrap">
+          <span class="section-label">ORIGINS & ETHOS // 590 LABS®</span>
+          <h1 class="section-title" style="margin-bottom:1.5rem;">STREETWEAR AS A COUNTER-CULTURE CANVAS.</h1>
+          
+          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&auto=format&fit=crop&q=85" alt="590 LABS Studio" style="width:100%; height:460px; object-fit:cover; border-radius:var(--radius-xs); margin-bottom:2.5rem; border:1px solid var(--border-light);" />
+
+          <blockquote class="story-archival-quote">
+            "We build clothing for people who treat getting dressed as an act of personal autonomy rather than corporate compliance."
+          </blockquote>
+
+          <div style="display:grid; grid-template-columns:1fr; gap:2rem; font-size:1rem; line-height:1.75; color:var(--text-secondary);">
+            <p>
+              590 LABS was conceived in 2024 as an independent antidote to commercialized, homogenized streetwear. In a world saturated with synthetic polyester blends and fast-fashion drops that end up in landfills, we committed to an uncompromising physical standard: <strong>every piece must feel substantial, intentional, and indestructible.</strong>
+            </p>
+            <p>
+              We source single-origin combed organic cotton from certified mills in Tirupur, Southern India, knitting our bespoke jerseys at 280 GSM to 450 GSM. We wash our raw fabrics with enzyme and mineral treatments before precision tailoring, eliminating the shrinkage and twisting that plague ordinary T-shirts after the first wash.
+            </p>
+            <p>
+              Our sizing is intentionally unisex and generous. We believe the silhouette should be dictated by personal styling rather than rigid gender categorizations. Every seam is double-locked or coverstitched to withstand real urban daily wear.
+            </p>
+          </div>
+
+    </div>
+
+    <!-- ======================================================================
+         VIEW 5: CUSTOMER ACCOUNT DASHBOARD (MY ORDERS, TRACKING, ADDRESSES)
+         ====================================================================== -->
+    <div id="accountView" style="display: none;">
+      <section class="section-padding container">
+        <!-- Logged Out Notice -->
+        <div id="accountLoggedOutState" style="display: none; text-align: center; padding: 4rem 1rem; background: #FFFFFF; border: 1px solid var(--border-light); border-radius: var(--radius-xs);">
+          <span class="badge badge-lime" style="margin-bottom: 1rem;">SECURE ACCESS</span>
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.75rem;">SIGN IN TO VIEW YOUR ORDERS</h2>
+          <p style="color: var(--text-secondary); max-width: 480px; margin: 0 auto 2rem; font-size: 0.95rem;">
+            Access your order history, live doorstep courier tracking, saved delivery addresses, and exclusive drop access.
+          </p>
+          <button class="btn btn-lime btn-lg" onclick="window.openAuthModal('login')">SIGN IN OR CREATE ACCOUNT ↗</button>
+        </div>
+
+        <!-- Logged In Dashboard -->
+        <div id="accountLoggedInState">
+          <div class="account-view-header">
+            <div>
+              <span class="section-label">590 LABS // COLLECTOR PROFILE</span>
+              <h1 class="section-title" id="accUserName" style="font-size: 2.2rem; margin-top: 0.25rem;">MY ACCOUNT</h1>
+              <p class="font-mono" style="font-size: 0.8rem; color: var(--text-secondary);" id="accUserMeta">
+                collector@590labs.com · Member since 2026
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+              <span class="badge badge-lime" id="accUserRoleBadge">VERIFIED COLLECTOR</span>
+              <button class="btn btn-outline btn-sm" id="accSignOutBtn">SIGN OUT</button>
+            </div>
+          </div>
+
+          <!-- Account Tabs -->
+          <div class="dashboard-nav-tabs">
+            <button class="dash-tab-btn active" data-tab="accOrders">MY ORDERS & TRACKING</button>
+            <button class="dash-tab-btn" data-tab="accAddresses">SAVED ADDRESSES</button>
+            <button class="dash-tab-btn" data-tab="accSecurity">ACCOUNT SECURITY</button>
+          </div>
+
+          <!-- TAB 1: ORDERS & TRACKING -->
+          <div id="accTabOrdersContent" class="dash-tab-content">
+            <div id="accOrdersList">
+              <!-- Rendered dynamically by app.js -->
+              <div style="text-align:center; padding:3rem; color:var(--text-secondary);">Loading your orders...</div>
+            </div>
+          </div>
+
+          <!-- TAB 2: SAVED ADDRESSES -->
+          <div id="accTabAddressesContent" class="dash-tab-content" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <h3 style="font-size: 1.1rem;">DELIVERY ADDRESSES</h3>
+              <button class="btn btn-outline btn-sm" id="toggleAddAddressBtn">+ ADD NEW ADDRESS</button>
+            </div>
+
+            <!-- New Address Form (Toggleable) -->
+            <div id="newAddressFormWrap" style="display: none; background: #FFFFFF; border: 1px solid var(--border-medium); padding: 1.75rem; border-radius: var(--radius-xs); margin-bottom: 2rem;">
+              <h4 style="font-size: 1rem; margin-bottom: 1.25rem;">ADD DELIVERY ADDRESS (INDIA)</h4>
+              <div class="checkout-form-grid">
+                <div class="form-group">
+                  <label class="form-label">FULL NAME *</label>
+                  <input type="text" class="form-input" id="addrFullName" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">PHONE NUMBER (10 DIGITS) *</label>
+                  <input type="tel" class="form-input" id="addrPhone" required />
+                </div>
+                <div class="form-group full-width">
+                  <label class="form-label">ADDRESS LINE 1 (FLAT / BUILDING / STREET) *</label>
+                  <input type="text" class="form-input" id="addrLine1" required />
+                </div>
+                <div class="form-group full-width">
+                  <label class="form-label">ADDRESS LINE 2 (LANDMARK / AREA)</label>
+                  <input type="text" class="form-input" id="addrLine2" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">CITY *</label>
+                  <input type="text" class="form-input" id="addrCity" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">STATE *</label>
+                  <input type="text" class="form-input" id="addrState" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">6-DIGIT PIN CODE *</label>
+                  <input type="text" class="form-input" id="addrPincode" maxlength="6" required />
+                </div>
+                <div class="form-group" style="display:flex; align-items:center; gap:0.5rem; margin-top:1.5rem;">
+                  <input type="checkbox" id="addrIsDefault" style="width:16px; height:16px; accent-color:#111111;" />
+                  <label for="addrIsDefault" style="font-size:0.85rem; cursor:pointer;">Set as default delivery address</label>
+                </div>
+              </div>
+              <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                <button class="btn btn-lime btn-sm" id="saveAddressBtn">SAVE ADDRESS</button>
+                <button class="btn btn-outline btn-sm" id="cancelAddressBtn">CANCEL</button>
+              </div>
+            </div>
+
+            <!-- Addresses List Grid -->
+            <div id="accAddressesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- TAB 3: ACCOUNT SECURITY -->
+          <div id="accTabSecurityContent" class="dash-tab-content" style="display: none;">
+            <div style="background: #FFFFFF; border: 1px solid var(--border-light); padding: 2rem; border-radius: var(--radius-xs); max-width: 500px;">
+              <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">UPDATE PASSWORD</h3>
+              <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem;">
+                Keep your 590 Labs account secure by using a strong password with at least 6 characters.
+              </p>
+              <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label class="form-label">CURRENT PASSWORD *</label>
+                <input type="password" class="form-input" id="secCurrentPassword" required />
+              </div>
+              <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label class="form-label">NEW PASSWORD *</label>
+                <input type="password" class="form-input" id="secNewPassword" minlength="6" required />
+              </div>
+              <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label class="form-label">CONFIRM NEW PASSWORD *</label>
+                <input type="password" class="form-input" id="secConfirmPassword" minlength="6" required />
+              </div>
+              <button class="btn btn-lime btn-block" id="secChangePasswordBtn">SAVE NEW PASSWORD</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ======================================================================
+         VIEW 6: ADMINISTRATOR DASHBOARD (PROTECTED STORE MANAGEMENT)
+         ====================================================================== -->
+    <div id="adminView" style="display: none;">
+      <section class="section-padding container">
+        <div class="admin-view-header">
+          <div>
+            <span class="badge badge-lime font-mono">RESTRICTED ACCESS // SUPERADMIN</span>
+            <h1 class="section-title" style="font-size: 2.2rem; margin-top: 0.25rem;">590 LABS® ADMIN CONSOLE</h1>
+            <p class="font-mono" style="font-size: 0.8rem; color: var(--text-secondary);">
+              Store management, live inventory control, real order fulfillment & customer records.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <span class="badge font-mono" style="background:#EBFBEE; color:#2B8A3E; border:1px solid #B2F2BB;">● DATABASE ONLINE</span>
+            <button class="btn btn-outline btn-sm" onclick="window.navigateTo('home')">VIEW STOREFRONT ↗</button>
+          </div>
+        </div>
+
+        <!-- Admin Navigation Tabs -->
+        <div class="dashboard-nav-tabs">
+          <button class="dash-tab-btn active" data-tab="admOverview">OVERVIEW & METRICS</button>
+          <button class="dash-tab-btn" data-tab="admOrders">ORDERS FULFILLMENT</button>
+          <button class="dash-tab-btn" data-tab="admProducts">PRODUCTS & STOCK</button>
+          <button class="dash-tab-btn" data-tab="admCoupons">COUPONS & OFFERS</button>
+          <button class="dash-tab-btn" data-tab="admCustomers">CUSTOMERS</button>
+        </div>
+
+        <!-- TAB 1: OVERVIEW & METRICS -->
+        <div id="admOverviewContent" class="dash-tab-content">
+          <!-- 4 Metric Cards -->
+          <div class="stats-metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">TOTAL PAID REVENUE</div>
+              <div class="metric-value" id="admStatRevenue">₹0</div>
+              <div class="font-mono" style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.4rem;">From verified orders</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">TOTAL ORDERS PLACED</div>
+              <div class="metric-value" id="admStatOrders">0</div>
+              <div class="font-mono" style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.4rem;">All fulfillment states</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">PENDING DISPATCH</div>
+              <div class="metric-value" id="admStatPending" style="color:#1864AB;">0</div>
+              <div class="font-mono" style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.4rem;">Confirmed or packing</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">REGISTERED CUSTOMERS</div>
+              <div class="metric-value" id="admStatCustomers">0</div>
+              <div class="font-mono" style="font-size:0.7rem; color:var(--text-secondary); margin-top:0.4rem;">Collector accounts</div>
+            </div>
+          </div>
+
+          <!-- Low Stock Variant Alerts -->
+          <div style="margin-bottom: 2.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <h3 style="font-size: 1.15rem;">LOW STOCK INVENTORY ALERTS (≤ 3 UNITS)</h3>
+              <span class="badge badge-lime font-mono" id="admLowStockBadge">0 ALERTS</span>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>PRODUCT</th>
+                    <th>SIZE</th>
+                    <th>COLOR</th>
+                    <th>CURRENT STOCK</th>
+                    <th>ACTION</th>
+                  </tr>
+                </thead>
+                <tbody id="admLowStockTableBody">
+                  <!-- Populated by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent Orders -->
+          <div>
+            <h3 style="font-size: 1.15rem; margin-bottom: 1rem;">RECENT STORE ACTIVITY</h3>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>ORDER ID</th>
+                    <th>CUSTOMER</th>
+                    <th>DATE</th>
+                    <th>TOTAL</th>
+                    <th>PAYMENT</th>
+                    <th>STATUS</th>
+                  </tr>
+                </thead>
+                <tbody id="admRecentOrdersTableBody">
+                  <!-- Populated by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: ORDERS MANAGEMENT -->
+        <div id="admOrdersContent" class="dash-tab-content" style="display: none;">
+          <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <input type="text" class="form-input" id="admOrderSearchInput" placeholder="SEARCH ORDER ID, NAME, EMAIL..." style="max-width: 320px;" />
+            <select class="form-input" id="admOrderFilterStatus" style="max-width: 200px;">
+              <option value="all">ALL FULFILLMENT STATES</option>
+              <option value="confirmed">CONFIRMED</option>
+              <option value="packing">PACKING</option>
+              <option value="in_transit">IN TRANSIT</option>
+              <option value="out_for_delivery">OUT FOR DELIVERY</option>
+              <option value="delivered">DELIVERED</option>
+              <option value="cancelled">CANCELLED</option>
+            </select>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ORDER REF</th>
+                  <th>CUSTOMER</th>
+                  <th>CONTACT</th>
+                  <th>ITEMS</th>
+                  <th>AMOUNT</th>
+                  <th>PAYMENT</th>
+                  <th>FULFILLMENT STATUS</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody id="admFullOrdersTableBody">
+                <!-- Populated by app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: PRODUCTS & INVENTORY -->
+        <div id="admProductsContent" class="dash-tab-content" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.15rem;">PRODUCT CATALOGUE & LIVE STOCK EDITING</h3>
+            <button class="btn btn-lime btn-sm" id="toggleAddProductBtn">+ ADD NEW DROP</button>
+          </div>
+
+          <!-- Add Product Form (Collapsible) -->
+          <div id="newProductFormWrap" style="display:none; background:#FFFFFF; border:1px solid var(--border-medium); padding:1.75rem; border-radius:var(--radius-xs); margin-bottom:2rem;">
+            <h4 style="font-size:1.05rem; margin-bottom:1.25rem;">CREATE NEW PRODUCT DROP</h4>
+            <div class="checkout-form-grid">
+              <div class="form-group">
+                <label class="form-label">PRODUCT ID (SLUG) *</label>
+                <input type="text" class="form-input" id="npId" placeholder="e.g. vintage-wash-tee" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">TITLE *</label>
+                <input type="text" class="form-input" id="npTitle" placeholder="e.g. VINTAGE WASH BOXY TEE" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">CATEGORY *</label>
+                <select class="form-input" id="npCategory">
+                  <option value="tops">TOPS</option>
+                  <option value="bottoms">BOTTOMS</option>
+                  <option value="outerwear">OUTERWEAR</option>
+                  <option value="accessories">ACCESSORIES</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">PRICE (INR ₹) *</label>
+                <input type="number" class="form-input" id="npPrice" placeholder="1499" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">GSM (FABRIC DENSITY)</label>
+                <input type="text" class="form-input" id="npGsm" placeholder="e.g. 300 GSM" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">INITIAL STOCK PER VARIANT</label>
+                <input type="number" class="form-input" id="npStock" value="10" />
+              </div>
+              <div class="form-group full-width">
+                <label class="form-label">IMAGE URL (HIGH-RES PHOTOGRAPHY)</label>
+                <input type="url" class="form-input" id="npImage" placeholder="https://images.unsplash.com/photo-..." />
+              </div>
+              <div class="form-group full-width">
+                <label class="form-label">DESCRIPTION</label>
+                <textarea class="form-input" id="npDesc" rows="3" placeholder="Architectural silhouette, dense combed cotton..."></textarea>
+              </div>
+            </div>
+            <div style="margin-top:1.5rem; display:flex; gap:0.75rem;">
+              <button class="btn btn-lime btn-sm" id="submitNewProductBtn">PUBLISH DROP</button>
+              <button class="btn btn-outline btn-sm" id="cancelNewProductBtn">CANCEL</button>
+            </div>
+          </div>
+
+          <!-- Product Variants Table -->
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>PRODUCT</th>
+                  <th>CATEGORY</th>
+                  <th>PRICE</th>
+                  <th>VARIANTS BREAKDOWN & REAL STOCK</th>
+                  <th>TOTAL INVENTORY</th>
+                </tr>
+              </thead>
+              <tbody id="admProductsTableBody">
+                <!-- Populated by app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 4: COUPONS & OFFERS -->
+        <div id="admCouponsContent" class="dash-tab-content" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.15rem;">PROMOTIONAL DISCOUNT CODES</h3>
+            <button class="btn btn-lime btn-sm" id="toggleAddCouponBtn">+ CREATE PROMO CODE</button>
+          </div>
+
+          <!-- Add Coupon Form (Collapsible) -->
+          <div id="newCouponFormWrap" style="display:none; background:#FFFFFF; border:1px solid var(--border-medium); padding:1.75rem; border-radius:var(--radius-xs); margin-bottom:2rem;">
+            <h4 style="font-size:1.05rem; margin-bottom:1.25rem;">NEW PROMOTIONAL COUPON</h4>
+            <div class="checkout-form-grid">
+              <div class="form-group">
+                <label class="form-label">COUPON CODE (UPPERCASE) *</label>
+                <input type="text" class="form-input" id="ncCode" placeholder="e.g. FLASH20" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">DISCOUNT TYPE *</label>
+                <select class="form-input" id="ncType">
+                  <option value="percent">PERCENTAGE (%)</option>
+                  <option value="fixed">FLAT AMOUNT (₹)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">DISCOUNT VALUE *</label>
+                <input type="number" class="form-input" id="ncValue" placeholder="e.g. 20" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">MINIMUM ORDER VALUE (₹)</label>
+                <input type="number" class="form-input" id="ncMinOrder" value="0" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">MAX DISCOUNT CAP (₹)</label>
+                <input type="number" class="form-input" id="ncMaxDiscount" placeholder="e.g. 1000" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">USAGE LIMIT</label>
+                <input type="number" class="form-input" id="ncLimit" placeholder="e.g. 500" />
+              </div>
+            </div>
+            <div style="margin-top:1.5rem; display:flex; gap:0.75rem;">
+              <button class="btn btn-lime btn-sm" id="submitNewCouponBtn">ACTIVATE COUPON</button>
+              <button class="btn btn-outline btn-sm" id="cancelNewCouponBtn">CANCEL</button>
+            </div>
+          </div>
+
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>CODE</th>
+                  <th>DISCOUNT</th>
+                  <th>MIN ORDER</th>
+                  <th>MAX CAP</th>
+                  <th>TIMES USED</th>
+                  <th>STATUS</th>
+                </tr>
+              </thead>
+              <tbody id="admCouponsTableBody">
+                <!-- Populated by app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 5: CUSTOMER DIRECTORY -->
+        <div id="admCustomersContent" class="dash-tab-content" style="display: none;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 1.25rem;">REGISTERED CUSTOMER BASE</h3>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>NAME</th>
+                  <th>EMAIL</th>
+                  <th>PHONE</th>
+                  <th>TOTAL ORDERS</th>
+                  <th>LIFETIME SPEND</th>
+                  <th>REGISTERED</th>
+                </tr>
+              </thead>
+              <tbody id="admCustomersTableBody">
+                <!-- Populated by app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- ========================================================================
+       3. Footer
+       ======================================================================== -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="assets/logo-white.svg" alt="590.labs" class="brand-logo-img brand-logo-footer" />
+          <p>
+            Independent streetwear label engineered for unisex fits, everyday rebellion, and brutalist aesthetics.
+          </p>
+          <div style="margin-top: 1.25rem;" class="font-mono">
+            <span>● SYSTEM ACTIVE</span> // BLR • BOM • DEL
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">COLLECTIONS</h4>
+          <ul class="footer-links">
+            <li><a href="#shop">New Drops (Drop 04)</a></li>
+            <li><a href="#tops">Graphic & Boxy Tees</a></li>
+            <li><a href="#tops">Heavyweight Hoodies</a></li>
+            <li><a href="#bottoms">Modular Utility Cargos</a></li>
+            <li><a href="#bottoms">Parachute Track Pants</a></li>
+            <li><a href="#accessories">Tactical Slings & Caps</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">COMMUNITY & HELP</h4>
+          <ul class="footer-links">
+            <li><a href="#story">Our Story & Craft</a></li>
+            <li><a href="#lookbook">Campaign Lookbook</a></li>
+            <li><a href="javascript:void(0)" onclick="document.getElementById('sizeGuideModal').classList.add('active')">Size & Fit Guide</a></li>
+            <li><a href="javascript:void(0)" onclick="alert('Doorstep shipping in 2-3 business days across India. Free shipping on orders over ₹1,999.')">Shipping & Returns</a></li>
+            <li><a href="javascript:void(0)" onclick="alert('Contact the 590 LABS concierge at: support@590labs.com')">Concierge / Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-heading">VIP DROP RADAR</h4>
+          <p style="font-size:0.8rem; margin-bottom:1rem; color:#A0A09C;">Receive direct private access links to upcoming batches before sellout.</p>
+          <div class="font-mono" style="font-size:0.75rem; color:#A0A09C;">
+            <div>PROMO CODES:</div>
+            <div style="color:#FFFFFF; margin-top:4px;">• "DROP10" for 10% off</div>
+            <div style="color:#FFFFFF;">• "LABS590" for ₹590 off > ₹2,500</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 590 LABS® INC. ALL RIGHTS RESERVED. NOT MADE TO BLEND IN.
+        </div>
+
+        <div class="payment-badges">
+          <span class="payment-tag">UPI (GPAY / PHONEPE)</span>
+          <span class="payment-tag">RUPAY</span>
+          <span class="payment-tag">VISA</span>
+          <span class="payment-tag">MASTERCARD</span>
+          <span class="payment-tag">CASH ON DELIVERY</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       4. Slide-Out Cart Drawer
+       ======================================================================== -->
+  <div class="drawer-backdrop" id="cartBackdrop"></div>
+  <aside class="drawer-panel" id="cartDrawer" aria-label="Shopping Bag">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <span>YOUR BAG</span>
+        <span class="badge badge-lime font-mono cart-count-badge">0</span>
+      </div>
+      <button class="drawer-close-btn" id="cartCloseBtn" aria-label="Close Bag">
+        <svg style="width:20px; height:20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <!-- Free Shipping Meter -->
+      <div class="shipping-meter-wrap">
+        <div class="shipping-meter-text" id="shippingMeterText">
+          <span>ADD <strong>₹1,999</strong> FOR FREE SHIPPING</span>
+          <span>0%</span>
+        </div>
+        <div class="shipping-progress-track">
+          <div class="shipping-progress-fill" id="shippingProgressFill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Item Rows -->
+      <div class="cart-items-list" id="cartItemsList">
+        <!-- Rendered by Store in app.js -->
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <!-- Promo Code Box -->
+      <div class="cart-promo-box">
+        <input type="text" class="cart-promo-input" id="cartPromoInput" placeholder="PROMO CODE (e.g. DROP10)" />
+        <button class="btn btn-outline btn-sm" id="cartApplyPromoBtn">APPLY</button>
+      </div>
+
+      <!-- Totals -->
+      <div class="cart-totals-list">
+        <div class="cart-total-row">
+          <span>SUBTOTAL</span>
+          <span id="cartSubtotal">₹0</span>
+        </div>
+        <div class="cart-total-row discount-row" id="cartDiscountRow" style="display:none;">
+          <span>PROMO DISCOUNT</span>
+          <span id="cartDiscount">-₹0</span>
+        </div>
+        <div class="cart-total-row">
+          <span>ESTIMATED SHIPPING</span>
+          <span id="cartShipping">FREE</span>
+        </div>
+        <div class="cart-total-row final-total">
+          <span>TOTAL</span>
+          <span id="cartTotal">₹0</span>
+        </div>
+      </div>
+
+      <button class="btn btn-lime btn-block btn-lg" id="cartCheckoutBtn">
+        PROCEED TO CHECKOUT ↗
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       5. Product Details Modal (Full Interactive PDP)
+       ======================================================================== -->
+  <div class="pdp-modal" id="pdpModal" role="dialog" aria-modal="true">
+    <div class="pdp-modal-content">
+      <button class="pdp-close-btn" aria-label="Close Product View">
+        <svg style="width:20px; height:20px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="pdp-layout">
+        <!-- Gallery -->
+        <div class="pdp-gallery-wrap">
+          <div class="pdp-main-image-box">
+            <img class="pdp-main-img" id="pdpMainImg" src="" alt="Product View" />
+          </div>
+          <div class="pdp-thumbs-row" id="pdpThumbs">
+            <!-- Thumbs injected by app.js -->
+          </div>
+        </div>
+
+        <!-- Info / Buying Controls -->
+        <div class="pdp-info-wrap">
+          <div class="pdp-breadcrumbs" id="pdpBreadcrumb">590 LABS / TOPS / GRAPHIC TEES</div>
+          <h2 class="pdp-title" id="pdpTitle">CORE GRAPHIC TEE</h2>
+          
+          <div class="pdp-price-tag">
+            <span class="pdp-current-price" id="pdpPrice">₹1,299</span>
+            <span class="pdp-compare-price" id="pdpComparePrice">₹1,699</span>
+            <span class="stock-status-pill" id="pdpStockIndicator">⚡ Only 2 pieces left in size L</span>
+          </div>
+
+          <p class="font-mono" style="font-size:0.75rem; color:var(--text-secondary);" id="pdpFitSubtitle">
+            Heavyweight look · Relaxed fit · Unisex
+          </p>
+
+          <!-- Colors -->
+          <div class="pdp-attribute-box">
+            <div class="pdp-attr-header">
+              <span>COLOR: <strong id="pdpSelectedColorName">Obsidian Black</strong></span>
+            </div>
+            <div class="pdp-colors-list" id="pdpColors">
+              <!-- Swatches injected by app.js -->
+            </div>
+          </div>
+
+          <!-- Sizes -->
+          <div class="pdp-attribute-box">
+            <div class="pdp-attr-header">
+              <span>CHOOSE SIZE</span>
+              <span class="pdp-size-guide-trigger">SIZE GUIDE (CM / IN)</span>
+            </div>
+            <div class="pdp-sizes-list" id="pdpSizes">
+              <!-- Sizes injected by app.js -->
+            </div>
+          </div>
+
+          <!-- Add to Cart CTA -->
+          <button class="btn btn-lime btn-block btn-lg" id="pdpAddToCartBtn" style="margin-top:0.5rem;">
+            ADD TO BAG ↗
+          </button>
+
+          <!-- Delivery Pincode Checker -->
+          <div class="pdp-pincode-box">
+            <span class="font-mono" style="font-size:0.72rem; color:var(--text-primary); display:block;">ESTIMATE DOORSTEP DELIVERY:</span>
+            <div class="pincode-form">
+              <input type="text" class="pincode-input" id="pdpPincodeInput" placeholder="ENTER 6-DIGIT PINCODE (e.g. 560001)" maxlength="6" />
+              <button class="btn btn-outline btn-sm" id="pdpCheckPincodeBtn">CHECK</button>
+            </div>
+            <div class="pincode-result" id="pdpPincodeResult"></div>
+          </div>
+
+          <!-- Accordion Specs -->
+          <div class="pdp-accordion-list">
+            <div class="pdp-accordion-item active">
+              <div class="pdp-accordion-header">
+                <span>DESIGN & FIT DETAILS</span>
+                <svg class="chevron" style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              <div class="pdp-accordion-body" id="pdpDescription">
+                <!-- Description -->
+              </div>
+            </div>
+
+            <div class="pdp-accordion-item">
+              <div class="pdp-accordion-header">
+                <span>FABRIC COMPOSITION & SPECS</span>
+                <svg class="chevron" style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              <div class="pdp-accordion-body">
+                <ul id="pdpSpecsList" style="list-style:none; display:flex; flex-direction:column; gap:0.4rem; font-family:var(--font-mono); font-size:0.75rem;"></ul>
+              </div>
+            </div>
+
+            <div class="pdp-accordion-item">
+              <div class="pdp-accordion-header">
+                <span>CARE & WASHING INSTRUCTIONS</span>
+                <svg class="chevron" style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              <div class="pdp-accordion-body" id="pdpCareText">
+                Machine wash cold inside-out. Do not iron directly on print. Hang dry in shade.
+              </div>
+            </div>
+
+            <div class="pdp-accordion-item">
+              <div class="pdp-accordion-header">
+                <span>14-DAY DOORSTEP RETURNS & EXCHANGES</span>
+                <svg class="chevron" style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              <div class="pdp-accordion-body">
+                Enjoy 14 days of hassle-free doorstep size exchanges and full refunds across India. Return pickup is scheduled from your doorstep at zero additional cost.
+              </div>
+            </div>
+          </div>
+
+          <!-- Verified Reviews Section -->
+          <div class="reviews-section" id="pdpReviewsContainer">
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:1.25rem;">
+              <div>
+                <span class="section-label">COMMUNITY VERIFIED FEEDBACK</span>
+                <h3 style="font-size:1.2rem; display:flex; align-items:center; gap:0.5rem;">
+                  <span id="pdpAvgRating">4.9</span>
+                  <span class="review-rating-stars">★★★★★</span>
+                  <span style="font-size:0.85rem; font-family:var(--font-mono); color:var(--text-secondary);" id="pdpReviewCountHeader">(48 reviews)</span>
+                </h3>
+              </div>
+              <button class="btn btn-outline btn-sm" id="toggleWriteReviewBtn">+ WRITE A REVIEW</button>
+            </div>
+
+            <!-- Write Review Form (Collapsible) -->
+            <form id="writeReviewForm" style="display:none; background:var(--bg-subtle); padding:1.25rem; border-radius:var(--radius-xs); border:1px solid var(--border-medium); margin-bottom:1.5rem;">
+              <h4 style="font-size:0.95rem; margin-bottom:0.75rem;">SUBMIT ARCHIVE REVIEW</h4>
+              <div class="checkout-form-grid">
+                <div class="form-group">
+                  <label class="form-label">YOUR NAME *</label>
+                  <input type="text" class="form-input" id="revAuthorName" placeholder="Karan S." required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">RATING *</label>
+                  <select class="form-input" id="revRating" required>
+                    <option value="5">★★★★★ (5/5 Exceptional)</option>
+                    <option value="4">★★★★☆ (4/5 Great Fit)</option>
+                    <option value="3">★★★☆☆ (3/5 Standard)</option>
+                    <option value="2">★★☆☆☆ (2/5 Below Standard)</option>
+                    <option value="1">★☆☆☆☆ (1/5 Unsatisfactory)</option>
+                  </select>
+                </div>
+                <div class="form-group full-width">
+                  <label class="form-label">REVIEW HEADLINE</label>
+                  <input type="text" class="form-input" id="revTitle" placeholder="e.g. Unmatched collar thickness and drape" />
+                </div>
+                <div class="form-group full-width">
+                  <label class="form-label">WRITTEN FEEDBACK *</label>
+                  <textarea class="form-input" id="revComment" rows="3" placeholder="Share your experience with fit, wash durability, fabric weight..." required></textarea>
+                </div>
+              </div>
+              <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+                <button type="submit" class="btn btn-lime btn-sm" id="submitReviewBtn">POST REVIEW</button>
+                <button type="button" class="btn btn-outline btn-sm" id="cancelReviewBtn">CANCEL</button>
+              </div>
+            </form>
+
+            <!-- Reviews List -->
+            <div id="pdpReviewsList">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       6. Size Guide Modal
+       ======================================================================== -->
+  <div class="size-guide-modal" id="sizeGuideModal" role="dialog" aria-modal="true">
+    <div class="size-guide-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <div>
+          <span class="section-label">590 LABS FIT LAB</span>
+          <h3 style="font-size:1.3rem;">GARMENT MEASUREMENTS (CM / IN)</h3>
+        </div>
+        <button class="drawer-close-btn" id="sizeGuideCloseBtn" aria-label="Close Size Guide">✕</button>
+      </div>
+
+      <p style="font-size:0.85rem; color:var(--text-secondary);">
+        All 590 LABS tops are cut with dropped shoulders and a boxy relaxed drape. For a true oversized aesthetic, select your standard size. For a more conventional fit, consider sizing down by one.
+      </p>
+
+      <table class="size-table">
+        <thead>
+          <tr>
+            <th>SIZE</th>
+            <th>CHEST (IN)</th>
+            <th>LENGTH (IN)</th>
+            <th>SHOULDER (IN)</th>
+            <th>SLEEVE (IN)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>XS</strong></td>
+            <td>40"</td>
+            <td>27"</td>
+            <td>20"</td>
+            <td>8.5"</td>
+          </tr>
+          <tr>
+            <td><strong>S</strong></td>
+            <td>42"</td>
+            <td>28"</td>
+            <td>21"</td>
+            <td>9.0"</td>
+          </tr>
+          <tr>
+            <td><strong>M</strong></td>
+            <td>44"</td>
+            <td>29"</td>
+            <td>22"</td>
+            <td>9.5"</td>
+          </tr>
+          <tr>
+            <td><strong>L</strong></td>
+            <td>46"</td>
+            <td>30"</td>
+            <td>23"</td>
+            <td>10.0"</td>
+          </tr>
+          <tr>
+            <td><strong>XL</strong></td>
+            <td>48"</td>
+            <td>31"</td>
+            <td>24"</td>
+            <td>10.5"</td>
+          </tr>
+          <tr>
+            <td><strong>XXL</strong></td>
+            <td>50"</td>
+            <td>32"</td>
+            <td>25"</td>
+            <td>11.0"</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-primary); font-weight:600;">
+        MODEL FIT REFERENCE: Male model is 6'1" wearing size L. Female model is 5'8" wearing size M.
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       7. Checkout Modal & Order Confirmation Flow
+       ======================================================================== -->
+  <div class="checkout-modal" id="checkoutModal" role="dialog" aria-modal="true">
+    <div class="checkout-modal-content">
+      <button class="drawer-close-btn" id="checkoutCloseBtn" style="position:absolute; top:1.2rem; right:1.2rem;" aria-label="Close Checkout">✕</button>
+
+      <!-- SCREEN 1: CHECKOUT FORM -->
+      <div id="checkoutScreenForm">
+        <span class="section-label">590 LABS SECURE TERMINAL</span>
+        <h2 style="font-size:1.5rem; margin-bottom:1rem;">EXPRESS CHECKOUT</h2>
+
+        <div class="checkout-steps-bar">
+          <div class="checkout-step completed">1. BAG</div>
+          <div class="checkout-step active">2. SHIPPING & PAYMENT</div>
+          <div class="checkout-step">3. CONFIRMATION</div>
+        </div>
+
+        <div class="checkout-form-grid">
+          <div class="form-group">
+            <label class="form-label">FULL NAME *</label>
+            <input type="text" class="form-input" id="chkName" placeholder="Aarav Sharma" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">PHONE NUMBER (FOR OTP/UPDATES) *</label>
+            <input type="tel" class="form-input" id="chkPhone" placeholder="+91 98765 43210" required />
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">EMAIL ADDRESS *</label>
+            <input type="email" class="form-input" id="chkEmail" placeholder="aarav@streetwear.in" required />
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">DELIVERY ADDRESS (HOUSE / STREET / AREA) *</label>
+            <input type="text" class="form-input" id="chkAddress" placeholder="Flat 4B, Concrete Lofts, Indiranagar" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">CITY *</label>
+            <input type="text" class="form-input" id="chkCity" value="Bengaluru" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">PINCODE *</label>
+            <input type="text" class="form-input" id="chkPincode" value="560038" maxlength="6" required />
+          </div>
+        </div>
+
+        <h4 class="font-mono" style="font-size:0.75rem; margin:1.5rem 0 0.5rem; color:var(--text-primary);">SELECT PAYMENT PROTOCOL:</h4>
+        <div class="payment-tabs" id="chkPaymentTabs">
+          <div class="payment-tab active" data-method="razorpay">
+            <span style="font-weight:700;">RAZORPAY ONLINE</span>
+            <span>UPI (GPay/PhonePe) · Cards · NetBanking</span>
+          </div>
+          <div class="payment-tab" data-method="cod">
+            <span style="font-weight:700;">CASH ON DELIVERY</span>
+            <span>Pay on Doorstep (Orders ≤ ₹5,000)</span>
+          </div>
+        </div>
+
+        <!-- Order items recap -->
+        <div style="background:var(--bg-subtle); padding:1rem; border-radius:var(--radius-xs); margin:1.5rem 0; border:1px solid var(--border-light);">
+          <div class="font-mono" style="font-size:0.7rem; color:var(--text-primary); font-weight:700; margin-bottom:0.5rem;">ORDER SUMMARY:</div>
+          <div id="checkoutItemsSummary"></div>
+          <div style="display:flex; justify-content:space-between; margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid var(--border-medium); font-family:var(--font-heading); font-weight:800; font-size:1.1rem; color:var(--text-primary);">
+            <span>TOTAL PAYABLE:</span>
+            <span id="checkoutFinalTotal">₹0</span>
+          </div>
+        </div>
+
+        <button class="btn btn-lime btn-block btn-lg" id="checkoutSubmitBtn">
+          AUTHORIZE & PLACE ORDER ↗
+        </button>
+      </div>
+
+      <!-- SCREEN 2: ORDER CONFIRMATION -->
+      <div id="checkoutScreenSuccess" style="display:none;" class="order-success-screen">
+        <div class="order-success-icon">
+          <svg style="width:32px; height:32px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+
+        <span class="badge badge-lime" style="margin-bottom:0.75rem;">ORDER SECURED</span>
+        <h2 style="font-size:1.85rem; margin-bottom:0.5rem; color:var(--text-primary);">THANK YOU FOR JOINING THE LAB.</h2>
+        <p style="color:var(--text-secondary); font-size:0.9rem;">
+          Your order has been recorded into the 590 LABS fulfillment queue.
+        </p>
+
+        <div style="background:var(--bg-subtle); padding:1.25rem; border-radius:var(--radius-xs); border:1px solid var(--border-light); margin:1.8rem auto; max-width:450px; text-align:left;" class="font-mono">
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.8rem;">
+            <span style="color:var(--text-secondary);">ORDER ID:</span>
+            <strong style="color:var(--text-primary);" id="confirmedOrderId">#590-2026-0001</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.8rem;">
+            <span style="color:var(--text-secondary);">RECIPIENT:</span>
+            <strong id="confirmedRecipient">Aarav Sharma</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.8rem;">
+            <span style="color:var(--text-secondary);">ESTIMATED DELIVERY:</span>
+            <strong style="color:var(--text-primary);">2–3 Business Days (Express)</strong>
+          </div>
+        </div>
+
+        <!-- Tracking Visual Timeline -->
+        <div class="order-timeline">
+          <div class="timeline-point active">
+            <div class="timeline-dot">✓</div>
+            <span>ORDER PLACED</span>
+          </div>
+          <div class="timeline-point active">
+            <div class="timeline-dot">●</div>
+            <span>PACKING IN LAB</span>
+          </div>
+          <div class="timeline-point">
+            <div class="timeline-dot">3</div>
+            <span>IN TRANSIT</span>
+          </div>
+          <div class="timeline-point">
+            <div class="timeline-dot">4</div>
+            <span>OUT FOR DELIVERY</span>
+          </div>
+        </div>
+
+        <button class="btn btn-outline" id="orderContinueShoppingBtn" style="margin-top:1.5rem;">
+          CONTINUE EXPLORING ARCHIVE ↗
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       8. Saved Wishlist Drawer
+       ======================================================================== -->
+  <div class="drawer-backdrop" id="wishlistBackdrop"></div>
+  <aside class="drawer-panel" id="wishlistDrawer" aria-label="Saved Pieces">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <span>SAVED PIECES</span>
+        <span class="badge badge-lime font-mono wishlist-count-badge">0</span>
+      </div>
+      <button class="drawer-close-btn" id="wishlistCloseBtn" aria-label="Close Wishlist">✕</button>
+    </div>
+    <div class="drawer-body">
+      <div class="cart-items-list" id="wishlistItemsList">
+        <!-- Rendered by app.js -->
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       9. Live Search Modal Overlay
+       ======================================================================== -->
+  <div class="pdp-modal" id="searchModal" role="dialog" aria-modal="true">
+    <div class="pdp-modal-content" style="max-width:680px; padding:2rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+        <span class="section-label">590 LABS ARCHIVE SEARCH</span>
+        <button class="drawer-close-btn" id="searchCloseBtn" aria-label="Close Search">✕</button>
+      </div>
+
+      <div style="display:flex; align-items:center; background:var(--bg-subtle); border:1px solid var(--border-medium); border-radius:var(--radius-xs); padding:0.6rem 1rem;">
+        <svg style="width:18px; height:18px; color:var(--text-secondary); margin-right:0.75rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchModalInput" placeholder="SEARCH TEES, HOODIES, CARGOS, GSM, SPECS..." style="flex:1; background:none; border:none; color:var(--text-primary); font-family:var(--font-body); font-size:0.95rem; outline:none;" />
+      </div>
+
+      <div style="margin:1.5rem 0 0.75rem;" class="font-mono" style="font-size:0.75rem; color:var(--text-secondary);">
+        TRENDING MATCHES:
+      </div>
+      <div id="searchResultsGrid" style="display:grid; grid-template-columns:1fr; gap:0.75rem;">
+        <!-- Injected by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       10. Mobile Menu Drawer
+       ======================================================================== -->
+  <div class="drawer-backdrop" id="mobileMenuBackdrop"></div>
+  <aside class="drawer-panel" id="mobileMenuDrawer" style="left:0; right:auto; transform:translateX(-100%);" aria-label="Mobile Navigation">
+    <div class="drawer-header">
+      <img src="assets/logo-black.svg" alt="590.labs" class="brand-logo-img brand-logo-mobile" />
+      <button class="drawer-close-btn" id="mobileMenuCloseBtn" aria-label="Close Menu">✕</button>
+    </div>
+    <div class="drawer-body" style="padding: 2rem 1.5rem;">
+      <nav style="display:flex; flex-direction:column; gap:1.25rem;">
+        <a href="#home" class="mobile-nav-link" style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; color:var(--text-primary);">HOME</a>
+        <a href="#shop" class="mobile-nav-link" style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; color:var(--text-primary);">NEW DROPS ↗</a>
+        <a href="#shop" class="mobile-nav-link" style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; color:var(--text-primary);">SHOP ALL</a>
+        <a href="#tops" class="mobile-nav-link" style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; color:var(--text-primary);">TOPS</a>
+        <a href="#bottoms" class="mobile-nav-link" style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; color:var(--text-primary);">BOTTOMS</a>
+        <a href="#lookbook" class="mobile-nav-link" style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; color:var(--text-primary);">LOOKBOOK</a>
+        <a href="#story" class="mobile-nav-link" style="font-family:var(--font-display); font-size:1.5rem; font-weight:800; color:var(--text-primary);">OUR STORY</a>
+      </nav>
+
+      <div style="margin-top:3rem; padding-top:2rem; border-top:1px solid var(--border-light);">
+        <p class="font-mono" style="font-size:0.72rem; color:var(--text-secondary); margin-bottom:0.75rem;">CURRENCY SELECTOR:</p>
+        <select class="currency-select" style="width:100%;">
+          <option value="INR">₹ INR (Indian Rupee)</option>
+          <option value="USD">$ USD (US Dollar)</option>
+          <option value="EUR">€ EUR (Euro)</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================================================
+       11. Sensory Toast Notifications
+       ======================================================================== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========================================================================
+       12. Authentication Modal (Login / Register / Forgot Password)
+       ======================================================================== -->
+  <div class="auth-modal" id="authModal" role="dialog" aria-modal="true">
+    <div class="auth-card">
+      <button class="drawer-close-btn" id="authCloseBtn" style="position:absolute; top:1.25rem; right:1.25rem;" aria-label="Close Authentication">✕</button>
+
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" id="tabBtnLogin" data-target="authFormLogin">SIGN IN</button>
+        <button class="auth-tab-btn" id="tabBtnRegister" data-target="authFormRegister">CREATE ACCOUNT</button>
+      </div>
+
+      <!-- FORM 1: SIGN IN -->
+      <form id="authFormLogin">
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label class="form-label">EMAIL ADDRESS *</label>
+          <input type="email" class="form-input" id="loginEmail" placeholder="collector@590labs.com" required />
+        </div>
+        <div class="form-group" style="margin-bottom:0.75rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-label">PASSWORD *</label>
+            <a href="javascript:void(0)" id="authForgotPwdLink" class="font-mono" style="font-size:0.7rem; color:var(--text-secondary); text-decoration:underline;">FORGOT?</a>
+          </div>
+          <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" class="btn btn-lime btn-block btn-lg" id="loginSubmitBtn" style="margin-top:1.25rem;">
+          SIGN IN TO ARCHIVE ↗
+        </button>
+
+        <div class="auth-divider">OR CONTINUE WITH</div>
+
+        <!-- Google OAuth Sign-In Button -->
+        <button type="button" class="google-auth-btn" id="googleLoginBtn">
+          <svg style="width:18px; height:18px;" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>CONTINUE WITH GOOGLE</span>
+        </button>
+
+        <div style="margin-top:1.5rem; text-align:center; font-family:var(--font-mono); font-size:0.72rem; color:var(--text-secondary);">
+          Demo Admin: <strong>admin@590labs.com</strong> / <strong>Admin@590Labs2026</strong>
+        </div>
+      </form>
+
+      <!-- FORM 2: REGISTER -->
+      <form id="authFormRegister" style="display:none;">
+        <div class="form-group" style="margin-bottom:0.85rem;">
+          <label class="form-label">FULL NAME *</label>
+          <input type="text" class="form-input" id="regName" placeholder="Karan Sharma" required />
+        </div>
+        <div class="form-group" style="margin-bottom:0.85rem;">
+          <label class="form-label">EMAIL ADDRESS *</label>
+          <input type="email" class="form-input" id="regEmail" placeholder="karan@example.com" required />
+        </div>
+        <div class="form-group" style="margin-bottom:0.85rem;">
+          <label class="form-label">PHONE NUMBER (OPTIONAL)</label>
+          <input type="tel" class="form-input" id="regPhone" placeholder="+91 98765 43210" />
+        </div>
+        <div class="form-group" style="margin-bottom:0.85rem;">
+          <label class="form-label">CREATE PASSWORD (MIN 6 CHARACTERS) *</label>
+          <input type="password" class="form-input" id="regPassword" minlength="6" placeholder="••••••••" required />
+        </div>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label class="form-label">CONFIRM PASSWORD *</label>
+          <input type="password" class="form-input" id="regConfirmPassword" minlength="6" placeholder="••••••••" required />
+        </div>
+
+        <div style="margin-bottom:1.25rem; font-size:0.75rem; color:var(--text-secondary);">
+          By registering, you accept 590 LABS terms, privacy policy, and limited-drop collector notices.
+        </div>
+
+        <button type="submit" class="btn btn-lime btn-block btn-lg" id="regSubmitBtn">
+          JOIN 590 LABS ARCHIVE ↗
+        </button>
+      </form>
+
+      <!-- FORM 3: FORGOT PASSWORD -->
+      <form id="authFormForgot" style="display:none;">
+        <h3 style="font-size:1.15rem; margin-bottom:0.5rem;">PASSWORD RECOVERY</h3>
+        <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1.5rem;">
+          Enter your registered email address and we'll generate a secure password reset link.
+        </p>
+
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label class="form-label">REGISTERED EMAIL ADDRESS *</label>
+          <input type="email" class="form-input" id="forgotEmail" placeholder="collector@590labs.com" required />
+        </div>
+
+        <button type="submit" class="btn btn-lime btn-block btn-lg" id="forgotSubmitBtn">
+          SEND RECOVERY LINK ↗
+        </button>
+
+        <div style="margin-top:1.25rem; text-align:center;">
+          <a href="javascript:void(0)" id="forgotBackToLoginLink" class="font-mono" style="font-size:0.75rem; color:var(--text-primary); text-decoration:underline;">← BACK TO SIGN IN</a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

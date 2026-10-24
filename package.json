@@ -1,0 +1,22 @@
+{
+  "name": "590-labs-streetwear",
+  "version": "1.0.0",
+  "description": "590 LABS — Independent Unisex Streetwear Storefront",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "seed": "node server/seed.js",
+    "test": "node test/api.test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.9",
+    "express": "^5.3.0",
+    "framer-motion": "^14.6.0",
+    "jsonwebtoken": "^9.0.3",
+    "razorpay": "^2.9.8"
+  }
+}
