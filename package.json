@@ -11,7 +11,8 @@
     "test": "node --max-old-space-size=4096 test/api.test.js",
     "test:admin": "node test/admin.test.js",
     "test:monochrome": "node test/monochrome_redesign.test.js",
-    "test:all": "node test/api.test.js && node test/admin.test.js && node test/concurrency.test.js && node test/intro.test.js && node test/responsive.test.js && node test/monochrome_redesign.test.js"
+    "test:clean": "node test/zero_demo_data.test.js",
+    "test:all": "node test/api.test.js && node test/admin.test.js && node test/concurrency.test.js && node test/intro.test.js && node test/responsive.test.js && node test/monochrome_redesign.test.js && node test/zero_demo_data.test.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

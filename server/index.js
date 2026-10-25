@@ -72,11 +72,11 @@ app.use(express.static(staticDir, {
   etag: true,
   lastModified: true,
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html')) {
-      // HTML documents should revalidate so updates are immediately picked up
-      res.setHeader('Cache-Control', 'no-cache');
-    } else if (/\.(css|js|svg|png|jpg|jpeg|webp|woff2?|ico)$/i.test(filePath)) {
-      // Static design assets, fonts, stylesheets and scripts can be safely cached
+    if (filePath.endsWith('.html') || filePath.endsWith('.js')) {
+      // HTML documents and scripts should revalidate immediately
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    } else if (/\.(css|svg|png|jpg|jpeg|webp|woff2?|ico)$/i.test(filePath)) {
+      // Static design assets, fonts, stylesheets and icons can be safely cached
       res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
     }
   }

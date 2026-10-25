@@ -177,22 +177,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // --------------------------------------------------------------------------
   function renderHomeProducts() {
     if (!productsGridHome) return;
+    const allProducts = window.PRODUCTS || PRODUCTS || [];
     const featured = getFeaturedDrops().slice(0, 8);
-    if (featured.length === 0) {
+    const list = featured.length > 0 ? featured : allProducts.slice(0, 8);
+    if (list.length === 0) {
       productsGridHome.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
-          <div class="font-display" style="font-size: 1.5rem; letter-spacing: 0.1em; color: var(--off-white); margin-bottom: 0.5rem;">OUR COLLECTION IS COMING SOON.</div>
-          <p class="font-mono" style="color: var(--off-white-muted); font-size: 0.85rem;">CHECK BACK SOON FOR THE NEXT 590 LABS ARCHIVAL DROP.</p>
+        <div style="grid-column: 1/-1; text-align: center; padding: clamp(3.5rem, 6vw, 5.5rem) 1.5rem; background: #FFFFFF; border: 1px dashed var(--border-light); border-radius: var(--radius-xs);">
+          <div class="font-display" style="font-size: clamp(1.25rem, 2.5vw, 1.6rem); letter-spacing: 0.1em; color: var(--text-primary); margin-bottom: 0.75rem;">NEW COLLECTION COMING SOON</div>
+          <p class="font-mono" style="color: var(--text-secondary); font-size: 0.85rem; max-width: 480px; margin: 0 auto; line-height: 1.6;">WE ARE PREPARING OUR NEXT ARCHIVAL DROP. ALL RELEASES ARE PRODUCED IN LIMITED QUANTITIES.</p>
         </div>
       `;
       return;
     }
-    productsGridHome.innerHTML = featured.map(createProductCardHTML).join("");
+    productsGridHome.innerHTML = list.map(createProductCardHTML).join("");
   }
 
   function renderShopCatalog() {
     if (!shopCatalogGrid) return;
-    let list = [...(window.PRODUCTS || PRODUCTS)];
+    let list = [...(window.PRODUCTS || PRODUCTS || [])];
 
     // Filter by Category
     if (currentCategory && currentCategory !== "all") {
@@ -222,10 +224,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (list.length === 0) {
       const isCatalogEmpty = !window.PRODUCTS || window.PRODUCTS.length === 0;
       shopCatalogGrid.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
-          <div class="font-display" style="font-size: 1.35rem; letter-spacing: 0.08em; color: var(--off-white); margin-bottom: 0.5rem;">${isCatalogEmpty ? 'COLLECTION COMING SOON.' : 'NO PIECES FOUND MATCHING CRITERIA.'}</div>
-          <p class="font-mono" style="color: var(--off-white-muted); margin-bottom: 1.25rem; font-size: 0.85rem;">${isCatalogEmpty ? 'Check back soon for the latest collection.' : 'Try clearing your filters or search terms.'}</p>
-          ${isCatalogEmpty ? '' : '<button class="btn btn-outline-lime btn-sm" onclick="window.resetShopFilters()">RESET ALL FILTERS</button>'}
+        <div style="grid-column: 1/-1; text-align: center; padding: clamp(3.5rem, 6vw, 5.5rem) 1.5rem; background: #FFFFFF; border: 1px dashed var(--border-light); border-radius: var(--radius-xs);">
+          <div class="font-display" style="font-size: clamp(1.25rem, 2.5vw, 1.5rem); letter-spacing: 0.08em; color: var(--text-primary); margin-bottom: 0.75rem;">${isCatalogEmpty ? 'NEW COLLECTION COMING SOON' : 'NO PIECES FOUND MATCHING CRITERIA.'}</div>
+          <p class="font-mono" style="color: var(--text-secondary); margin-bottom: 1.25rem; font-size: 0.85rem; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.6;">${isCatalogEmpty ? 'Check back soon for the next 590 LABS drop.' : 'Try clearing your filters or search terms.'}</p>
+          ${isCatalogEmpty ? '' : '<button class="btn btn-outline btn-sm" onclick="window.resetShopFilters()">RESET ALL FILTERS</button>'}
         </div>
       `;
       const catalogCountEl = document.getElementById("catalogCount");
@@ -251,9 +253,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // --------------------------------------------------------------------------
   // PRODUCT DETAILS MODAL (PDP)
   // --------------------------------------------------------------------------
-  function openPdp(productId) {
-    const product = getProductById(productId);
-    if (!product) return;
+  async function openPdp(productId) {
+    let product = getProductById(productId);
+    if (!product && window.API && window.API.products) {
+      try {
+        const res = await window.API.products.get(productId);
+        if (res && res.product) {
+          product = res.product;
+        }
+      } catch (e) {}
+    }
+    if (!product) {
+      showToast("Selected piece is currently unavailable or coming soon.", "info");
+      return;
+    }
 
     activePdpProduct = product;
     activePdpSize = product.sizes[0];
@@ -729,15 +742,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!resultsContainer) return;
 
     const q = (query || "").toLowerCase().trim();
-    const matches = q ? PRODUCTS.filter(p => 
-      p.title.toLowerCase().includes(q) || 
-      p.category.toLowerCase().includes(q) || 
-      p.type.toLowerCase().includes(q) ||
-      p.gsm.toLowerCase().includes(q)
-    ) : PRODUCTS.slice(0, 4); // show trending if empty
+    const catalog = window.PRODUCTS || PRODUCTS || [];
+    const matches = q ? catalog.filter(p => 
+      (p.title && p.title.toLowerCase().includes(q)) || 
+      (p.category && p.category.toLowerCase().includes(q)) || 
+      (p.type && p.type.toLowerCase().includes(q)) ||
+      (p.gsm && p.gsm.toLowerCase().includes(q))
+    ) : catalog.slice(0, 4);
 
     if (matches.length === 0) {
-      resultsContainer.innerHTML = `<p class="font-mono" style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 2rem;">NO PIECES MATCHING "${query.toUpperCase()}"</p>`;
+      resultsContainer.innerHTML = `<p class="font-mono" style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 2rem;">${q ? `NO PIECES MATCHING "${query.toUpperCase()}"` : 'NEW COLLECTION COMING SOON'}</p>`;
       return;
     }
 

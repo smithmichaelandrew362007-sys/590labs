@@ -4,6 +4,7 @@
  */
 
 const assert = require('assert');
+const db = require('../server/db');
 
 const BASE_URL = 'http://localhost:3000/api';
 
@@ -114,13 +115,20 @@ async function runAdminTests() {
     assert.ok(res.data.message.includes('password recovery'));
   });
 
-  await test('6. User cannot access other customers profiles or orders', async () => {
-    // Customer tries accessing order #590-2026-84920 (belongs to user #2 Karan)
-    const res = await request('/orders/590-2026-84920', {
+  await test('6. User cannot access other customers profiles or orders (403)', async () => {
+    const privOrderId = '590-TEST-PRIV-001';
+    db.prepare(`
+      INSERT OR REPLACE INTO orders (id, user_id, customer_email, customer_name, customer_phone, shipping_address, subtotal, total_amount, payment_method)
+      VALUES (?, 1, 'admin@590labs.com', 'Store Owner', '+91 98765 43210', '{}', 1000, 1000, 'cod')
+    `).run(privOrderId);
+
+    const res = await request(`/orders/${privOrderId}`, {
       headers: { Authorization: `Bearer ${customerToken}` }
     });
     assert.strictEqual(res.status, 403);
     assert.strictEqual(res.data.success, false);
+
+    db.prepare('DELETE FROM orders WHERE id = ?').run(privOrderId);
   });
 
   // ============================================================================
@@ -564,6 +572,11 @@ async function runAdminTests() {
   console.log('\n================================================================');
   console.log(`  MASTER ADMIN TEST RESULTS: ${passed} Passed, ${failed} Failed`);
   console.log('================================================================\n');
+
+  // Cleanup test fixtures so database remains pristine
+  db.prepare("DELETE FROM products WHERE id LIKE 'test-hoodie-%'").run();
+  db.prepare("DELETE FROM orders WHERE customer_email LIKE 'tester_%@example.com'").run();
+  db.prepare("DELETE FROM users WHERE email LIKE 'tester_%@example.com' OR email LIKE 'staff_%@590labs.com'").run();
 
   if (failed > 0) {
     process.exit(1);

@@ -204,7 +204,7 @@ const Store = (function() {
   }
 
   function getWishlistItems() {
-    return PRODUCTS.filter(p => wishlist.includes(p.id));
+    return (window.PRODUCTS || PRODUCTS || []).filter(p => wishlist.includes(p.id));
   }
 
   return {
