@@ -49,6 +49,13 @@
   --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 6px;
+
+  /* Mobile Safe Areas & Touch Target Guidelines (WCAG 2.5.5 / 2.5.8) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --touch-target-min: 44px;
   
   /* Transitions */
   --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -70,6 +77,8 @@ html {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -77,6 +86,7 @@ body {
   background-color: var(--bg-page);
   color: var(--text-primary);
   line-height: 1.55;
+  max-width: 100%;
   overflow-x: hidden;
   position: relative;
   min-height: 100vh;
@@ -151,17 +161,38 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-img {
+img, picture, video, canvas, svg {
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
 }
 
 .container {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 clamp(1rem, 3.5vw, 2.5rem);
+  padding: 0 clamp(0.85rem, 3.5vw, 2.5rem);
+}
+
+/* Responsive Table Wrapper */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Touch Target Expansion for Touch Devices (WCAG 2.5.5 / 2.5.8) */
+@media (pointer: coarse) {
+  .action-btn,
+  .drawer-close-btn,
+  .pdp-close-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
 }
 
 /* Minimalist Badges */
@@ -389,6 +420,48 @@ img {
 @media (min-width: 768px) {
   .header-actions {
     gap: 0.75rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .header-actions {
+    gap: 0.35rem;
+  }
+  .action-btn {
+    width: 35px;
+    height: 35px;
+  }
+  .action-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+  .brand-logo-img {
+    height: 24px;
+    max-width: 130px;
+  }
+  .brand-logo {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-actions {
+    gap: 0.22rem;
+  }
+  .action-btn {
+    width: 32px;
+    height: 32px;
+  }
+  .action-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+  .brand-tagline {
+    display: none;
+  }
+  .brand-logo-img {
+    height: 21px;
+    max-width: 105px;
   }
 }
 
@@ -1561,6 +1634,20 @@ img {
 }
 
 .drawer-panel.active {
+  transform: translateX(0);
+}
+
+/* Left-sliding drawer for Mobile Navigation */
+.drawer-panel.drawer-panel-left {
+  right: auto;
+  left: 0;
+  border-left: none;
+  border-right: 1px solid var(--border-light);
+  transform: translateX(-100%);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+}
+
+.drawer-panel.drawer-panel-left.active {
   transform: translateX(0);
 }
 
