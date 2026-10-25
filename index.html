@@ -27,14 +27,27 @@
   <!-- Cinematic Introduction Stylesheet -->
   <link rel="stylesheet" href="css/intro.css" />
 
-  <!-- Immediate First-Visit Check (Prevents Flash of Intro for Returning Customers) -->
+  <!-- Immediate Session / Direct Link Check -->
   <script>
     (function() {
       try {
-        var isEntered = localStorage.getItem('590labs_store_entered_v1') === 'true';
-        var isDirect = window.location.hash && window.location.hash !== '#home' && window.location.hash !== '#intro';
+        // Safe migration: clear legacy persistent localStorage flag so intro is not permanently skipped on new visits
+        localStorage.removeItem('590labs_store_entered_v1');
+
+        var isSessionEntered = sessionStorage.getItem('590labs_store_entered_v1') === 'true';
+        var isDirect = window.location.hash && window.location.hash !== '#home' && window.location.hash !== '#intro' && window.location.hash !== '#';
         var hasEnteredParam = window.location.search.indexOf('entered=true') !== -1;
-        if ((isEntered || isDirect || hasEnteredParam) && window.location.search.indexOf('intro=true') === -1) {
+
+        if (hasEnteredParam) {
+          sessionStorage.setItem('590labs_store_entered_v1', 'true');
+          isSessionEntered = true;
+          if (window.history && window.history.replaceState) {
+            var cleanUrl = window.location.pathname + (window.location.hash || '#home');
+            window.history.replaceState(null, '', cleanUrl);
+          }
+        }
+
+        if ((isSessionEntered || isDirect) && window.location.search.indexOf('intro=true') === -1 && window.location.hash !== '#intro') {
           document.documentElement.classList.add('store-entered');
         }
       } catch (e) {}

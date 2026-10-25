@@ -18,11 +18,14 @@
   let continueHereLink = null;
 
   /**
-   * Safe localStorage helper (handles privacy mode or storage restrictions)
+   * Safe sessionStorage helper: intro appears on every new visit,
+   * while browsing within an existing shopping tab is preserved.
    */
   function isStoreEntered() {
     try {
-      return localStorage.getItem(STORAGE_KEY) === "true";
+      // Safe cleanup of legacy persistent flag so intro is not permanently skipped on new visits
+      localStorage.removeItem(STORAGE_KEY);
+      return sessionStorage.getItem(STORAGE_KEY) === "true";
     } catch (e) {
       return false;
     }
@@ -30,7 +33,7 @@
 
   function setStoreEntered() {
     try {
-      localStorage.setItem(STORAGE_KEY, "true");
+      sessionStorage.setItem(STORAGE_KEY, "true");
     } catch (e) {
       // Graceful fallback for strict privacy browsers
     }
@@ -49,12 +52,12 @@
       return false;
     }
 
-    // Explicit bypass query
+    // Explicit bypass query from new tab
     if (search.includes("entered=true")) {
       return true;
     }
 
-    // Direct section hashes
+    // Direct section hashes: #shop, #tops, #bottoms, #lookbook, #story, #faq, #account, #admin, #cart, #checkout, or #product/...
     if (hash && hash !== "#home" && hash !== "#intro" && hash !== "#") {
       return true;
     }
@@ -67,6 +70,10 @@
    */
   function dismissIntroCurrentTab() {
     setStoreEntered();
+    if (window.location.pathname.endsWith("intro.html")) {
+      window.location.href = window.location.origin + window.location.pathname.replace("intro.html", "index.html") + "?entered=true#home";
+      return;
+    }
     if (!introEl) introEl = document.getElementById("cinematicIntro");
     if (!introEl) return;
 
@@ -83,8 +90,11 @@
    */
   function getStorefrontUrl() {
     const origin = window.location.origin;
-    const pathname = window.location.pathname;
-    const hash = window.location.hash || "#home";
+    let pathname = window.location.pathname;
+    if (pathname.endsWith("intro.html")) {
+      pathname = pathname.replace("intro.html", "index.html");
+    }
+    const hash = window.location.hash && window.location.hash !== "#intro" ? window.location.hash : "#home";
     // Append entered=true to ensure the new tab opens directly into the shopping catalog
     return `${origin}${pathname}?entered=true${hash}`;
   }
@@ -104,8 +114,15 @@
     let newTab = null;
 
     try {
-      // Directly invoke window.open within trusted user gesture to maximize popup acceptance
-      newTab = window.open(targetUrl, "_blank", "noopener,noreferrer");
+      // Directly invoke window.open within trusted user gesture.
+      // Do NOT specify 'noopener' in features string because Chromium/Firefox return null if 'noopener' is in features!
+      newTab = window.open(targetUrl, "_blank");
+      if (newTab) {
+        // Prevent reverse tabnabbing securely without breaking window reference detection
+        try {
+          newTab.opener = null;
+        } catch (_) {}
+      }
     } catch (err) {
       newTab = null;
     }
@@ -151,15 +168,18 @@
     fallbackBtn = document.getElementById("introFallbackBtn");
     continueHereLink = document.getElementById("introContinueHereLink");
 
-    // Check if returning visitor or arriving through direct link
+    // Check if returning visitor in this session or arriving through direct link
     if (isStoreEntered() || hasDirectRoute()) {
+      if (hasDirectRoute()) {
+        setStoreEntered();
+      }
       document.documentElement.classList.add("store-entered");
       document.body.classList.add("store-entered");
       introEl.style.display = "none";
       return;
     }
 
-    // First-time visitor: Ensure intro is visible and active
+    // First-time or new visit: Ensure intro is visible and active
     introEl.style.display = "flex";
 
     // Bind event listeners
@@ -180,8 +200,9 @@
   window.resetIntro = function() {
     try {
       localStorage.removeItem(STORAGE_KEY);
+      sessionStorage.removeItem(STORAGE_KEY);
       console.log("[590 LABS] Intro reset successfully. Reloading...");
-      window.location.href = window.location.origin + window.location.pathname + "?intro=true";
+      window.location.href = window.location.origin + window.location.pathname.replace("intro.html", "") + "?intro=true";
     } catch (e) {
       window.location.reload();
     }
