@@ -29,7 +29,7 @@ body.store-entered #cinematicIntro {
   z-index: 99999;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem);
   overflow: hidden;
@@ -146,7 +146,7 @@ body.store-entered #cinematicIntro {
   align-items: center;
   text-align: center;
   max-width: 900px;
-  margin: auto 0;
+  margin: 0;
   padding: 1rem 0;
 }
 
