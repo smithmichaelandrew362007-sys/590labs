@@ -770,6 +770,32 @@ p, h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
 }
 
+@media (max-width: 767px) {
+  .hero-section {
+    min-height: auto;
+    padding: 3.5rem 0 2.5rem;
+  }
+  .hero-bg-overlay {
+    background: linear-gradient(180deg, rgba(250, 249, 246, 0.95) 0%, rgba(250, 249, 246, 0.88) 55%, rgba(250, 249, 246, 0.65) 100%);
+  }
+  .hero-tech-specs {
+    margin-top: 2rem;
+    gap: 0.85rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .hero-cta-group {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .hero-cta-group .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* ==========================================================================
    Marquee Infinite Ticker
    ========================================================================== */
@@ -1056,6 +1082,19 @@ p, h1, h2, h3, h4, h5, h6 {
   }
 }
 
+@media (max-width: 479px) {
+  .products-grid {
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
 /* Product Card */
 .product-card {
   position: relative;
@@ -1178,6 +1217,39 @@ p, h1, h2, h3, h4, h5, h6 {
     background: #FAFAFA;
     padding: 0.6rem 0.8rem;
     border-top: 1px solid var(--border-light);
+  }
+}
+
+@media (max-width: 479px) {
+  .quick-add-overlay {
+    padding: 0.45rem 0.5rem;
+  }
+  .quick-add-sizes {
+    gap: 0.25rem;
+  }
+  .quick-size-chip {
+    min-width: 25px;
+    height: 26px;
+    font-size: 0.62rem;
+  }
+  .product-info {
+    padding: 0.75rem 0.65rem;
+  }
+  .product-title {
+    font-size: 0.82rem;
+  }
+  .filter-tabs {
+    gap: 0.35rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    padding-bottom: 0.35rem;
+    flex-wrap: nowrap;
+  }
+  .filter-tab {
+    flex-shrink: 0;
+    padding: 0.38rem 0.75rem;
+    font-size: 0.7rem;
   }
 }
 
@@ -1312,6 +1384,63 @@ p, h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px solid var(--border-light);
   position: relative;
   overflow: hidden;
+}
+
+/* Responsive Lookbook View Grid */
+.lookbook-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .lookbook-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.8rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lookbook-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+}
+
+.lookbook-card-img {
+  width: 100%;
+  height: 480px;
+  object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .lookbook-card-img {
+    height: 320px;
+  }
+}
+
+.lookbook-card-footer {
+  padding: 1.25rem;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* Responsive Saved Delivery Addresses Grid */
+.account-addresses-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 580px) {
+  .account-addresses-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
 }
 
 .editorial-layout {
@@ -1969,6 +2098,41 @@ p, h1, h2, h3, h4, h5, h6 {
   }
 }
 
+@media (max-width: 859px) {
+  .pdp-gallery-wrap {
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+    padding: 1.25rem 1rem;
+  }
+  .pdp-thumbs-row {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.35rem;
+  }
+  .pdp-info-wrap {
+    padding: 1.5rem 1rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .pdp-modal {
+    padding: 0.5rem;
+  }
+  .pdp-modal-content {
+    max-height: 96vh;
+  }
+  .pdp-title {
+    font-size: 1.3rem;
+  }
+  .pdp-size-btn {
+    min-width: 38px;
+    height: 38px;
+    font-size: 0.75rem;
+    padding: 0 0.6rem;
+  }
+}
+
 /* Gallery */
 .pdp-gallery-wrap {
   padding: 1.5rem;
@@ -2275,6 +2439,16 @@ p, h1, h2, h3, h4, h5, h6 {
   box-shadow: var(--shadow-modal);
 }
 
+@media (max-width: 600px) {
+  .size-guide-card {
+    padding: 1.5rem 1rem;
+  }
+}
+
+.search-modal-content {
+  padding: clamp(1.2rem, 3.5vw, 2rem);
+}
+
 .size-table {
   width: 100%;
   border-collapse: collapse;
@@ -2384,6 +2558,31 @@ p, h1, h2, h3, h4, h5, h6 {
   .payment-tabs {
     grid-template-columns: 1fr;
     gap: 0.5rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .checkout-modal {
+    padding: 0.5rem;
+  }
+  .checkout-modal-content {
+    padding: 1.25rem 0.85rem;
+  }
+  .checkout-steps-bar {
+    gap: 0.25rem;
+    font-size: 0.62rem;
+  }
+  .order-timeline {
+    font-size: 0.6rem;
+  }
+  .toast-container {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+  }
+  .toast {
+    font-size: 0.72rem;
+    padding: 0.65rem 1rem;
   }
 }
 
@@ -2724,7 +2923,13 @@ p, h1, h2, h3, h4, h5, h6 {
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--border-light);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 0.25rem;
+  scrollbar-width: none;
+}
+
+.dashboard-nav-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .dash-tab-btn {
@@ -2739,6 +2944,7 @@ p, h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-xs) var(--radius-xs) 0 0;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .dash-tab-btn.active {
@@ -2749,12 +2955,43 @@ p, h1, h2, h3, h4, h5, h6 {
   margin-bottom: -1px;
 }
 
+@media (max-width: 600px) {
+  .account-view-header, .admin-view-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+  .dash-tab-btn {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.72rem;
+  }
+}
+
 /* Stats 4-Grid */
 .stats-metric-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.25rem;
   margin-bottom: 2.5rem;
+}
+
+@media (max-width: 600px) {
+  .stats-metric-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .metric-card {
+    padding: 1rem 0.85rem;
+  }
+  .metric-card .metric-value {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .stats-metric-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .metric-card {

@@ -457,10 +457,10 @@
           </p>
         </div>
 
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:2rem;">
-          <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface);">
-            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&auto=format&fit=crop&q=75&fm=webp" alt="Look 01" loading="lazy" decoding="async" width="450" height="520" style="width:100%; height:520px; object-fit:cover;" />
-            <div style="padding:1.25rem; background:var(--bg-surface); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+        <div class="lookbook-grid">
+          <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface); border-radius:var(--radius-xs); overflow:hidden;">
+            <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&auto=format&fit=crop&q=75&fm=webp" alt="Look 01" loading="lazy" decoding="async" width="450" height="520" class="lookbook-card-img" />
+            <div class="lookbook-card-footer">
               <div>
                 <h4 style="font-size:0.95rem; color:var(--text-primary);">LOOK 01 // OBSIDIAN PROTOCOL</h4>
                 <p class="font-mono" style="font-size:0.72rem; color:var(--text-secondary);">Cyberpunk Acid Hoodie + Modular Utility Cargo</p>
@@ -469,9 +469,9 @@
             </div>
           </div>
 
-          <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface);">
-            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=75&fm=webp" alt="Look 02" loading="lazy" decoding="async" width="450" height="520" style="width:100%; height:520px; object-fit:cover;" />
-            <div style="padding:1.25rem; background:var(--bg-surface); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+          <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface); border-radius:var(--radius-xs); overflow:hidden;">
+            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=75&fm=webp" alt="Look 02" loading="lazy" decoding="async" width="450" height="520" class="lookbook-card-img" />
+            <div class="lookbook-card-footer">
               <div>
                 <h4 style="font-size:0.95rem; color:var(--text-primary);">LOOK 02 // BRUTALIST DRAPE</h4>
                 <p class="font-mono" style="font-size:0.72rem; color:var(--text-secondary);">Core Graphic Tee // 001 + Parachute Track Pant</p>
@@ -480,9 +480,9 @@
             </div>
           </div>
 
-          <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface);">
-            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=75&fm=webp" alt="Look 03" loading="lazy" decoding="async" width="450" height="520" style="width:100%; height:520px; object-fit:cover;" />
-            <div style="padding:1.25rem; background:var(--bg-surface); border-top:1px solid var(--border-light); display:flex; justify-content:space-between; align-items:center;">
+          <div style="position:relative; border:1px solid var(--border-light); background:var(--bg-surface); border-radius:var(--radius-xs); overflow:hidden;">
+            <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=75&fm=webp" alt="Look 03" loading="lazy" decoding="async" width="450" height="520" class="lookbook-card-img" />
+            <div class="lookbook-card-footer">
               <div>
                 <h4 style="font-size:0.95rem; color:var(--text-primary);">LOOK 03 // TACTICAL TRANSIT</h4>
                 <p class="font-mono" style="font-size:0.72rem; color:var(--text-secondary);">Stealth Flight Bomber + Tactical Cordura Sling</p>
@@ -620,7 +620,7 @@
             </div>
 
             <!-- Addresses List Grid -->
-            <div id="accAddressesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+            <div id="accAddressesGrid" class="account-addresses-grid">
               <!-- Rendered dynamically -->
             </div>
           </div>
@@ -1289,61 +1289,63 @@
         All 590 LABS tops are cut with dropped shoulders and a boxy relaxed drape. For a true oversized aesthetic, select your standard size. For a more conventional fit, consider sizing down by one.
       </p>
 
-      <table class="size-table">
-        <thead>
-          <tr>
-            <th>SIZE</th>
-            <th>CHEST (IN)</th>
-            <th>LENGTH (IN)</th>
-            <th>SHOULDER (IN)</th>
-            <th>SLEEVE (IN)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>XS</strong></td>
-            <td>40"</td>
-            <td>27"</td>
-            <td>20"</td>
-            <td>8.5"</td>
-          </tr>
-          <tr>
-            <td><strong>S</strong></td>
-            <td>42"</td>
-            <td>28"</td>
-            <td>21"</td>
-            <td>9.0"</td>
-          </tr>
-          <tr>
-            <td><strong>M</strong></td>
-            <td>44"</td>
-            <td>29"</td>
-            <td>22"</td>
-            <td>9.5"</td>
-          </tr>
-          <tr>
-            <td><strong>L</strong></td>
-            <td>46"</td>
-            <td>30"</td>
-            <td>23"</td>
-            <td>10.0"</td>
-          </tr>
-          <tr>
-            <td><strong>XL</strong></td>
-            <td>48"</td>
-            <td>31"</td>
-            <td>24"</td>
-            <td>10.5"</td>
-          </tr>
-          <tr>
-            <td><strong>XXL</strong></td>
-            <td>50"</td>
-            <td>32"</td>
-            <td>25"</td>
-            <td>11.0"</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="size-table">
+          <thead>
+            <tr>
+              <th>SIZE</th>
+              <th>CHEST (IN)</th>
+              <th>LENGTH (IN)</th>
+              <th>SHOULDER (IN)</th>
+              <th>SLEEVE (IN)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>XS</strong></td>
+              <td>40"</td>
+              <td>27"</td>
+              <td>20"</td>
+              <td>8.5"</td>
+            </tr>
+            <tr>
+              <td><strong>S</strong></td>
+              <td>42"</td>
+              <td>28"</td>
+              <td>21"</td>
+              <td>9.0"</td>
+            </tr>
+            <tr>
+              <td><strong>M</strong></td>
+              <td>44"</td>
+              <td>29"</td>
+              <td>22"</td>
+              <td>9.5"</td>
+            </tr>
+            <tr>
+              <td><strong>L</strong></td>
+              <td>46"</td>
+              <td>30"</td>
+              <td>23"</td>
+              <td>10.0"</td>
+            </tr>
+            <tr>
+              <td><strong>XL</strong></td>
+              <td>48"</td>
+              <td>31"</td>
+              <td>24"</td>
+              <td>10.5"</td>
+            </tr>
+            <tr>
+              <td><strong>XXL</strong></td>
+              <td>50"</td>
+              <td>32"</td>
+              <td>25"</td>
+              <td>11.0"</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-primary); font-weight:600;">
         MODEL FIT REFERENCE: Male model is 6'1" wearing size L. Female model is 5'8" wearing size M.
@@ -1508,7 +1510,7 @@
        9. Live Search Modal Overlay
        ======================================================================== -->
   <div class="pdp-modal" id="searchModal" role="dialog" aria-modal="true">
-    <div class="pdp-modal-content" style="max-width:680px; padding:2rem;">
+    <div class="pdp-modal-content search-modal-content" style="max-width:680px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
         <span class="section-label">590 LABS ARCHIVE SEARCH</span>
         <button class="drawer-close-btn" id="searchCloseBtn" aria-label="Close Search">✕</button>

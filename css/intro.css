@@ -436,30 +436,52 @@ body.store-entered #cinematicIntro {
   }
 }
 
-/* Mobile Responsiveness */
+/* Portrait and Mobile Responsiveness */
+@media (orientation: portrait) {
+  .cinematic-bg-img {
+    object-position: center 25%;
+  }
+}
+
 @media (max-width: 640px) {
   .cinematic-intro {
-    padding: 1.75rem 1.25rem;
+    padding: max(1.5rem, env(safe-area-inset-top, 1.5rem)) max(1rem, env(safe-area-inset-right, 1rem)) max(1.5rem, env(safe-area-inset-bottom, 1.5rem)) max(1rem, env(safe-area-inset-left, 1rem));
   }
 
   .cinematic-brand-logo {
-    height: 36px;
+    height: clamp(32px, 8vw, 44px);
+    max-width: 85vw;
   }
 
   .cinematic-tagline {
-    letter-spacing: 0.22em;
+    font-size: clamp(0.78rem, 2.8vw, 1.05rem);
+    letter-spacing: clamp(0.12em, 0.5vw, 0.28em);
     margin-bottom: 2rem;
   }
 
   .cinematic-enter-btn {
-    padding: 1rem 2rem;
+    padding: 0.95rem 1.8rem;
     font-size: 0.82rem;
     width: 100%;
     max-width: 280px;
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 360px) {
+  .cinematic-brand-logo {
+    height: 30px;
   }
 
-  .cinematic-top-meta,
-  .cinematic-bottom-meta {
-    font-size: 0.58rem;
+  .cinematic-tagline {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    margin-bottom: 1.75rem;
+  }
+
+  .cinematic-enter-btn {
+    padding: 0.85rem 1.4rem;
+    font-size: 0.75rem;
+    max-width: 240px;
   }
 }
