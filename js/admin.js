@@ -64,9 +64,25 @@
     return data;
   }
 
+  // Valid dashboard sections
+  const VALID_SECTIONS = [
+    'overview', 'products', 'categories', 'inventory',
+    'orders', 'customers', 'coupons', 'analytics',
+    'activity', 'administrators'
+  ];
+
+  // Helper to extract requested section from URL subpath or hash
+  function getRequestedSection() {
+    const rawPath = window.location.pathname.replace(/^\/admin\/?/, '').toLowerCase().replace(/\/$/, '');
+    const rawHash = (window.location.hash || '').replace('#', '').toLowerCase();
+    if (rawPath && VALID_SECTIONS.includes(rawPath)) return rawPath;
+    if (rawHash && VALID_SECTIONS.includes(rawHash)) return rawHash;
+    return 'overview';
+  }
+
   // --- ROUTER & SESSION CHECK ---
   async function initRouter() {
-    const path = window.location.pathname.toLowerCase();
+    const rawPath = window.location.pathname.toLowerCase().replace(/\/$/, '') || '/';
 
     // Check current session
     try {
@@ -80,16 +96,18 @@
       state.user = null;
     }
 
-    if (path === '/admin/login') {
+    if (rawPath === '/admin/login') {
       if (state.user) {
         window.location.href = '/admin';
         return;
       }
       renderLoginScreen();
     } else {
-      // Any other /admin route
+      // Any other /admin route (/admin, /admin/products, /admin/orders, etc.)
       if (!state.user) {
-        window.location.href = '/admin/login';
+        const targetSec = getRequestedSection();
+        const redirectParam = (targetSec && targetSec !== 'overview') ? `?redirect=${encodeURIComponent(targetSec)}` : '';
+        window.location.href = `/admin/login${redirectParam}`;
         return;
       }
       renderDashboardScreen();
@@ -139,8 +157,14 @@
         alertBox.textContent = res.message || 'Authenticated successfully. Entering console...';
         alertBox.style.display = 'block';
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectSec = urlParams.get('redirect');
+        const dest = (redirectSec && VALID_SECTIONS.includes(redirectSec.toLowerCase())) 
+          ? `/admin#${redirectSec.toLowerCase()}` 
+          : '/admin';
+
         setTimeout(() => {
-          window.location.href = '/admin';
+          window.location.href = dest;
         }, 400);
       } catch (err) {
         alertBox.className = 'alert-box alert-danger';
@@ -194,9 +218,21 @@
       link.onclick = (e) => {
         e.preventDefault();
         const sec = link.dataset.section;
-        if (sec) switchSection(sec);
+        if (sec) {
+          switchSection(sec);
+          if (window.history && window.history.pushState) {
+            window.history.pushState(null, '', `/admin#${sec}`);
+          } else {
+            window.location.hash = sec;
+          }
+        }
       };
     });
+
+    // Handle browser Back / Forward history events
+    window.onpopstate = () => {
+      switchSection(getRequestedSection());
+    };
 
     // Mobile Menu Controls
     const sidebar = document.getElementById('adminSidebar');
@@ -217,8 +253,8 @@
     document.getElementById('sidebarLogoutBtn').onclick = doLogout;
     document.getElementById('headerLogoutBtn').onclick = doLogout;
 
-    // Load initial section
-    switchSection('overview');
+    // Load initial section from URL subpath or hash
+    switchSection(getRequestedSection());
   }
 
   // --- SECTION SWITCHER ---

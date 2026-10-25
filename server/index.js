@@ -21,6 +21,9 @@ const adminRoutes = require('./routes/admin');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Production Reverse Proxy Support (enables secure cookies and HTTPS detection behind Cloudflare, Nginx, Render)
+app.enable('trust proxy');
+
 // High-Performance Native HTTP Compression (Brotli & Gzip)
 app.use(compression);
 
@@ -65,8 +68,19 @@ app.use('/api/orders', ordersRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Serve static frontend files with intelligent asset caching
 const staticDir = path.resolve(__dirname, '..');
+
+// Dedicated Admin Interface Routes (handles /admin, /admin/login, /admin/products, /admin/orders, etc.)
+// Placed before static files to guarantee clean execution without static caching conflicts
+app.use((req, res, next) => {
+  if ((req.method === 'GET' || req.method === 'HEAD') && (req.path === '/admin' || req.path.startsWith('/admin/'))) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    return res.sendFile(path.join(staticDir, 'admin.html'));
+  }
+  next();
+});
+
+// Serve static frontend files with intelligent asset caching
 app.use(express.static(staticDir, {
   maxAge: '1d',
   etag: true,
@@ -82,24 +96,17 @@ app.use(express.static(staticDir, {
   }
 }));
 
-// Dedicated Admin Interface Routes
-app.use((req, res, next) => {
-  if (req.method === 'GET' && (req.path === '/admin' || req.path.startsWith('/admin/'))) {
-    return res.sendFile(path.join(staticDir, 'admin.html'));
-  }
-  next();
-});
-
 // Fallback to index.html for Single-Page Application client routing
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {
     return res.status(404).json({ success: false, error: 'Endpoint not found.' });
   }
-  if (req.method === 'GET') {
+  if (req.method === 'GET' || req.method === 'HEAD') {
     return res.sendFile(path.join(staticDir, 'index.html'));
   }
   next();
 });
+
 
 // Centralized safe error handler
 app.use(errorHandler);
