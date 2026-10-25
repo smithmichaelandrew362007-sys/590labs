@@ -7,7 +7,10 @@
     "start": "node server/index.js",
     "dev": "node server/index.js",
     "seed": "node server/seed.js",
-    "test": "node --max-old-space-size=4096 test/api.test.js"
+    "setup:owner": "node server/setup-owner.js",
+    "test": "node --max-old-space-size=4096 test/api.test.js",
+    "test:admin": "node test/admin.test.js",
+    "test:all": "node test/api.test.js && node test/admin.test.js && node test/concurrency.test.js && node test/intro.test.js && node test/responsive.test.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

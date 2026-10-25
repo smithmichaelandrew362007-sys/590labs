@@ -274,7 +274,7 @@ async function runTests() {
       })
     });
     assert.strictEqual(res.status, 200);
-    assert.strictEqual(res.data.user.role, 'admin');
+    assert.ok(['owner', 'admin'].includes(res.data.user.role));
     adminToken = res.data.token;
   });
 

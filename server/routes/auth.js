@@ -134,6 +134,71 @@ router.post('/login', (req, res) => {
 });
 
 /**
+ * POST /api/auth/admin-login
+ * Dedicated administrative authentication endpoint enforcing role authorization
+ */
+router.post('/admin-login', (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: 'Email and password are required.' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(cleanEmail);
+
+    if (!user || !user.password_hash) {
+      return res.status(401).json({ success: false, error: 'Invalid email or password.' });
+    }
+
+    const isMatch = bcrypt.compareSync(password, user.password_hash);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, error: 'Invalid email or password.' });
+    }
+
+    const ADMIN_ROLES = ['owner', 'admin', 'staff'];
+    if (!ADMIN_ROLES.includes(user.role)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied. This account does not possess administrative privileges.'
+      });
+    }
+
+    const payload = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
+
+    const token = generateToken(payload);
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    if (db.logActivity) {
+      db.logActivity(payload, 'ADMIN_LOGIN', 'user', user.id, { email: user.email, role: user.role });
+    }
+
+    res.json({
+      success: true,
+      user: payload,
+      token,
+      message: `Welcome back, ${user.name}.`
+    });
+  } catch (err) {
+    console.error('Admin login error:', err);
+    res.status(500).json({ success: false, error: 'Authentication service error.' });
+  }
+});
+
+
+/**
  * POST /api/auth/google
  * Google Sign-in handler
  * Accepts Google OAuth credentials or token payload.

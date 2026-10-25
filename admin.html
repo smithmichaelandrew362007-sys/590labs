@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>590 LABS® — STORE MANAGEMENT SYSTEM // RESTRICTED ACCESS</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="/assets/logo-black.svg" />
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <!-- Admin Design System -->
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+
+  <!-- ========================================================================
+       SCREEN 1: DEDICATED ADMIN LOGIN (/admin/login)
+       ======================================================================== -->
+  <div id="adminLoginContainer" style="display: none;">
+    <div class="admin-login-card">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <img src="/assets/logo-black.svg" alt="590 LABS" class="admin-login-logo" />
+        <span class="badge badge-lime font-mono">RESTRICTED ACCESS // STORE MANAGEMENT</span>
+        <h1 class="font-display" style="font-size: 1.5rem; margin-top: 0.75rem; text-transform: uppercase;">ADMINISTRATIVE LOGIN</h1>
+        <p class="font-mono" style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+          Authorized personnel only. All access attempts are monitored and logged.
+        </p>
+      </div>
+
+      <div id="loginAlertBox" class="alert-box"></div>
+
+      <form id="adminLoginForm" onsubmit="return false;">
+        <div class="form-group">
+          <label class="form-label" for="admLoginEmail">ADMINISTRATOR EMAIL</label>
+          <input type="email" id="admLoginEmail" class="form-input" placeholder="admin@590labs.com" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <label class="form-label" for="admLoginPassword" style="margin-bottom: 0;">PASSWORD</label>
+            <a href="javascript:void(0)" id="forgotPasswordLink" class="font-mono" style="font-size: 0.7rem; color: var(--text-secondary); text-decoration: underline;">Forgot?</a>
+          </div>
+          <div class="password-input-wrap">
+            <input type="password" id="admLoginPassword" class="form-input" placeholder="••••••••••••" required autocomplete="current-password" />
+            <button type="button" class="password-toggle-btn" id="togglePasswordBtn">SHOW</button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="admLoginSubmitBtn" style="width: 100%; margin-top: 0.75rem; padding: 0.85rem;">
+          SIGN IN TO DASHBOARD →
+        </button>
+      </form>
+
+      <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-light); text-align: center;">
+        <a href="/" class="font-mono" style="font-size: 0.78rem; color: var(--text-secondary); text-decoration: none;">
+          ← Return to 590 Labs Public Storefront
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       SCREEN 2: DEDICATED ADMIN DASHBOARD (/admin)
+       ======================================================================== -->
+  <div id="adminDashboardContainer" style="display: none;">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="admin-sidebar-brand">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <img src="/assets/logo-white.svg" alt="590 LABS" class="admin-sidebar-logo" />
+          <span class="badge badge-lime" style="font-size: 0.6rem; padding: 0.1rem 0.35rem;">ADMIN</span>
+        </div>
+        <button id="adminSidebarCloseBtn" class="admin-mobile-toggle" style="color: #FFFFFF; border-color: var(--border-dark);">✕</button>
+      </div>
+
+      <ul class="admin-nav-menu">
+        <li class="admin-nav-item">
+          <a class="admin-nav-link active" data-section="overview">
+            <span>●</span> OVERVIEW
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="products">
+            <span>▥</span> PRODUCTS & DROPS
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="categories">
+            <span>▤</span> CATEGORIES
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="inventory">
+            <span>▦</span> LIVE INVENTORY
+            <span class="admin-nav-badge" id="sidebarLowStockBadge" style="display: none;">0</span>
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="orders">
+            <span>▧</span> ORDERS FULFILLMENT
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="customers">
+            <span>◈</span> CUSTOMERS
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="discounts">
+            <span>◇</span> DISCOUNTS & CODES
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="analytics">
+            <span>▲</span> SALES ANALYTICS
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="merchandising">
+            <span>★</span> MERCHANDISING
+          </a>
+        </li>
+        <li class="admin-nav-item" id="navItemAdmins" style="display: none;">
+          <a class="admin-nav-link" data-section="administrators">
+            <span>❖</span> ADMINISTRATORS
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="activity">
+            <span>◉</span> ACTIVITY LOG
+          </a>
+        </li>
+        <li class="admin-nav-item">
+          <a class="admin-nav-link" data-section="settings">
+            <span>⚙</span> SETTINGS & SETUP
+          </a>
+        </li>
+      </ul>
+
+      <div class="admin-sidebar-footer">
+        <a href="/" target="_blank" class="btn btn-outline btn-sm" style="width: 100%; color: #FFFFFF; border-color: #333333; margin-bottom: 0.75rem;">
+          STOREFRONT ↗
+        </a>
+        <button id="sidebarLogoutBtn" class="btn btn-sm" style="width: 100%; background: #222222; color: #FF6B6B;">
+          LOGOUT
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="admin-main-wrap">
+      
+      <!-- Top Navigation Header -->
+      <header class="admin-header">
+        <div class="admin-header-left">
+          <button id="adminMobileMenuToggle" class="admin-mobile-toggle">☰</button>
+          <div class="font-mono" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">
+            590 LABS® <span style="color: var(--text-muted);">/</span> <span id="adminHeaderSectionLabel" style="color: var(--text-primary);">OVERVIEW</span>
+          </div>
+        </div>
+
+        <div class="admin-header-right">
+          <span class="badge font-mono" style="background:#EBFBEE; color:#2B8A3E; border:1px solid #B2F2BB;">
+            ● DATABASE WAL ONLINE
+          </span>
+
+          <div class="admin-user-pill">
+            <div class="admin-user-avatar" id="adminUserAvatar">A</div>
+            <div>
+              <div class="font-heading" id="adminUserName" style="font-size: 0.8rem; font-weight: 700; line-height: 1.1;">Admin</div>
+              <div class="badge badge-owner" id="adminUserRoleBadge" style="font-size: 0.58rem; padding: 0.05rem 0.3rem;">OWNER</div>
+            </div>
+          </div>
+
+          <button id="headerLogoutBtn" class="btn btn-outline btn-sm">LOGOUT</button>
+        </div>
+      </header>
+
+      <!-- Main Body Content Views -->
+      <main class="admin-body">
+        
+        <!-- ==================================================================
+             SECTION 1: OVERVIEW
+             ================================================================== -->
+        <section id="sec-overview" class="admin-section active">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">STORE OVERVIEW & LIVE METRICS</h1>
+              <p class="admin-page-desc">Real-time operational summary from database records.</p>
+            </div>
+            <div>
+              <button class="btn btn-lime btn-sm" id="btnOverviewNewDrop">+ ADD NEW DROP</button>
+            </div>
+          </div>
+
+          <!-- 4 Metrics -->
+          <div class="stats-metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">TOTAL PAID REVENUE</div>
+              <div class="metric-value" id="statRevenue">₹0</div>
+              <div class="metric-subtext">Verified received transactions</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">TOTAL ORDERS PLACED</div>
+              <div class="metric-value" id="statOrders">0</div>
+              <div class="metric-subtext">All fulfillment states</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">PENDING DISPATCH</div>
+              <div class="metric-value" id="statPending" style="color: var(--info);">0</div>
+              <div class="metric-subtext">Confirmed or packing in warehouse</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">REGISTERED CUSTOMERS</div>
+              <div class="metric-value" id="statCustomers">0</div>
+              <div class="metric-subtext">Collector customer accounts</div>
+            </div>
+          </div>
+
+          <!-- Low Stock Variants Card -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div>
+                <h3 class="admin-card-title">LOW STOCK INVENTORY ALERTS (≤ 3 UNITS)</h3>
+                <div class="font-mono" style="font-size: 0.72rem; color: var(--text-secondary);">Items nearing depletion across published drops</div>
+              </div>
+              <span class="badge badge-lime font-mono" id="lowStockCountBadge">0 ALERTS</span>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>PRODUCT</th>
+                    <th>SIZE</th>
+                    <th>COLOR</th>
+                    <th>CURRENT STOCK</th>
+                    <th>ADJUST STOCK</th>
+                  </tr>
+                </thead>
+                <tbody id="overviewLowStockBody">
+                  <tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-muted);">No low stock alerts currently.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent Orders Card -->
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div>
+                <h3 class="admin-card-title">RECENT STORE ACTIVITY</h3>
+                <div class="font-mono" style="font-size: 0.72rem; color: var(--text-secondary);">Latest customer purchases requiring attention</div>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="window.adminApp.switchSection('orders')">VIEW ALL ORDERS →</button>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>ORDER ID</th>
+                    <th>CUSTOMER</th>
+                    <th>DATE</th>
+                    <th>TOTAL</th>
+                    <th>PAYMENT</th>
+                    <th>FULFILLMENT</th>
+                    <th>ACTION</th>
+                  </tr>
+                </thead>
+                <tbody id="overviewRecentOrdersBody">
+                  <tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading recent orders...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 2: PRODUCTS
+             ================================================================== -->
+        <section id="sec-products" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">PRODUCT CATALOGUE & DROPS</h1>
+              <p class="admin-page-desc">Create, publish, edit, or archive items without modifying source code.</p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+              <button class="btn btn-lime btn-sm" id="btnOpenNewProductModal">+ CREATE NEW DROP</button>
+            </div>
+          </div>
+
+          <!-- Filter & Search Bar -->
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <input type="text" id="prodSearchInput" class="form-input" placeholder="SEARCH TITLE, SLUG, CATEGORY..." style="max-width: 320px;" />
+            <select id="prodStatusFilter" class="form-input" style="max-width: 180px;">
+              <option value="all">ALL STATUSES</option>
+              <option value="published">PUBLISHED</option>
+              <option value="draft">DRAFT</option>
+              <option value="archived">ARCHIVED</option>
+            </select>
+            <select id="prodCategoryFilter" class="form-input" style="max-width: 180px;">
+              <option value="all">ALL CATEGORIES</option>
+            </select>
+          </div>
+
+          <!-- Products Table -->
+          <div class="admin-card">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>PRODUCT</th>
+                    <th>CATEGORY</th>
+                    <th>PRICE</th>
+                    <th>STATUS</th>
+                    <th>VARIANTS & REAL STOCK</th>
+                    <th>TOTAL STOCK</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="adminProductsTableBody">
+                  <tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading products...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 3: CATEGORIES
+             ================================================================== -->
+        <section id="sec-categories" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">STORE CATEGORIES</h1>
+              <p class="admin-page-desc">Organize your clothing catalog into curated streetwear collections.</p>
+            </div>
+            <div>
+              <button class="btn btn-lime btn-sm" id="btnOpenCategoryModal">+ NEW CATEGORY</button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>NAME</th>
+                    <th>SLUG</th>
+                    <th>DESCRIPTION</th>
+                    <th>ASSIGNED PRODUCTS</th>
+                    <th>ORDER</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="adminCategoriesTableBody">
+                  <tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading categories...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 4: INVENTORY
+             ================================================================== -->
+        <section id="sec-inventory" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">LIVE INVENTORY & SKU CONTROL</h1>
+              <p class="admin-page-desc">Direct stock adjustment across sizes and colorways.</p>
+            </div>
+            <div style="display:flex; gap:0.5rem; align-items:center;">
+              <input type="text" id="inventorySearchInput" class="form-input" placeholder="SEARCH SKU OR PRODUCT..." style="max-width: 260px;" />
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>PRODUCT TITLE</th>
+                    <th>SIZE</th>
+                    <th>COLOR</th>
+                    <th>CURRENT STOCK</th>
+                    <th>UPDATE QUANTITY</th>
+                  </tr>
+                </thead>
+                <tbody id="adminInventoryTableBody">
+                  <tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading inventory...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 5: ORDERS
+             ================================================================== -->
+        <section id="sec-orders" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">ORDERS FULFILLMENT</h1>
+              <p class="admin-page-desc">Process orders, update tracking numbers, and manage delivery statuses.</p>
+            </div>
+          </div>
+
+          <!-- Orders Filters -->
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+            <input type="text" id="orderSearchInput" class="form-input" placeholder="SEARCH ORDER ID, NAME, PHONE, EMAIL..." style="max-width: 320px;" />
+            <select id="orderFulfillmentFilter" class="form-input" style="max-width: 200px;">
+              <option value="all">ALL FULFILLMENT STATES</option>
+              <option value="pending">PENDING</option>
+              <option value="confirmed">CONFIRMED</option>
+              <option value="packing">PACKING</option>
+              <option value="in_transit">IN TRANSIT</option>
+              <option value="out_for_delivery">OUT FOR DELIVERY</option>
+              <option value="delivered">DELIVERED</option>
+              <option value="cancelled">CANCELLED</option>
+            </select>
+            <select id="orderPaymentFilter" class="form-input" style="max-width: 180px;">
+              <option value="all">ALL PAYMENT STATES</option>
+              <option value="paid">PAID</option>
+              <option value="pending">PENDING</option>
+              <option value="failed">FAILED</option>
+              <option value="refunded">REFUNDED</option>
+            </select>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>ORDER REF</th>
+                    <th>CUSTOMER</th>
+                    <th>DATE</th>
+                    <th>ITEMS</th>
+                    <th>TOTAL</th>
+                    <th>PAYMENT</th>
+                    <th>FULFILLMENT STATUS</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="adminOrdersTableBody">
+                  <tr><td colspan="8" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading orders...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 6: CUSTOMERS
+             ================================================================== -->
+        <section id="sec-customers" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">CUSTOMER DIRECTORY</h1>
+              <p class="admin-page-desc">Customer profiles and order histories. Sensitive credentials strictly shielded.</p>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>CUSTOMER</th>
+                    <th>EMAIL</th>
+                    <th>PHONE</th>
+                    <th>ORDER COUNT</th>
+                    <th>LIFETIME SPEND</th>
+                    <th>MEMBER SINCE</th>
+                  </tr>
+                </thead>
+                <tbody id="adminCustomersTableBody">
+                  <tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading customers...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 7: DISCOUNTS
+             ================================================================== -->
+        <section id="sec-discounts" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">PROMOTIONAL DISCOUNTS</h1>
+              <p class="admin-page-desc">Configure discount codes, percentage cuts, and order value thresholds.</p>
+            </div>
+            <div>
+              <button class="btn btn-lime btn-sm" id="btnOpenCouponModal">+ CREATE PROMO CODE</button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>CODE</th>
+                    <th>DISCOUNT</th>
+                    <th>MIN ORDER</th>
+                    <th>MAX CAP</th>
+                    <th>TIMES USED</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="adminCouponsTableBody">
+                  <tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading coupons...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 8: ANALYTICS
+             ================================================================== -->
+        <section id="sec-analytics" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">SALES REPORTS & ANALYTICS</h1>
+              <p class="admin-page-desc">Genuine revenue metrics, average order value, and product performance.</p>
+            </div>
+          </div>
+
+          <div class="stats-metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">GROSS PAID REVENUE</div>
+              <div class="metric-value" id="anGrossRevenue">₹0</div>
+              <div class="metric-subtext">Verified collected funds</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">AVERAGE ORDER VALUE (AOV)</div>
+              <div class="metric-value" id="anAov">₹0</div>
+              <div class="metric-subtext">Revenue per paid checkout</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">TOTAL DISCOUNTS ABSORBED</div>
+              <div class="metric-value" id="anTotalDiscounts">₹0</div>
+              <div class="metric-subtext">From applied promo codes</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">COMPLETED ORDERS</div>
+              <div class="metric-value" id="anPaidOrders">0</div>
+              <div class="metric-subtext">Successfully settled orders</div>
+            </div>
+          </div>
+
+          <div class="grid-2col">
+            <!-- Top Selling Products -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3 class="admin-card-title">TOP SELLING DROPS</h3>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>PRODUCT</th>
+                      <th>UNITS SOLD</th>
+                      <th>REVENUE</th>
+                    </tr>
+                  </thead>
+                  <tbody id="anTopProductsBody">
+                    <tr><td colspan="3" style="text-align:center; padding: 1.5rem; color: var(--text-muted);">No sales data available yet.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Category Revenue Breakdown -->
+            <div class="admin-card">
+              <div class="admin-card-header">
+                <h3 class="admin-card-title">REVENUE BY CATEGORY</h3>
+              </div>
+              <div class="admin-table-wrap">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>CATEGORY</th>
+                      <th>UNITS</th>
+                      <th>REVENUE</th>
+                    </tr>
+                  </thead>
+                  <tbody id="anCategoryRevenueBody">
+                    <tr><td colspan="3" style="text-align:center; padding: 1.5rem; color: var(--text-muted);">No category sales data yet.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 9: MERCHANDISING
+             ================================================================== -->
+        <section id="sec-merchandising" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">HOMEPAGE MERCHANDISING</h1>
+              <p class="admin-page-desc">Configure announcement tickers, featured drops, and store messaging.</p>
+            </div>
+            <div>
+              <button class="btn btn-lime btn-sm" id="btnSaveMerchandising">SAVE SETTINGS</button>
+            </div>
+          </div>
+
+          <div class="admin-card" style="padding: 2rem;">
+            <div class="form-group">
+              <label class="form-label" for="merchBannerText">TOP ANNOUNCEMENT TICKER MESSAGE</label>
+              <input type="text" id="merchBannerText" class="form-input" placeholder="FREE EXPRESS SHIPPING ON ALL ORDERS OVER ₹1,999..." />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="merchHeroHeadline">HERO DISPLAY TAGLINE</label>
+              <input type="text" id="merchHeroHeadline" class="form-input" placeholder="BEYOND THE ORDINARY." />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">FEATURED PRODUCT SLUGS (COMMA SEPARATED)</label>
+              <input type="text" id="merchFeaturedSlugs" class="form-input" placeholder="core-graphic-tee, modular-utility-cargo" />
+              <div class="font-mono" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
+                Enter product IDs to prioritize in the homepage curated section.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 10: ADMINISTRATORS (OWNER-ONLY)
+             ================================================================== -->
+        <section id="sec-administrators" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">AUTHORIZED ADMINISTRATORS</h1>
+              <p class="admin-page-desc">Owner control room for authorizing additional team members and staff roles.</p>
+            </div>
+            <div>
+              <button class="btn btn-lime btn-sm" id="btnOpenInviteAdminModal">+ AUTHORIZE ADMINISTRATOR</button>
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>NAME</th>
+                    <th>EMAIL</th>
+                    <th>ROLE</th>
+                    <th>AUTHORIZED DATE</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="adminAdministratorsTableBody">
+                  <tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading administrators...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 11: ACTIVITY LOG
+             ================================================================== -->
+        <section id="sec-activity" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">ADMINISTRATIVE AUDIT LOG</h1>
+              <p class="admin-page-desc">Immutable chronological record of all administrative operations.</p>
+            </div>
+            <div>
+              <input type="text" id="activitySearchInput" class="form-input" placeholder="FILTER BY ACTION, ADMIN..." style="max-width: 280px;" />
+            </div>
+          </div>
+
+          <div class="admin-card">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>TIMESTAMP</th>
+                    <th>ADMINISTRATOR</th>
+                    <th>ACTION</th>
+                    <th>ENTITY</th>
+                    <th>DETAILS</th>
+                  </tr>
+                </thead>
+                <tbody id="adminActivityTableBody">
+                  <tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-muted);">Loading activity logs...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================================================================
+             SECTION 12: SETTINGS & SETUP
+             ================================================================== -->
+        <section id="sec-settings" class="admin-section">
+          <div class="admin-page-header">
+            <div>
+              <h1 class="admin-page-title">SYSTEM CONFIGURATION & SECURITY</h1>
+              <p class="admin-page-desc">Technical parameters, environment status, and owner account security.</p>
+            </div>
+          </div>
+
+          <div class="grid-2col">
+            <div class="admin-card" style="padding: 1.75rem;">
+              <h3 class="admin-card-title" style="margin-bottom: 1rem;">ENVIRONMENT & ENGINE STATUS</h3>
+              <div style="font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.8;">
+                <div>ENGINE: <strong>Node.js 24 + Express 5</strong></div>
+                <div>DATABASE: <strong>SQLite (Native WAL Mode)</strong></div>
+                <div>AUTHENTICATION: <strong>HMAC-SHA256 JWT (7-Day HTTP-Only Cookie)</strong></div>
+                <div>IMAGE STORAGE: <strong>Local High-Performance Static Storage (/assets/uploads)</strong></div>
+                <div>PAYMENT GATEWAY: <strong>Razorpay + Cash on Delivery (Atomic decrement)</strong></div>
+              </div>
+            </div>
+
+            <div class="admin-card" style="padding: 1.75rem;">
+              <h3 class="admin-card-title" style="margin-bottom: 1rem;">SAMPLE DATA CLEANUP</h3>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                Easily archive or delete confirmed development sample items when you are ready to launch your genuine collection.
+              </p>
+              <button class="btn btn-outline btn-sm" id="btnAuditSampleProducts">
+                AUDIT & CLEAN SAMPLE DATA →
+              </button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODALS
+       ======================================================================== -->
+
+  <!-- MODAL: ADD / EDIT PRODUCT -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal-box modal-box-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="productModalTitle">CREATE NEW PRODUCT DROP</h3>
+        <button class="modal-close-btn" id="closeProductModalBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="productForm" onsubmit="return false;">
+          <input type="hidden" id="pmIsEdit" value="false" />
+          
+          <div class="grid-2col">
+            <div class="form-group">
+              <label class="form-label" for="pmSlug">PRODUCT SLUG / ID *</label>
+              <input type="text" id="pmSlug" class="form-input" placeholder="e.g. vintage-boxy-tee" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pmTitle">PRODUCT TITLE *</label>
+              <input type="text" id="pmTitle" class="form-input" placeholder="e.g. VINTAGE BOXY TEE // 001" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pmCategory">CATEGORY *</label>
+              <select id="pmCategory" class="form-input" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pmStatus">PUBLICATION STATUS *</label>
+              <select id="pmStatus" class="form-input">
+                <option value="published">PUBLISHED (VISIBLE ON STOREFRONT)</option>
+                <option value="draft">DRAFT (HIDDEN FROM PUBLIC)</option>
+                <option value="archived">ARCHIVED (RETIRED FROM SALE)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pmPrice">SELLING PRICE (INR ₹) *</label>
+              <input type="number" id="pmPrice" class="form-input" placeholder="1499" required min="0" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pmComparePrice">COMPARE-AT PRICE (₹)</label>
+              <input type="number" id="pmComparePrice" class="form-input" placeholder="1999" min="0" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pmGsm">GSM (FABRIC DENSITY)</label>
+              <input type="text" id="pmGsm" class="form-input" placeholder="e.g. 280 GSM" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pmStock">INITIAL STOCK (PER VARIANT)</label>
+              <input type="number" id="pmStock" class="form-input" value="10" min="0" />
+            </div>
+          </div>
+
+          <!-- Product Images & Upload -->
+          <div class="form-group" style="margin-top: 1rem;">
+            <label class="form-label">PRODUCT IMAGES</label>
+            <div class="image-upload-dropzone" id="imageUploadDropzone">
+              <input type="file" id="imageFileInput" accept="image/png,image/jpeg,image/webp,image/gif" style="display: none;" />
+              <div class="font-heading" style="font-size: 0.9rem; font-weight: 700;">CLICK OR DROP HIGH-RES PHOTOGRAPHY HERE</div>
+              <div class="font-mono" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.25rem;">
+                Supports WEBP, PNG, JPEG up to 5MB. Stored directly on your production server.
+              </div>
+            </div>
+
+            <div style="margin-top: 0.75rem;">
+              <input type="text" id="pmImageUrlInput" class="form-input" placeholder="Or paste external image URL and press Enter..." />
+            </div>
+
+            <div class="image-preview-grid" id="imagePreviewContainer"></div>
+          </div>
+
+          <!-- Sizing & Colors -->
+          <div class="grid-2col" style="margin-top: 1rem;">
+            <div class="form-group">
+              <label class="form-label">AVAILABLE SIZES</label>
+              <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;" id="sizeCheckboxes">
+                <label><input type="checkbox" value="XS" /> XS</label>
+                <label><input type="checkbox" value="S" checked /> S</label>
+                <label><input type="checkbox" value="M" checked /> M</label>
+                <label><input type="checkbox" value="L" checked /> L</label>
+                <label><input type="checkbox" value="XL" checked /> XL</label>
+                <label><input type="checkbox" value="XXL" /> XXL</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">COLORWAY NAME</label>
+              <input type="text" id="pmColorName" class="form-input" placeholder="e.g. Obsidian Black" value="Obsidian Black" />
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group" style="margin-top: 0.5rem;">
+            <label class="form-label" for="pmDescription">PRODUCT DESCRIPTION & FIT NOTES</label>
+            <textarea id="pmDescription" class="form-input" rows="3" placeholder="Relaxed boxy silhouette, double-needle stitched collar..."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" id="btnCancelProductModal">CANCEL</button>
+        <button class="btn btn-lime btn-sm" id="btnSaveProductModal">SAVE PRODUCT DROP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ORDER DETAILS -->
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal-box modal-box-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="orderModalTitle">ORDER DETAILS</h3>
+        <button class="modal-close-btn" id="closeOrderModalBtn">✕</button>
+      </div>
+      <div class="modal-body" id="orderModalBody">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" id="btnCloseOrderModal">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CATEGORY CREATE/EDIT -->
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title" id="categoryModalTitle">CREATE CATEGORY</h3>
+        <button class="modal-close-btn" id="closeCategoryModalBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="cmId" />
+        <div class="form-group">
+          <label class="form-label" for="cmName">CATEGORY NAME *</label>
+          <input type="text" id="cmName" class="form-input" placeholder="e.g. Knitwear" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cmSlug">SLUG *</label>
+          <input type="text" id="cmSlug" class="form-input" placeholder="e.g. knitwear" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cmDesc">DESCRIPTION</label>
+          <textarea id="cmDesc" class="form-input" rows="2" placeholder="Heavyweight luxury knits and cardigans"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cmOrder">DISPLAY ORDER</label>
+          <input type="number" id="cmOrder" class="form-input" value="1" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" id="btnCancelCategoryModal">CANCEL</button>
+        <button class="btn btn-lime btn-sm" id="btnSaveCategoryModal">SAVE CATEGORY</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: COUPON CREATE -->
+  <div class="modal-overlay" id="couponModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">CREATE PROMOTIONAL CODE</h3>
+        <button class="modal-close-btn" id="closeCouponModalBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="cpmCode">PROMO CODE (UPPERCASE) *</label>
+          <input type="text" id="cpmCode" class="form-input" placeholder="e.g. FLASH20" required />
+        </div>
+        <div class="grid-2col">
+          <div class="form-group">
+            <label class="form-label" for="cpmType">DISCOUNT TYPE *</label>
+            <select id="cpmType" class="form-input">
+              <option value="percent">PERCENTAGE (%)</option>
+              <option value="fixed">FLAT AMOUNT (₹)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cpmValue">DISCOUNT VALUE *</label>
+            <input type="number" id="cpmValue" class="form-input" placeholder="20" required min="1" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cpmMinOrder">MINIMUM ORDER (₹)</label>
+            <input type="number" id="cpmMinOrder" class="form-input" value="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cpmMaxDiscount">MAX DISCOUNT CAP (₹)</label>
+            <input type="number" id="cpmMaxDiscount" class="form-input" placeholder="1000" min="0" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" id="btnCancelCouponModal">CANCEL</button>
+        <button class="btn btn-lime btn-sm" id="btnSaveCouponModal">ACTIVATE CODE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AUTHORIZE ADMINISTRATOR (OWNER-ONLY) -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">AUTHORIZE NEW ADMINISTRATOR</h3>
+        <button class="modal-close-btn" id="closeAdminModalBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="amName">FULL NAME *</label>
+          <input type="text" id="amName" class="form-input" placeholder="e.g. Rhea Sharma" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="amEmail">EMAIL ADDRESS *</label>
+          <input type="email" id="amEmail" class="form-input" placeholder="e.g. rhea@590labs.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="amPassword">TEMPORARY PASSWORD *</label>
+          <input type="password" id="amPassword" class="form-input" placeholder="Minimum 8 characters" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="amRole">ASSIGNED ROLE *</label>
+          <select id="amRole" class="form-input">
+            <option value="admin">ADMINISTRATOR (FULL PRODUCT, ORDER, INVENTORY PERMISSIONS)</option>
+            <option value="staff">STAFF (ORDERS FULFILLMENT & INVENTORY VIEW)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline btn-sm" id="btnCancelAdminModal">CANCEL</button>
+        <button class="btn btn-lime btn-sm" id="btnSaveAdminModal">AUTHORIZE ACCOUNT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="admin-toast-container" id="adminToastContainer"></div>
+
+  <!-- Main Administrative Script -->
+  <script src="/js/admin.js"></script>
+</body>
+</html>

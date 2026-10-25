@@ -174,8 +174,32 @@ function initDatabase() {
       value TEXT NOT NULL
     );
 
+    CREATE TABLE IF NOT EXISTS categories (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE,
+      slug TEXT NOT NULL UNIQUE,
+      description TEXT,
+      image_url TEXT,
+      display_order INTEGER DEFAULT 0,
+      is_active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+      updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS activity_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      admin_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      admin_name TEXT NOT NULL,
+      action TEXT NOT NULL,
+      entity_type TEXT NOT NULL,
+      entity_id TEXT,
+      details TEXT,
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
     -- Indices for quick querying
     CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+    CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
     CREATE INDEX IF NOT EXISTS idx_variants_product ON product_variants(product_id);
     CREATE INDEX IF NOT EXISTS idx_orders_user ON orders(user_id);
     CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at);
@@ -185,9 +209,61 @@ function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_wishlist_user ON wishlist_items(user_id);
     CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
     CREATE INDEX IF NOT EXISTS idx_addresses_user ON addresses(user_id);
+    CREATE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug);
+    CREATE INDEX IF NOT EXISTS idx_activity_admin ON activity_logs(admin_id);
+    CREATE INDEX IF NOT EXISTS idx_activity_created ON activity_logs(created_at);
   `);
+
+  // Seed default streetwear categories if empty
+  try {
+    const catCount = db.prepare('SELECT COUNT(*) as count FROM categories').get();
+    if (catCount.count === 0) {
+      const insertCat = db.prepare(`
+        INSERT INTO categories (name, slug, description, display_order, is_active)
+        VALUES (?, ?, ?, ?, 1)
+      `);
+      insertCat.run('Tops', 'tops', 'Heavyweight tees, luxury hoodies, and architectural longsleeves', 1);
+      insertCat.run('Bottoms', 'bottoms', 'Tactical cargo pants, heavy terry sweatpants, and nylon trackpants', 2);
+      insertCat.run('Outerwear', 'outerwear', 'Tactical vests, weathered denim jackets, and winter outerwear', 3);
+      insertCat.run('Accessories', 'accessories', 'Utility rig bags, crossbody carry gear, and minimalist essentials', 4);
+    }
+  } catch (e) {
+    console.warn('Categories init notice:', e.message);
+  }
+
+  // Ensure an Owner exists if existing database had admin@590labs.com as 'admin'
+  try {
+    const ownerCheck = db.prepare("SELECT COUNT(*) as count FROM users WHERE role = 'owner'").get();
+    if (ownerCheck.count === 0) {
+      db.prepare("UPDATE users SET role = 'owner' WHERE email = 'admin@590labs.com'").run();
+    }
+  } catch (e) {
+    console.warn('Owner migration notice:', e.message);
+  }
 }
+
 
 initDatabase();
 
+/**
+ * Log administrative operations for compliance, auditability and tamper protection
+ */
+function logActivity(adminUser, action, entityType, entityId = null, details = null) {
+  try {
+    const adminId = adminUser ? adminUser.id : null;
+    const adminName = adminUser ? (adminUser.name || adminUser.email || 'Admin') : 'System';
+    const detailString = typeof details === 'object' ? JSON.stringify(details) : (details ? String(details) : null);
+
+    db.prepare(`
+      INSERT INTO activity_logs (admin_id, admin_name, action, entity_type, entity_id, details)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).run(adminId, adminName, action, entityType, entityId ? String(entityId) : null, detailString);
+  } catch (err) {
+    console.error('Failed to record activity log:', err.message);
+  }
+}
+
+db.logActivity = logActivity;
+
 module.exports = db;
+

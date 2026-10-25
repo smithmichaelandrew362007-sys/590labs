@@ -35,6 +35,8 @@ function authenticateToken(req, res, next) {
   });
 }
 
+const ADMIN_ROLES = ['owner', 'admin', 'staff'];
+
 /**
  * Middleware requiring user to be logged in
  */
@@ -49,7 +51,8 @@ function requireAuth(req, res, next) {
 }
 
 /**
- * Middleware requiring admin role
+ * Middleware requiring an administrative role (owner, admin, or staff)
+ * Performs live database lookup to prevent revoked tokens from retaining access.
  */
 function requireAdmin(req, res, next) {
   if (!req.user) {
@@ -59,14 +62,79 @@ function requireAdmin(req, res, next) {
     });
   }
 
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({
+  // Live check in database to guard against revoked permissions or deleted accounts
+  try {
+    const db = require('../db');
+    const userRow = db.prepare('SELECT id, role, email FROM users WHERE id = ?').get(req.user.id);
+    if (!userRow || !ADMIN_ROLES.includes(userRow.role)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied. Administrative privileges are required.'
+      });
+    }
+    // Update req.user with latest DB role
+    req.user.role = userRow.role;
+    next();
+  } catch (err) {
+    if (!ADMIN_ROLES.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied. Administrative privileges are required.'
+      });
+    }
+    next();
+  }
+}
+
+/**
+ * Middleware requiring Owner role
+ */
+function requireOwner(req, res, next) {
+  if (!req.user) {
+    return res.status(401).json({
       success: false,
-      error: 'Access denied. Administrative privileges are required.'
+      error: 'Authentication required. Please log in as the store owner.'
     });
   }
 
-  next();
+  try {
+    const db = require('../db');
+    const userRow = db.prepare('SELECT id, role FROM users WHERE id = ?').get(req.user.id);
+    if (!userRow || userRow.role !== 'owner') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied. Only the store Owner is authorized to perform this operation.'
+      });
+    }
+    req.user.role = userRow.role;
+    next();
+  } catch (err) {
+    if (req.user.role !== 'owner') {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied. Owner privilege required.'
+      });
+    }
+    next();
+  }
+}
+
+/**
+ * Factory for checking specific allowed roles
+ */
+function requireRole(allowedRoles = []) {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ success: false, error: 'Authentication required.' });
+    }
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        error: `Access denied. Permitted roles: ${allowedRoles.join(', ')}.`
+      });
+    }
+    next();
+  };
 }
 
 /**
@@ -89,6 +157,10 @@ module.exports = {
   authenticateToken,
   requireAuth,
   requireAdmin,
+  requireOwner,
+  requireRole,
+  ADMIN_ROLES,
   generateToken,
   JWT_SECRET
 };
+

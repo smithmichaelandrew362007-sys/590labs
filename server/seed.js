@@ -22,7 +22,7 @@ function seed() {
       '590 Labs Superadmin',
       'admin@590labs.com',
       adminPasswordHash,
-      'admin',
+      'owner',
       '+91 98765 43210'
     );
 

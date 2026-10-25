@@ -82,6 +82,14 @@ app.use(express.static(staticDir, {
   }
 }));
 
+// Dedicated Admin Interface Routes
+app.use((req, res, next) => {
+  if (req.method === 'GET' && (req.path === '/admin' || req.path.startsWith('/admin/'))) {
+    return res.sendFile(path.join(staticDir, 'admin.html'));
+  }
+  next();
+});
+
 // Fallback to index.html for Single-Page Application client routing
 app.use((req, res, next) => {
   if (req.path.startsWith('/api/')) {
