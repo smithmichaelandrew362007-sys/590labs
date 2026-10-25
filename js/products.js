@@ -4,7 +4,7 @@
  * Currency: INR (₹) with USD/EUR conversion support
  */
 
-const PRODUCTS = [
+let PRODUCTS = [
   {
     id: "core-graphic-tee",
     title: "CORE GRAPHIC TEE // 001",
@@ -450,3 +450,12 @@ function getProductsByCategory(category) {
 function getFeaturedDrops() {
   return PRODUCTS.filter(p => p.isNewDrop || p.isBestseller);
 }
+
+// Global reference & dynamic setter for live database synchronization
+window.PRODUCTS = PRODUCTS;
+window.setProducts = function(newProducts) {
+  if (Array.isArray(newProducts)) {
+    PRODUCTS = newProducts;
+    window.PRODUCTS = newProducts;
+  }
+};

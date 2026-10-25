@@ -178,26 +178,35 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderHomeProducts() {
     if (!productsGridHome) return;
     const featured = getFeaturedDrops().slice(0, 8);
+    if (featured.length === 0) {
+      productsGridHome.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
+          <div class="font-display" style="font-size: 1.5rem; letter-spacing: 0.1em; color: var(--off-white); margin-bottom: 0.5rem;">OUR COLLECTION IS COMING SOON.</div>
+          <p class="font-mono" style="color: var(--off-white-muted); font-size: 0.85rem;">CHECK BACK SOON FOR THE NEXT 590 LABS ARCHIVAL DROP.</p>
+        </div>
+      `;
+      return;
+    }
     productsGridHome.innerHTML = featured.map(createProductCardHTML).join("");
   }
 
   function renderShopCatalog() {
     if (!shopCatalogGrid) return;
-    let list = [...PRODUCTS];
+    let list = [...(window.PRODUCTS || PRODUCTS)];
 
     // Filter by Category
     if (currentCategory && currentCategory !== "all") {
-      list = list.filter(p => p.category === currentCategory || p.type.toLowerCase().includes(currentCategory.toLowerCase()));
+      list = list.filter(p => p.category === currentCategory || (p.type && p.type.toLowerCase().includes(currentCategory.toLowerCase())));
     }
 
     // Filter by Search Query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase().trim();
       list = list.filter(p => 
-        p.title.toLowerCase().includes(q) || 
-        p.subtitle.toLowerCase().includes(q) || 
-        p.description.toLowerCase().includes(q) ||
-        p.gsm.toLowerCase().includes(q)
+        (p.title && p.title.toLowerCase().includes(q)) || 
+        (p.subtitle && p.subtitle.toLowerCase().includes(q)) || 
+        (p.description && p.description.toLowerCase().includes(q)) ||
+        (p.gsm && p.gsm.toLowerCase().includes(q))
       );
     }
 
@@ -211,12 +220,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (list.length === 0) {
+      const isCatalogEmpty = !window.PRODUCTS || window.PRODUCTS.length === 0;
       shopCatalogGrid.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;">
-          <p class="font-mono" style="color: var(--off-white-muted); margin-bottom: 1rem;">NO PIECES FOUND MATCHING CRITERIA.</p>
-          <button class="btn btn-outline-lime btn-sm" onclick="window.resetShopFilters()">RESET ALL FILTERS</button>
+          <div class="font-display" style="font-size: 1.35rem; letter-spacing: 0.08em; color: var(--off-white); margin-bottom: 0.5rem;">${isCatalogEmpty ? 'COLLECTION COMING SOON.' : 'NO PIECES FOUND MATCHING CRITERIA.'}</div>
+          <p class="font-mono" style="color: var(--off-white-muted); margin-bottom: 1.25rem; font-size: 0.85rem;">${isCatalogEmpty ? 'Check back soon for the latest collection.' : 'Try clearing your filters or search terms.'}</p>
+          ${isCatalogEmpty ? '' : '<button class="btn btn-outline-lime btn-sm" onclick="window.resetShopFilters()">RESET ALL FILTERS</button>'}
         </div>
       `;
+      const catalogCountEl = document.getElementById("catalogCount");
+      if (catalogCountEl) catalogCountEl.innerText = `0 PIECES`;
       return;
     }
 
@@ -2020,12 +2033,37 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ==========================================================================
-  // INITIAL APPLICATION BOOT
+  // INITIAL APPLICATION BOOT & LIVE DATABASE SYNC
   // ==========================================================================
+  async function syncProductsFromBackend() {
+    try {
+      if (window.API && window.API.products) {
+        const data = await window.API.products.list({ limit: 100 });
+        if (data && Array.isArray(data.products)) {
+          if (typeof window.setProducts === 'function') {
+            window.setProducts(data.products);
+          }
+          renderHomeProducts();
+          renderShopCatalog();
+          renderWishlist();
+        }
+      }
+    } catch (e) {
+      console.warn('[590] Storefront using offline catalog snapshot:', e.message);
+    }
+  }
+
   initDropCountdown();
   renderHomeProducts();
   renderWishlist();
   renderCart();
   updateAuthUI();
   navigateTo(window.location.hash || "#home");
+  syncProductsFromBackend();
+
+  // Re-sync when switching back to storefront tab
+  window.addEventListener("focus", () => {
+    syncProductsFromBackend();
+  });
 });
+
