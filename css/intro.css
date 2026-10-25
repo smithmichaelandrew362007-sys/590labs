@@ -1,0 +1,465 @@
+/**
+ * 590 LABS® — Cinematic Introduction Stylesheet
+ * Luxury minimalist streetwear brand introduction overlay.
+ */
+
+:root {
+  --intro-bg: #070707;
+  --intro-text: #F5F3EF;
+  --intro-text-muted: #A0A09C;
+  --intro-accent-lime: #8CE005;
+  --intro-border: rgba(245, 243, 239, 0.2);
+  --intro-border-hover: rgba(245, 243, 239, 0.8);
+}
+
+/* Hide intro when store is already entered */
+html.store-entered #cinematicIntro,
+body.store-entered #cinematicIntro {
+  display: none !important;
+}
+
+/* Fullscreen Cinematic Container */
+.cinematic-intro {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: var(--intro-bg);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem);
+  overflow: hidden;
+  user-select: none;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s ease;
+}
+
+.cinematic-intro.fading-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Fullscreen Background & Cinematic Motion */
+.cinematic-bg-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.cinematic-bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  filter: contrast(1.1) brightness(0.72) grayscale(25%);
+  transform: scale(1.04);
+  animation: cinematicKenBurns 18s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  will-change: transform, opacity;
+  opacity: 0;
+  animation-name: cinematicBgFadeIn, cinematicKenBurns;
+  animation-duration: 1.8s, 20s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out, cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes cinematicBgFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cinematicKenBurns {
+  0% {
+    transform: scale(1.03) translateY(0);
+  }
+  100% {
+    transform: scale(1.12) translateY(-1.5%);
+  }
+}
+
+/* Cinematic Dark Gradient Overlays */
+.cinematic-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(circle at center, rgba(7, 7, 7, 0.35) 0%, rgba(7, 7, 7, 0.82) 80%, rgba(7, 7, 7, 0.96) 100%);
+  pointer-events: none;
+}
+
+.cinematic-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(7, 7, 7, 0.6) 0%, transparent 40%, rgba(7, 7, 7, 0.75) 80%, rgba(7, 7, 7, 0.95) 100%);
+}
+
+/* Header Brand Label (Top corner) */
+.cinematic-top-meta {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1380px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--intro-text-muted);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: introFadeDown 1.2s 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cinematic-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--intro-text);
+  font-weight: 600;
+}
+
+.cinematic-live-badge::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--intro-accent-lime);
+  box-shadow: 0 0 10px var(--intro-accent-lime);
+}
+
+/* Center Stage Brand Showcase */
+.cinematic-center-stage {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 900px;
+  margin: auto 0;
+  padding: 1rem 0;
+}
+
+/* Brand Logo (Scene 2: Logo Reveal) */
+.cinematic-logo-wrap {
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  animation: introLogoReveal 1.4s 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.cinematic-brand-logo {
+  height: clamp(38px, 6vw, 68px);
+  width: auto;
+  max-width: 90vw;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.6));
+}
+
+.cinematic-logo-text {
+  font-family: var(--font-display, "Syne", sans-serif);
+  font-size: clamp(2.8rem, 8vw, 6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #FFFFFF;
+  line-height: 1;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-shadow: 0 12px 32px rgba(0, 0, 0, 0.8);
+}
+
+.cinematic-logo-text .reg {
+  font-size: 0.3em;
+  vertical-align: super;
+  font-family: var(--font-mono, monospace);
+  color: var(--intro-text-muted);
+}
+
+/* Tagline: BEYOND THE ORDINARY. (Scene 3: Tagline Reveal) */
+.cinematic-tagline {
+  font-family: var(--font-heading, "Space Grotesk", sans-serif);
+  font-size: clamp(0.85rem, 2.2vw, 1.35rem);
+  font-weight: 600;
+  letter-spacing: clamp(0.25em, 0.6vw, 0.45em);
+  color: #FFFFFF;
+  text-transform: uppercase;
+  margin-bottom: 2.75rem;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: introTaglineReveal 1.2s 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+}
+
+/* Enter Store CTA (Scene 4: Button Reveal) */
+.cinematic-cta-wrap {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: introCtaReveal 1.2s 1.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cinematic-enter-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1.15rem 2.8rem;
+  background-color: transparent;
+  color: #FFFFFF;
+  border: 1.5px solid var(--intro-border-hover);
+  border-radius: 2px;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.cinematic-enter-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: #FFFFFF;
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 0;
+}
+
+.cinematic-enter-btn span {
+  position: relative;
+  z-index: 1;
+  transition: color 0.28s ease;
+}
+
+.cinematic-enter-btn:hover::before {
+  transform: translateY(0);
+}
+
+.cinematic-enter-btn:hover span {
+  color: #070707;
+}
+
+.cinematic-enter-btn:hover {
+  border-color: #FFFFFF;
+  box-shadow: 0 12px 40px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.cinematic-enter-btn:focus-visible {
+  outline: 2px solid var(--intro-accent-lime);
+  outline-offset: 4px;
+}
+
+.cinematic-enter-btn:active {
+  transform: translateY(1px);
+}
+
+/* Secondary Notice States (New Tab Opened / Blocked Popup Fallback) */
+.cinematic-notice {
+  display: none;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.4rem;
+  border-radius: 2px;
+  margin-top: 1rem;
+  max-width: 440px;
+  line-height: 1.5;
+  text-align: center;
+  animation: introNoticeFade 0.4s ease forwards;
+}
+
+.cinematic-notice.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notice-success {
+  background: rgba(20, 20, 20, 0.85);
+  border: 1px solid var(--intro-border);
+  color: var(--intro-text);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.notice-success .status-dot {
+  color: var(--intro-accent-lime);
+  font-size: 0.9rem;
+}
+
+.notice-fallback {
+  background: rgba(30, 20, 20, 0.9);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  color: #FFA8A8;
+}
+
+.cinematic-fallback-btn {
+  background: #FFFFFF;
+  color: #070707;
+  border: none;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.5rem 1.1rem;
+  border-radius: 2px;
+  cursor: pointer;
+  margin-top: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: opacity 0.2s ease;
+}
+
+.cinematic-fallback-btn:hover {
+  opacity: 0.9;
+}
+
+.cinematic-inline-enter-link {
+  color: var(--intro-text-muted);
+  font-size: 0.72rem;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.cinematic-inline-enter-link:hover {
+  color: #FFFFFF;
+}
+
+/* Bottom Archival Specs */
+.cinematic-bottom-meta {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1380px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  color: var(--intro-text-muted);
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: introFadeUp 1.2s 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Animations */
+@keyframes introFadeDown {
+  to {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+}
+
+@keyframes introFadeUp {
+  to {
+    opacity: 0.75;
+    transform: translateY(0);
+  }
+}
+
+@keyframes introLogoReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes introTaglineReveal {
+  to {
+    opacity: 0.95;
+    transform: translateY(0);
+  }
+}
+
+@keyframes introCtaReveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes introNoticeFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-bg-img {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .cinematic-top-meta,
+  .cinematic-logo-wrap,
+  .cinematic-tagline,
+  .cinematic-cta-wrap,
+  .cinematic-bottom-meta {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .cinematic-intro {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .cinematic-brand-logo {
+    height: 36px;
+  }
+
+  .cinematic-tagline {
+    letter-spacing: 0.22em;
+    margin-bottom: 2rem;
+  }
+
+  .cinematic-enter-btn {
+    padding: 1rem 2rem;
+    font-size: 0.82rem;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .cinematic-top-meta,
+  .cinematic-bottom-meta {
+    font-size: 0.58rem;
+  }
+}

@@ -24,8 +24,94 @@
 
   <!-- Core Stylesheet (Versioned for cache invalidation) -->
   <link rel="stylesheet" href="css/main.css?v=1.3.0" />
+  <!-- Cinematic Introduction Stylesheet -->
+  <link rel="stylesheet" href="css/intro.css" />
+
+  <!-- Immediate First-Visit Check (Prevents Flash of Intro for Returning Customers) -->
+  <script>
+    (function() {
+      try {
+        var isEntered = localStorage.getItem('590labs_store_entered_v1') === 'true';
+        var isDirect = window.location.hash && window.location.hash !== '#home' && window.location.hash !== '#intro';
+        var hasEnteredParam = window.location.search.indexOf('entered=true') !== -1;
+        if ((isEntered || isDirect || hasEnteredParam) && window.location.search.indexOf('intro=true') === -1) {
+          document.documentElement.classList.add('store-entered');
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
+
+  <!-- ========================================================================
+       0. Cinematic Brand Introduction (Appears on First Visit)
+       ======================================================================== -->
+  <section class="cinematic-intro" id="cinematicIntro" role="region" aria-label="Brand Introduction">
+    <!-- Cinematic Fullscreen Background -->
+    <div class="cinematic-bg-wrap">
+      <img class="cinematic-bg-img" 
+           src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1600&auto=format&fit=crop&q=75&fm=webp" 
+           alt="590 LABS Streetwear Editorial Campaign" 
+           width="1600" 
+           height="900" 
+           fetchpriority="high" />
+      <div class="cinematic-overlay"></div>
+    </div>
+
+    <!-- Top Metadata -->
+    <div class="cinematic-top-meta">
+      <span>CONCEPT 01 // AUTONOMY ARCHIVE</span>
+      <span class="cinematic-live-badge">SYSTEM ACTIVE</span>
+    </div>
+
+    <!-- Center Stage: Logo, Tagline & Enter Button -->
+    <div class="cinematic-center-stage">
+      <!-- Brand Logo (Scene 2: Logo Reveal) -->
+      <div class="cinematic-logo-wrap">
+        <img class="cinematic-brand-logo" 
+             src="assets/logo-white.svg" 
+             alt="590 LABS Logo" 
+             width="280" 
+             height="40" 
+             onerror="this.style.display='none'; document.getElementById('introFallbackLogo').style.display='flex';" />
+        <div id="introFallbackLogo" class="cinematic-logo-text" style="display: none;">
+          590 LABS<span class="reg">®</span>
+        </div>
+      </div>
+
+      <!-- Tagline (Scene 3: Tagline Reveal) -->
+      <p class="cinematic-tagline">
+        BEYOND THE ORDINARY.
+      </p>
+
+      <!-- Enter Call To Action (Scene 4: Button Reveal) -->
+      <div class="cinematic-cta-wrap">
+        <button type="button" class="cinematic-enter-btn" id="cinematicEnterBtn" aria-label="Enter 590 LABS Storefront in a new tab">
+          <span>ENTER STORE ↗</span>
+        </button>
+
+        <!-- Success Notice: Opened in New Tab -->
+        <div class="cinematic-notice notice-success" id="introNoticeSuccess" role="status">
+          <div><span class="status-dot">●</span> <strong>YOUR STORE IS OPEN IN A NEW TAB.</strong></div>
+          <a class="cinematic-inline-enter-link" id="introContinueHereLink">Continue browsing in this tab instead ↗</a>
+        </div>
+
+        <!-- Fallback Notice: Popup Blocked -->
+        <div class="cinematic-notice notice-fallback" id="introNoticeBlocked" role="alert">
+          <span>Your browser blocked the new tab. Continue to the store here:</span>
+          <button type="button" class="cinematic-fallback-btn" id="introFallbackBtn">
+            CONTINUE TO STORE HERE ↗
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Archival Specs -->
+    <div class="cinematic-bottom-meta">
+      <span>INDEPENDENT UNISEX STREETWEAR</span>
+      <span>TIRUPUR ARCHIVE // 2026</span>
+    </div>
+  </section>
 
   <!-- ========================================================================
        1. Announcement Bar
@@ -1593,5 +1679,6 @@
   <script src="js/audio.js" defer></script>
   <script src="js/cart.js" defer></script>
   <script src="js/app.js" defer></script>
+  <script src="js/intro.js" defer></script>
 </body>
 </html>
