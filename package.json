@@ -7,7 +7,7 @@
     "start": "node server/index.js",
     "dev": "node server/index.js",
     "seed": "node server/seed.js",
-    "test": "node test/api.test.js"
+    "test": "node --max-old-space-size=4096 test/api.test.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
