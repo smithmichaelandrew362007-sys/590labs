@@ -803,6 +803,14 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         currentCategory = "all";
       }
+    } else if (cleanHash === "faq") {
+      targetView = "homeView";
+      setTimeout(() => {
+        const faqEl = document.getElementById("faqSection");
+        if (faqEl) {
+          faqEl.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 150);
     } else if (cleanHash === "lookbook") {
       targetView = "lookbookView";
     } else if (cleanHash === "story" || cleanHash === "our-story") {
@@ -842,11 +850,44 @@ document.addEventListener("DOMContentLoaded", () => {
       loadAdminDashboard();
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (cleanHash !== "faq") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
 
   window.navigateTo = navigateTo;
   window.addEventListener("hashchange", () => navigateTo(window.location.hash));
+
+  // --------------------------------------------------------------------------
+  // FAQ ACCORDION ENGINE (Monochrome Black Section)
+  // --------------------------------------------------------------------------
+  document.addEventListener("click", function(e) {
+    const faqBtn = e.target.closest(".faq-question");
+    if (!faqBtn) return;
+
+    const item = faqBtn.closest(".faq-item");
+    if (!item) return;
+
+    const isExpanded = item.classList.contains("active");
+    const accordionList = item.closest(".faq-accordion-list");
+
+    // Close sibling FAQ items for clean single-accordion focus
+    if (accordionList) {
+      accordionList.querySelectorAll(".faq-item").forEach(other => {
+        if (other !== item) {
+          other.classList.remove("active");
+          const otherBtn = other.querySelector(".faq-question");
+          if (otherBtn) otherBtn.setAttribute("aria-expanded", "false");
+        }
+      });
+    }
+
+    item.classList.toggle("active", !isExpanded);
+    faqBtn.setAttribute("aria-expanded", String(!isExpanded));
+    if (typeof SoundEngine !== "undefined" && SoundEngine.click) {
+      SoundEngine.click();
+    }
+  });
 
   // --------------------------------------------------------------------------
   // GLOBAL EVENT LISTENERS & DELEGATION

@@ -1,26 +1,26 @@
 /* ==========================================================================
-   590 LABS® — MINIMALIST PREMIUM STREETWEAR DESIGN SYSTEM
-   Theme: 70% Minimalist Design | 20% Premium Fashion Editorial | 10% Subtle Streetwear
-   Palette: Warm Off-White (#FAF9F6) | Clean White (#FFFFFF) | Near-Black (#111111) | Muted Grey (#777777) | Restrained Accent (#8CE005)
+   590 LABS® — MONOCHROME PREMIUM STREETWEAR DESIGN SYSTEM
+   Theme: Minimalist Clean White Shopping | Monochrome Streetwear Aesthetic
+   Palette: Clean White (#FFFFFF) | Near-Black (#111111) | Neutral Grey (#666666) | Border (#E5E5E5)
    ========================================================================== */
 
 :root {
-  /* Core Minimalist Color System */
-  --bg-page: #FAF9F6;           /* Gallery-grade warm off-white */
+  /* Core Clean White Color System */
+  --bg-page: #FFFFFF;           /* Pure Clean White Storefront */
   --bg-surface: #FFFFFF;        /* Pure white for cards, panels, modals */
-  --bg-subtle: #F3F2EE;         /* Light warm neutral for image frames & tickers */
+  --bg-subtle: #F7F7F7;         /* Clean neutral light grey for subtle frames */
   --bg-elevated: #FFFFFF;
   
-  /* Text & Accents */
-  --text-primary: #111111;      /* Near-black, sharp & high contrast */
-  --text-secondary: #666666;    /* Editorial muted grey */
-  --text-muted: #8E8D8A;        /* Light grey for technical labels */
+  /* Text & Typography */
+  --text-primary: #111111;      /* Crisp near-black, sharp & high contrast */
+  --text-secondary: #666666;    /* Neutral grey for secondary copy */
+  --text-muted: #888888;        /* Light grey for technical labels */
   --text-inverse: #FFFFFF;
   
-  /* Restrained Streetwear Accent (used intentionally for status & subtle details) */
-  --accent-lime: #8CE005;
-  --accent-lime-subtle: rgba(140, 224, 5, 0.12);
-  --accent-lime-glow: rgba(140, 224, 5, 0.25);
+  /* Restrained Monochrome Streetwear Accents */
+  --accent-lime: #111111;
+  --accent-lime-subtle: rgba(17, 17, 17, 0.06);
+  --accent-lime-glow: rgba(0, 0, 0, 0.15);
   
   /* Hairline Borders & Dividers */
   --border-light: #E5E5E5;
@@ -92,7 +92,7 @@ body {
   min-height: 100vh;
 }
 
-/* Subtle, clean gallery atmosphere */
+/* Pure clean white backdrop */
 body::before {
   content: "";
   position: fixed;
@@ -100,7 +100,7 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(250, 249, 246, 0.7) 100%);
+  background: #FFFFFF;
   pointer-events: none;
   z-index: -1;
 }
@@ -624,20 +624,24 @@ p, h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Outline Button: Crisp Clean Border */
+/* Secondary Button: Crisp White with Black Text and Subtle Border */
 .btn-outline,
-.btn-outline-lime {
-  background: transparent;
-  color: var(--text-primary);
+.btn-outline-lime,
+.btn-secondary {
+  background: #FFFFFF;
+  color: #111111;
   border: 1px solid var(--border-medium);
+  font-weight: 600;
 }
 
 .btn-outline:hover,
-.btn-outline-lime:hover {
+.btn-outline-lime:hover,
+.btn-secondary:hover {
   background: #111111;
   color: #FFFFFF;
   border-color: #111111;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .btn-sm {
@@ -1619,6 +1623,148 @@ p, h1, h2, h3, h4, h5, h6 {
   .radar-form .btn {
     border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
   }
+}
+
+/* ==========================================================================
+   FAQ Section — Monochrome Black Section (#0B0B0B)
+   Clear boundary with white text and accessible accordions
+   ========================================================================== */
+
+.faq-section {
+  background-color: #0B0B0B;
+  color: #FFFFFF;
+  padding: clamp(4rem, 7vw, 6.5rem) 0;
+  border-top: 1px solid #1C1C1C;
+  border-bottom: 1px solid #151515;
+  position: relative;
+  width: 100%;
+}
+
+.faq-header {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto clamp(2rem, 4vw, 3.5rem);
+}
+
+.faq-label {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: #BDBDBD;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.faq-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.8vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.faq-subtitle {
+  font-size: clamp(0.86rem, 1.2vw, 0.96rem);
+  line-height: 1.6;
+  color: #BDBDBD;
+  margin: 0 auto;
+}
+
+.faq-accordion-list {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.faq-item {
+  background-color: #141414;
+  border: 1px solid #242424;
+  border-radius: var(--radius-xs);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  overflow: hidden;
+}
+
+.faq-item:hover {
+  border-color: #383838;
+}
+
+.faq-item.active {
+  border-color: #4A4A4A;
+  background-color: #171717;
+}
+
+.faq-question {
+  width: 100%;
+  padding: 1.35rem clamp(1.15rem, 2.5vw, 1.85rem);
+  background: transparent;
+  border: none;
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: clamp(0.85rem, 1.25vw, 0.96rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  text-align: left;
+  transition: color var(--transition-fast);
+}
+
+.faq-question:focus-visible {
+  outline: 2px solid #FFFFFF;
+  outline-offset: -2px;
+}
+
+.faq-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: #FFFFFF;
+  transition: transform var(--transition-normal);
+}
+
+.faq-icon svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--transition-normal);
+}
+
+.faq-item.active .faq-icon svg {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.35s ease, opacity 0.25s ease;
+  opacity: 0;
+  padding: 0 clamp(1.15rem, 2.5vw, 1.85rem);
+}
+
+.faq-item.active .faq-answer {
+  max-height: 320px;
+  opacity: 1;
+  padding: 0 clamp(1.15rem, 2.5vw, 1.85rem) 1.35rem;
+}
+
+.faq-answer p {
+  color: #D1D1D1;
+  font-size: clamp(0.82rem, 1.1vw, 0.92rem);
+  line-height: 1.7;
+  margin: 0;
+  border-top: 1px solid #222222;
+  padding-top: 0.95rem;
 }
 
 /* ==========================================================================

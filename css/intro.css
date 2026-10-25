@@ -4,12 +4,12 @@
  */
 
 :root {
-  --intro-bg: #070707;
-  --intro-text: #F5F3EF;
-  --intro-text-muted: #A0A09C;
-  --intro-accent-lime: #8CE005;
-  --intro-border: rgba(245, 243, 239, 0.2);
-  --intro-border-hover: rgba(245, 243, 239, 0.8);
+  --intro-bg: #000000;
+  --intro-text: #FFFFFF;
+  --intro-text-muted: #BDBDBD;
+  --intro-accent-lime: #FFFFFF;
+  --intro-border: rgba(255, 255, 255, 0.15);
+  --intro-border-hover: rgba(255, 255, 255, 0.6);
 }
 
 /* Hide intro when store is already entered */
@@ -133,8 +133,7 @@ body.store-entered #cinematicIntro {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--intro-accent-lime);
-  box-shadow: 0 0 10px var(--intro-accent-lime);
+  background-color: #FFFFFF;
 }
 
 /* Center Stage Brand Showcase */
@@ -220,9 +219,9 @@ body.store-entered #cinematicIntro {
   justify-content: center;
   gap: 0.75rem;
   padding: 1.15rem 2.8rem;
-  background-color: transparent;
-  color: #FFFFFF;
-  border: 1.5px solid var(--intro-border-hover);
+  background-color: #FFFFFF;
+  color: #000000;
+  border: 1.5px solid #FFFFFF;
   border-radius: 2px;
   font-family: var(--font-mono, "JetBrains Mono", monospace);
   font-size: 0.88rem;
@@ -231,46 +230,32 @@ body.store-entered #cinematicIntro {
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   position: relative;
   overflow: hidden;
   text-decoration: none;
 }
 
-.cinematic-enter-btn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: #FFFFFF;
-  transform: translateY(100%);
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 0;
-}
-
 .cinematic-enter-btn span {
   position: relative;
   z-index: 1;
+  color: #000000;
   transition: color 0.28s ease;
 }
 
-.cinematic-enter-btn:hover::before {
-  transform: translateY(0);
-}
-
-.cinematic-enter-btn:hover span {
-  color: #070707;
-}
-
 .cinematic-enter-btn:hover {
-  border-color: #FFFFFF;
-  box-shadow: 0 12px 40px rgba(255, 255, 255, 0.2);
+  background-color: #000000;
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
   transform: translateY(-2px);
 }
 
+.cinematic-enter-btn:hover span {
+  color: #FFFFFF;
+}
+
 .cinematic-enter-btn:focus-visible {
-  outline: 2px solid var(--intro-accent-lime);
+  outline: 2px solid #FFFFFF;
   outline-offset: 4px;
 }
 
@@ -302,14 +287,14 @@ body.store-entered #cinematicIntro {
 }
 
 .notice-success {
-  background: rgba(20, 20, 20, 0.85);
+  background: rgba(18, 18, 18, 0.95);
   border: 1px solid var(--intro-border);
-  color: var(--intro-text);
+  color: #FFFFFF;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
 }
 
 .notice-success .status-dot {
-  color: var(--intro-accent-lime);
+  color: #FFFFFF;
   font-size: 0.9rem;
 }
 
