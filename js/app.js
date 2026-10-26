@@ -271,6 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
     activePdpProduct = product;
     activePdpSize = (product.sizes && product.sizes.length > 0) ? product.sizes[0] : 'M';
     activePdpColorHex = (product.colors && product.colors[0] && product.colors[0].hex) ? product.colors[0].hex : '#0b0b0b';
+    activeGalleryIndex = 0;
 
     // Populate Modal Content
     const catUpper = (product.category || 'streetwear').toUpperCase();
@@ -284,23 +285,21 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("pdpFitSubtitle").innerText = fitNotes;
     document.getElementById("pdpDescription").innerText = product.description || "";
 
-    // Gallery
-    const mainImgEl = document.getElementById("pdpMainImg");
-    mainImgEl.src = optimizeImageUrl(product.images[0], 1000, 80);
-    mainImgEl.alt = product.title;
-    mainImgEl.decoding = "async";
-
+    // Gallery Thumbs
     const thumbsContainer = document.getElementById("pdpThumbs");
     thumbsContainer.innerHTML = product.images.map((imgUrl, i) => `
       <img class="pdp-thumb-img ${i === 0 ? 'active' : ''}" 
            src="${optimizeImageUrl(imgUrl, 160, 75)}" 
            data-index="${i}" 
-           alt="Thumbnail ${i + 1}"
+           alt="${product.title} View ${i + 1}"
            loading="lazy"
            decoding="async"
            width="60"
            height="75" />
     `).join("");
+
+    // Initialize gallery image & counter
+    switchPdpImage(0);
 
     // Colors
     const colorsContainer = document.getElementById("pdpColors");
@@ -331,37 +330,160 @@ document.addEventListener("DOMContentLoaded", () => {
     const pincodeInput = document.getElementById("pdpPincodeInput");
     if (pincodeInput) pincodeInput.value = "";
 
+    // Sync PDP Wishlist Button
+    const pdpWishBtn = document.getElementById("pdpWishlistToggleBtn");
+    if (pdpWishBtn) {
+      pdpWishBtn.classList.toggle("active", Store.isInWishlist(product.id));
+    }
+
+    // Track in Recently Viewed Archive & Render Discovery Shelves
+    trackRecentlyViewed(product);
+    renderPdpDiscovery(product);
+
     // Open Modal
     pdpModal.classList.add("active");
     document.body.style.overflow = "hidden";
     SoundEngine.click();
   }
 
+  function switchPdpImage(index) {
+    if (!activePdpProduct || !activePdpProduct.images || activePdpProduct.images.length === 0) return;
+    activeGalleryIndex = (index + activePdpProduct.images.length) % activePdpProduct.images.length;
+    const currentUrl = activePdpProduct.images[activeGalleryIndex];
+
+    const mainImgEl = document.getElementById("pdpMainImg");
+    if (mainImgEl) {
+      mainImgEl.style.opacity = '0.4';
+      mainImgEl.src = optimizeImageUrl(currentUrl, 1200, 85);
+      mainImgEl.alt = `${activePdpProduct.title} - View ${activeGalleryIndex + 1}`;
+      mainImgEl.onload = () => { mainImgEl.style.opacity = '1'; };
+    }
+
+    const counterEl = document.getElementById("pdpGalleryCounter");
+    if (counterEl) {
+      counterEl.innerText = `${activeGalleryIndex + 1} / ${activePdpProduct.images.length}`;
+    }
+
+    document.querySelectorAll(".pdp-thumb-img").forEach((thumb, i) => {
+      thumb.classList.toggle("active", i === activeGalleryIndex);
+    });
+
+    const lightboxModal = document.getElementById("pdpLightboxModal");
+    if (lightboxModal && lightboxModal.classList.contains("active")) {
+      const lbImg = document.getElementById("lightboxImg");
+      const lbCounter = document.getElementById("lightboxCounter");
+      if (lbImg) lbImg.src = optimizeImageUrl(currentUrl, 2000, 90);
+      if (lbCounter) lbCounter.innerText = `IMAGE ${activeGalleryIndex + 1} OF ${activePdpProduct.images.length}`;
+    }
+  }
+
+  function openLightbox() {
+    if (!activePdpProduct || !activePdpProduct.images || activePdpProduct.images.length === 0) return;
+    const lightboxModal = document.getElementById("pdpLightboxModal");
+    const lbImg = document.getElementById("lightboxImg");
+    const lbCounter = document.getElementById("lightboxCounter");
+    const lbWrap = document.getElementById("lightboxImgWrap");
+    if (!lightboxModal) return;
+
+    if (lbWrap) lbWrap.classList.remove("zoomed");
+    isLightboxZoomed = false;
+
+    if (lbImg) {
+      lbImg.src = optimizeImageUrl(activePdpProduct.images[activeGalleryIndex], 2000, 90);
+      lbImg.alt = activePdpProduct.title;
+    }
+    if (lbCounter) {
+      lbCounter.innerText = `IMAGE ${activeGalleryIndex + 1} OF ${activePdpProduct.images.length}`;
+    }
+
+    lightboxModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+    SoundEngine.click();
+  }
+
+  function closeLightbox() {
+    const lightboxModal = document.getElementById("pdpLightboxModal");
+    if (lightboxModal) {
+      lightboxModal.classList.remove("active");
+      const lbWrap = document.getElementById("lightboxImgWrap");
+      if (lbWrap) lbWrap.classList.remove("zoomed");
+      isLightboxZoomed = false;
+      if (!pdpModal || !pdpModal.classList.contains("active")) {
+        document.body.style.overflow = "";
+      }
+      SoundEngine.click();
+    }
+  }
+
+  function toggleLightboxZoom() {
+    const lbWrap = document.getElementById("lightboxImgWrap");
+    if (!lbWrap) return;
+    isLightboxZoomed = !isLightboxZoomed;
+    lbWrap.classList.toggle("zoomed", isLightboxZoomed);
+    SoundEngine.click();
+  }
+
   function renderPdpSizes() {
     if (!activePdpProduct) return;
     const sizesContainer = document.getElementById("pdpSizes");
+    const pdpAddBtn = document.getElementById("pdpAddToCartBtn");
+
     sizesContainer.innerHTML = activePdpProduct.sizes.map(size => {
-      const stockQty = activePdpProduct.stock ? activePdpProduct.stock[size] : 5;
+      const stockQty = (activePdpProduct.stock && activePdpProduct.stock[size] !== undefined) ? activePdpProduct.stock[size] : 5;
       const isOutOfStock = stockQty === 0;
       const isActive = size === activePdpSize;
       return `
-        <button class="pdp-size-btn ${isActive ? 'active' : ''}" 
+        <button type="button" class="pdp-size-btn ${isActive ? 'active' : ''}" 
                 data-size="${size}" 
-                ${isOutOfStock ? 'disabled' : ''}>
+                ${isOutOfStock ? 'disabled' : ''}
+                title="${isOutOfStock ? size + ' - Out of Stock' : size + ' (' + stockQty + ' in stock)'}">
           ${size}
         </button>
       `;
     }).join("");
 
     const stockIndicator = document.getElementById("pdpStockIndicator");
-    const stockQty = activePdpProduct.stock ? activePdpProduct.stock[activePdpSize] : 5;
-    if (stockIndicator) {
-      if (stockQty <= 3) {
-        stockIndicator.innerHTML = `⚡ High Demand: Only ${stockQty} pieces left in size ${activePdpSize}`;
+    const stockQty = (activePdpProduct.stock && activePdpProduct.stock[activePdpSize] !== undefined) ? activePdpProduct.stock[activePdpSize] : 5;
+    const stockAlertBox = document.getElementById("pdpStockAlertContainer");
+    const stockAlertSizeLabel = document.getElementById("pdpStockAlertSizeLabel");
+    const stockAlertFeedback = document.getElementById("pdpStockAlertFeedback");
+    if (stockAlertFeedback) stockAlertFeedback.style.display = "none";
+
+    if (stockQty === 0) {
+      if (stockAlertBox) stockAlertBox.style.display = "block";
+      if (stockAlertSizeLabel) stockAlertSizeLabel.innerText = `SIZE ${activePdpSize}`;
+      if (stockIndicator) {
+        stockIndicator.innerHTML = `✕ Sold Out: Size ${activePdpSize} is currently unavailable`;
+        stockIndicator.style.background = "#FFF5F5";
+        stockIndicator.style.color = "#E03131";
+        stockIndicator.style.border = "1px solid #FFC9C9";
         stockIndicator.style.display = "inline-flex";
-      } else {
-        stockIndicator.innerHTML = `✓ In Stock: Ready for instant dispatch in size ${activePdpSize}`;
-        stockIndicator.style.display = "inline-flex";
+      }
+      if (pdpAddBtn) {
+        pdpAddBtn.disabled = true;
+        pdpAddBtn.innerText = `OUT OF STOCK — NOTIFY ME ↓`;
+        pdpAddBtn.style.opacity = "0.45";
+        pdpAddBtn.style.cursor = "not-allowed";
+      }
+    } else {
+      if (stockAlertBox) stockAlertBox.style.display = "none";
+      if (stockIndicator) {
+        stockIndicator.style.background = "";
+        stockIndicator.style.color = "";
+        stockIndicator.style.border = "";
+        if (stockQty <= 3) {
+          stockIndicator.innerHTML = `⚡ High Demand: Only ${stockQty} pieces left in size ${activePdpSize}`;
+          stockIndicator.style.display = "inline-flex";
+        } else {
+          stockIndicator.innerHTML = `✓ In Stock: Ready for instant dispatch in size ${activePdpSize}`;
+          stockIndicator.style.display = "inline-flex";
+        }
+      }
+      if (pdpAddBtn) {
+        pdpAddBtn.disabled = false;
+        pdpAddBtn.innerText = "ADD TO BAG ↗";
+        pdpAddBtn.style.opacity = "1";
+        pdpAddBtn.style.cursor = "pointer";
       }
     }
   }
@@ -371,6 +493,140 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.style.overflow = "";
     activePdpProduct = null;
     SoundEngine.click();
+  }
+
+  // --------------------------------------------------------------------------
+  // 590 LABS FIT LAB & SMART SIZE RECOMMENDATION ENGINE
+  // --------------------------------------------------------------------------
+  let fitlabSelectedFit = 'boxy';
+  let fitlabIsMetric = false;
+
+  function calculateFitLabRecommendation() {
+    const heightEl = document.getElementById("fitlabHeightRange");
+    const weightEl = document.getElementById("fitlabWeightRange");
+    const heightDisp = document.getElementById("fitlabHeightDisplay");
+    const weightDisp = document.getElementById("fitlabWeightDisplay");
+    const recSizeEl = document.getElementById("fitlabRecSize");
+    const recExplainEl = document.getElementById("fitlabRecExplain");
+    const applyBtn = document.getElementById("fitlabApplySizeBtn");
+
+    if (!heightEl || !weightEl) return;
+
+    const heightCm = parseInt(heightEl.value, 10);
+    const weightKg = parseInt(weightEl.value, 10);
+
+    const totalInches = heightCm / 2.54;
+    const feet = Math.floor(totalInches / 12);
+    const inches = Math.round(totalInches % 12);
+    if (heightDisp) heightDisp.innerText = `${heightCm} CM (${feet}'${inches}")`;
+    if (weightDisp) weightDisp.innerText = `${weightKg} KG`;
+
+    const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+    let baseIndex = 2; // default M
+
+    if (heightCm < 168 || weightKg < 58) {
+      baseIndex = 0; // XS
+    } else if (heightCm < 174 || weightKg < 66) {
+      baseIndex = 1; // S
+    } else if (heightCm < 181 || weightKg < 76) {
+      baseIndex = 2; // M
+    } else if (heightCm < 188 || weightKg < 88) {
+      baseIndex = 3; // L
+    } else if (heightCm < 194 || weightKg < 98) {
+      baseIndex = 4; // XL
+    } else {
+      baseIndex = 5; // XXL
+    }
+
+    let finalIndex = baseIndex;
+    if (fitlabSelectedFit === 'oversized') {
+      finalIndex = Math.min(sizes.length - 1, baseIndex + 1);
+    } else if (fitlabSelectedFit === 'fitted') {
+      finalIndex = Math.max(0, baseIndex - 1);
+    }
+
+    const recSize = sizes[finalIndex];
+    if (recSizeEl) recSizeEl.innerText = `SIZE ${recSize}`;
+
+    const fitLabels = {
+      boxy: 'signature boxy drop-shoulder streetwear proportion',
+      oversized: 'slouch oversized volume with extended drape',
+      fitted: 'cleaner, structured torso profile'
+    };
+
+    const chestSizes = { XS: '40"', S: '42"', M: '44"', L: '46"', XL: '48"', XXL: '50"' };
+    const lengthSizes = { XS: '27"', S: '28"', M: '29"', L: '30"', XL: '31"', XXL: '32"' };
+
+    if (recExplainEl) {
+      recExplainEl.innerText = `Based on ${heightCm} cm (${feet}'${inches}") and ${weightKg} kg with ${fitLabels[fitlabSelectedFit]}, Size ${recSize} delivers the intended 590 Labs silhouette with a ${chestSizes[recSize]} chest profile and ${lengthSizes[recSize]} garment length.`;
+    }
+
+    if (applyBtn) {
+      applyBtn.innerText = `SELECT SIZE ${recSize} & CLOSE ↗`;
+      applyBtn.dataset.recommendedSize = recSize;
+    }
+  }
+
+  function applyFitLabSize() {
+    const applyBtn = document.getElementById("fitlabApplySizeBtn");
+    const chosenSize = applyBtn ? applyBtn.dataset.recommendedSize || 'L' : 'L';
+    if (activePdpProduct && activePdpProduct.sizes && activePdpProduct.sizes.includes(chosenSize)) {
+      activePdpSize = chosenSize;
+      renderPdpSizes();
+      showToast(`Selected recommended Size ${chosenSize}.`, "success");
+    } else {
+      showToast(`Size ${chosenSize} applied to selection.`, "info");
+    }
+    const modal = document.getElementById("sizeGuideModal");
+    if (modal) modal.classList.remove("active");
+    if (!pdpModal || !pdpModal.classList.contains("active")) {
+      document.body.style.overflow = "";
+    }
+    SoundEngine.click();
+  }
+
+  function updateMeasurementsUnit(isMetric) {
+    fitlabIsMetric = isMetric;
+    const btnInches = document.getElementById("fitlabUnitInches");
+    const btnCm = document.getElementById("fitlabUnitCm");
+    const thChest = document.getElementById("thChest");
+    const thLength = document.getElementById("thLength");
+    const thShoulder = document.getElementById("thShoulder");
+    const thSleeve = document.getElementById("thSleeve");
+
+    if (btnInches) btnInches.classList.toggle("active", !isMetric);
+    if (btnCm) btnCm.classList.toggle("active", isMetric);
+
+    const unit = isMetric ? "CM" : "IN";
+    if (thChest) thChest.innerText = `CHEST (${unit})`;
+    if (thLength) thLength.innerText = `LENGTH (${unit})`;
+    if (thShoulder) thShoulder.innerText = `SHOULDER (${unit})`;
+    if (thSleeve) thSleeve.innerText = `SLEEVE (${unit})`;
+
+    const table = document.getElementById("fitlabMeasurementsTable");
+    if (!table) return;
+
+    table.querySelectorAll("tbody tr").forEach(row => {
+      const dataStr = Object.values(row.dataset)[0];
+      if (!dataStr) return;
+      const [c, l, sh, sl] = dataStr.split(",").map(parseFloat);
+      const cellChest = row.querySelector(".val-chest");
+      const cellLength = row.querySelector(".val-length");
+      const cellShoulder = row.querySelector(".val-shoulder");
+      const cellSleeve = row.querySelector(".val-sleeve");
+
+      if (isMetric) {
+        if (cellChest) cellChest.innerText = `${Math.round(c * 2.54)} cm`;
+        if (cellLength) cellLength.innerText = `${Math.round(l * 2.54)} cm`;
+        if (cellShoulder) cellShoulder.innerText = `${Math.round(sh * 2.54)} cm`;
+        if (cellSleeve) cellSleeve.innerText = `${Math.round(sl * 2.54)} cm`;
+      } else {
+        if (cellChest) cellChest.innerText = `${c}"`;
+        if (cellLength) cellLength.innerText = `${l}"`;
+        if (cellShoulder) cellShoulder.innerText = `${sh}"`;
+        if (cellSleeve) cellSleeve.innerText = `${sl}"`;
+      }
+    });
   }
 
   // --------------------------------------------------------------------------
@@ -694,13 +950,20 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    wishlistItemsList.innerHTML = items.map(p => `
+    const headerHtml = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding-bottom:0.75rem; border-bottom:1px solid var(--border-light);">
+        <span class="font-mono" style="font-size:0.72rem; color:var(--text-secondary);">${items.length} PIECES SAVED</span>
+        <button type="button" class="btn btn-outline btn-sm font-mono" onclick="window.moveAllWishlistToBag()" style="font-size:0.7rem; padding:0.35rem 0.65rem;">+ ADD ALL TO BAG</button>
+      </div>
+    `;
+
+    const itemsHtml = items.map(p => `
       <div class="cart-item-row">
         <img class="cart-item-img" src="${optimizeImageUrl(p.images[0], 140, 75)}" alt="${p.title}" loading="lazy" decoding="async" width="60" height="75" />
         <div class="cart-item-details">
           <div>
             <h4 class="cart-item-title">${p.title}</h4>
-            <div class="cart-item-meta">${p.gsm} • ${p.subtitle}</div>
+            <div class="cart-item-meta">${p.gsm || '280 GSM'} • ${p.subtitle || ''}</div>
             <div class="cart-item-price">${Store.formatPrice(p.price)}</div>
           </div>
           <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
@@ -710,7 +973,25 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       </div>
     `).join("");
+
+    wishlistItemsList.innerHTML = headerHtml + itemsHtml;
   }
+
+  function moveAllWishlistToBag() {
+    const items = Store.getWishlistItems();
+    if (!items || items.length === 0) return;
+    let addedCount = 0;
+    items.forEach(p => {
+      const defaultSize = (p.sizes && p.sizes[0]) || 'M';
+      Store.addToCart(p, defaultSize, 1);
+      addedCount++;
+    });
+    closeWishlist();
+    openCart();
+    renderCart();
+    showToast(`Added ${addedCount} saved pieces to your bag!`, "success");
+  }
+  window.moveAllWishlistToBag = moveAllWishlistToBag;
 
   window.closeWishlist = closeWishlist;
   window.openPdp = openPdp;
@@ -720,6 +1001,110 @@ document.addEventListener("DOMContentLoaded", () => {
     renderHomeProducts();
     renderShopCatalog();
   };
+
+  // --------------------------------------------------------------------------
+  // RECENTLY VIEWED & PERSONALIZED DISCOVERY (FEATURE 6)
+  // --------------------------------------------------------------------------
+  const RECENTLY_VIEWED_KEY = '590labs_recently_viewed';
+
+  function getRecentlyViewedIds() {
+    try {
+      return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function trackRecentlyViewed(product) {
+    if (!product || !product.id) return;
+    try {
+      let ids = getRecentlyViewedIds().filter(id => id !== product.id);
+      ids.unshift(product.id);
+      ids = ids.slice(0, 8); // Keep up to 8 pieces
+      localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(ids));
+      renderStorefrontRecentlyViewed();
+    } catch (e) {}
+  }
+
+  function renderStorefrontRecentlyViewed() {
+    const section = document.getElementById("storefrontRecentlyViewedSection");
+    const grid = document.getElementById("storefrontRecentlyViewedGrid");
+    if (!section || !grid) return;
+
+    const ids = getRecentlyViewedIds();
+    const catalog = window.PRODUCTS || (typeof PRODUCTS !== 'undefined' ? PRODUCTS : []) || [];
+    const viewedProducts = ids.map(id => catalog.find(p => p.id === id)).filter(Boolean);
+
+    if (viewedProducts.length === 0) {
+      section.style.display = "none";
+      return;
+    }
+
+    section.style.display = "block";
+    grid.innerHTML = viewedProducts.map(renderProductCard).join("");
+  }
+
+  function clearRecentlyViewed() {
+    localStorage.removeItem(RECENTLY_VIEWED_KEY);
+    renderStorefrontRecentlyViewed();
+    const recentWrap = document.getElementById("pdpRecentlyViewedContainer");
+    if (recentWrap) recentWrap.style.display = "none";
+    showToast("Browsing history cleared.", "info");
+  }
+
+  function renderPdpDiscovery(product) {
+    const recsGrid = document.getElementById("pdpRecommendationsGrid");
+    const recentGrid = document.getElementById("pdpRecentlyViewedGrid");
+    const recentWrap = document.getElementById("pdpRecentlyViewedContainer");
+    const catalog = window.PRODUCTS || (typeof PRODUCTS !== 'undefined' ? PRODUCTS : []) || [];
+
+    // Recommendations: related from product or fallback from catalog
+    if (recsGrid) {
+      let recs = product.related || [];
+      if (!recs || recs.length === 0) {
+        recs = catalog.filter(p => p.id !== product.id);
+      }
+      if (recs.length > 0) {
+        recsGrid.innerHTML = recs.slice(0, 4).map(p => `
+          <div class="pdp-recommendation-card" onclick="window.openPdp('${p.id}')">
+            <div class="pdp-rec-img-wrap">
+              <img class="pdp-rec-img" src="${optimizeImageUrl((p.images && p.images[0]) || '', 400, 75)}" alt="${p.title}" loading="lazy" />
+            </div>
+            <div class="pdp-rec-info">
+              <div class="pdp-rec-title">${p.title}</div>
+              <div class="pdp-rec-meta">${p.gsm || '280 GSM'} · ${p.fit || 'Boxy'}</div>
+              <div class="pdp-rec-price">${Store.formatPrice(p.price)}</div>
+            </div>
+          </div>
+        `).join("");
+      }
+    }
+
+    // Recently Viewed (excluding current)
+    if (recentGrid && recentWrap) {
+      const ids = getRecentlyViewedIds().filter(id => id !== product.id);
+      const recentProducts = ids.map(id => catalog.find(p => p.id === id)).filter(Boolean).slice(0, 4);
+      if (recentProducts.length > 0) {
+        recentWrap.style.display = "block";
+        recentGrid.innerHTML = recentProducts.map(p => `
+          <div class="pdp-recommendation-card" onclick="window.openPdp('${p.id}')">
+            <div class="pdp-rec-img-wrap">
+              <img class="pdp-rec-img" src="${optimizeImageUrl((p.images && p.images[0]) || '', 400, 75)}" alt="${p.title}" loading="lazy" />
+            </div>
+            <div class="pdp-rec-info">
+              <div class="pdp-rec-title">${p.title}</div>
+              <div class="pdp-rec-meta">${p.gsm || '280 GSM'} · ${p.fit || 'Boxy'}</div>
+              <div class="pdp-rec-price">${Store.formatPrice(p.price)}</div>
+            </div>
+          </div>
+        `).join("");
+      } else {
+        recentWrap.style.display = "none";
+      }
+    }
+  }
+
+  window.clearRecentlyViewed = clearRecentlyViewed;
 
   // --------------------------------------------------------------------------
   // LIVE SEARCH OVERLAY
@@ -779,28 +1164,40 @@ document.addEventListener("DOMContentLoaded", () => {
   // --------------------------------------------------------------------------
   function initDropCountdown() {
     const timerEl = document.getElementById("dropTimer");
-    if (!timerEl) return;
+    const daysEl = document.getElementById("cdDays");
+    const hoursEl = document.getElementById("cdHours");
+    const minsEl = document.getElementById("cdMins");
+    const secsEl = document.getElementById("cdSecs");
 
-    // Target date: 4 days from now
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 4);
-    targetDate.setHours(targetDate.getHours() + 18);
+    if (!timerEl && !daysEl) return;
+
+    // Recurring 4-day drop cycle anchored to a fixed start
+    const cycleDuration = 4 * 24 * 60 * 60 * 1000;
+    const anchor = new Date("2026-10-25T18:00:00Z").getTime();
 
     function update() {
-      const now = new Date();
-      const diff = targetDate - now;
-
-      if (diff <= 0) {
-        timerEl.innerText = "DROP LIVE NOW";
-        return;
-      }
+      const now = Date.now();
+      const elapsed = (now - anchor) % cycleDuration;
+      let diff = cycleDuration - elapsed;
+      if (diff < 0) diff += cycleDuration;
 
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-      timerEl.innerText = `${String(days).padStart(2, '0')}D ${String(hours).padStart(2, '0')}H ${String(mins).padStart(2, '0')}M ${String(secs).padStart(2, '0')}S`;
+      const dStr = String(days).padStart(2, '0');
+      const hStr = String(hours).padStart(2, '0');
+      const mStr = String(mins).padStart(2, '0');
+      const sStr = String(secs).padStart(2, '0');
+
+      if (timerEl) {
+        timerEl.innerText = `${dStr}D ${hStr}H ${mStr}M ${sStr}S`;
+      }
+      if (daysEl) daysEl.innerText = dStr;
+      if (hoursEl) hoursEl.innerText = hStr;
+      if (minsEl) minsEl.innerText = mStr;
+      if (secsEl) secsEl.innerText = sStr;
     }
 
     update();
@@ -989,9 +1386,29 @@ document.addEventListener("DOMContentLoaded", () => {
       const thumb = e.target.closest(".pdp-thumb-img");
       if (thumb && activePdpProduct) {
         const idx = parseInt(thumb.dataset.index, 10);
-        document.getElementById("pdpMainImg").src = optimizeImageUrl(activePdpProduct.images[idx], 1000, 80);
-        document.querySelectorAll(".pdp-thumb-img").forEach((t, i) => t.classList.toggle("active", i === idx));
+        switchPdpImage(idx);
         SoundEngine.click();
+        return;
+      }
+
+      // Gallery Prev / Next arrow buttons
+      if (e.target.closest("#pdpGalleryPrevBtn")) {
+        e.stopPropagation();
+        switchPdpImage(activeGalleryIndex - 1);
+        SoundEngine.click();
+        return;
+      }
+      if (e.target.closest("#pdpGalleryNextBtn")) {
+        e.stopPropagation();
+        switchPdpImage(activeGalleryIndex + 1);
+        SoundEngine.click();
+        return;
+      }
+
+      // Fullscreen Lightbox expand button
+      if (e.target.closest("#pdpGalleryExpandBtn")) {
+        e.stopPropagation();
+        openLightbox();
         return;
       }
 
@@ -1024,17 +1441,118 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    // Touch Swipe navigation on Main Image
+    const mainImgBox = document.getElementById("pdpMainImageBox");
+    if (mainImgBox) {
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      mainImgBox.addEventListener("touchstart", (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      mainImgBox.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diffX = touchEndX - touchStartX;
+        if (diffX < -40) {
+          switchPdpImage(activeGalleryIndex + 1); // Swipe left -> Next
+        } else if (diffX > 40) {
+          switchPdpImage(activeGalleryIndex - 1); // Swipe right -> Prev
+        }
+      }, { passive: true });
+
+      // Desktop Hover Zoom with cursor tracking
+      mainImgBox.addEventListener("mousemove", (e) => {
+        const img = document.getElementById("pdpMainImg");
+        if (!img || window.innerWidth <= 768) return;
+        const rect = mainImgBox.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        img.style.transformOrigin = `${x}% ${y}%`;
+        img.style.transform = "scale(1.35)";
+      });
+
+      mainImgBox.addEventListener("mouseleave", () => {
+        const img = document.getElementById("pdpMainImg");
+        if (!img) return;
+        img.style.transformOrigin = "center center";
+        img.style.transform = "scale(1)";
+      });
+    }
+
     // PDP Add to Cart Button
     const pdpAddBtn = document.getElementById("pdpAddToCartBtn");
     if (pdpAddBtn) {
       pdpAddBtn.addEventListener("click", () => {
         if (!activePdpProduct || !activePdpSize) return;
+        const stockQty = (activePdpProduct.stock && activePdpProduct.stock[activePdpSize] !== undefined) ? activePdpProduct.stock[activePdpSize] : 5;
+        if (stockQty === 0) {
+          showToast(`Size ${activePdpSize} is currently sold out.`, "warning");
+          return;
+        }
+
         Store.addToCart(activePdpProduct, activePdpSize, activePdpColorHex, 1);
+        pdpAddBtn.innerText = "ADDED TO BAG ✓";
+        setTimeout(() => {
+          if (pdpAddBtn) pdpAddBtn.innerText = "ADD TO BAG ↗";
+        }, 1200);
+
         showToast(`Added ${activePdpProduct.title} [${activePdpSize}] to bag!`, "success");
         closePdp();
         openCart();
       });
     }
+
+    // PDP Wishlist Toggle Button
+    const pdpWishBtn = document.getElementById("pdpWishlistToggleBtn");
+    if (pdpWishBtn) {
+      pdpWishBtn.addEventListener("click", () => {
+        if (!activePdpProduct) return;
+        const added = Store.toggleWishlist(activePdpProduct.id);
+        pdpWishBtn.classList.toggle("active", added);
+        showToast(added ? "Piece saved to wishlist" : "Piece removed from wishlist");
+        renderWishlist();
+        renderHomeProducts();
+        renderShopCatalog();
+      });
+    }
+
+    // Out of Stock Back-in-Stock Alert Form Submit
+    const stockAlertForm = document.getElementById("pdpStockAlertForm");
+    if (stockAlertForm) {
+      stockAlertForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById("pdpStockAlertEmail");
+        const feedback = document.getElementById("pdpStockAlertFeedback");
+        const submitBtn = document.getElementById("pdpStockAlertSubmitBtn");
+        if (!emailInput || !activePdpProduct) return;
+
+        try {
+          if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = "REGISTERING..."; }
+          const res = await API.stockAlerts.subscribe(activePdpProduct.id, activePdpSize, emailInput.value);
+          if (feedback) {
+            feedback.style.display = "block";
+            feedback.style.color = "#2B8A3E";
+            feedback.innerText = res.message || "✓ Priority confirmed. We will notify you when restocked.";
+          }
+          showToast(res.message || "Restock priority confirmed!", "success");
+          emailInput.value = "";
+        } catch (err) {
+          if (feedback) {
+            feedback.style.display = "block";
+            feedback.style.color = "#E03131";
+            feedback.innerText = err.message || "Could not register alert.";
+          }
+        } finally {
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = "NOTIFY ME ↗"; }
+        }
+      });
+    }
+
+    // Clear Storefront Recently Viewed Button
+    document.getElementById("clearRecentlyViewedBtn")?.addEventListener("click", () => {
+      clearRecentlyViewed();
+    });
 
     // Pincode Estimator
     const checkPincodeBtn = document.getElementById("pdpCheckPincodeBtn");
@@ -1058,15 +1576,113 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Size Guide Modal Triggers
+  // Lightbox Modal Controls
+  const lightboxModal = document.getElementById("pdpLightboxModal");
+  if (lightboxModal) {
+    document.getElementById("lightboxCloseBtn")?.addEventListener("click", closeLightbox);
+    document.getElementById("lightboxZoomToggleBtn")?.addEventListener("click", toggleLightboxZoom);
+    document.getElementById("lightboxPrevBtn")?.addEventListener("click", () => switchPdpImage(activeGalleryIndex - 1));
+    document.getElementById("lightboxNextBtn")?.addEventListener("click", () => switchPdpImage(activeGalleryIndex + 1));
+    document.getElementById("lightboxImgWrap")?.addEventListener("click", toggleLightboxZoom);
+    lightboxModal.addEventListener("click", (e) => {
+      if (e.target === lightboxModal || e.target.id === "lightboxBody") {
+        closeLightbox();
+      }
+    });
+  }
+
+  // Size Guide & Smart Fit Lab Modal Triggers
   document.addEventListener("click", (e) => {
-    if (e.target.closest(".pdp-size-guide-trigger")) {
+    // 1. "⚡ FIND MY SIZE" trigger
+    if (e.target.closest("#pdpFindSizeTrigger")) {
       sizeGuideModal.classList.add("active");
+      document.getElementById("fitlabTabBtnRec")?.click();
+      calculateFitLabRecommendation();
       SoundEngine.click();
+      return;
     }
+
+    // 2. "SIZE CHART" trigger
+    if (e.target.closest("#pdpSizeGuideTrigger") || e.target.closest(".pdp-size-guide-trigger")) {
+      sizeGuideModal.classList.add("active");
+      document.getElementById("fitlabTabBtnTable")?.click();
+      SoundEngine.click();
+      return;
+    }
+
+    // 3. Close Size Guide
     if (e.target.closest("#sizeGuideCloseBtn") || e.target === sizeGuideModal) {
       sizeGuideModal.classList.remove("active");
       SoundEngine.click();
+      return;
+    }
+
+    // 4. Fit Lab Tab switching
+    const fitTab = e.target.closest(".fitlab-tab-btn");
+    if (fitTab) {
+      document.querySelectorAll(".fitlab-tab-btn").forEach(b => b.classList.remove("active"));
+      fitTab.classList.add("active");
+      const isRec = fitTab.dataset.tab === "rec";
+      document.getElementById("fitlabPanelRec")?.classList.toggle("active", isRec);
+      document.getElementById("fitlabPanelTable")?.classList.toggle("active", !isRec);
+      SoundEngine.click();
+      return;
+    }
+
+    // 5. Aesthetic preference radio cards
+    const radioCard = e.target.closest(".fitlab-radio-card");
+    if (radioCard) {
+      document.querySelectorAll(".fitlab-radio-card").forEach(c => c.classList.remove("active"));
+      radioCard.classList.add("active");
+      fitlabSelectedFit = radioCard.dataset.fit || "boxy";
+      calculateFitLabRecommendation();
+      SoundEngine.click();
+      return;
+    }
+
+    // 6. Apply recommended size
+    if (e.target.closest("#fitlabApplySizeBtn")) {
+      applyFitLabSize();
+      return;
+    }
+
+    // 7. Unit toggle
+    if (e.target.closest("#fitlabUnitInches")) {
+      updateMeasurementsUnit(false);
+      SoundEngine.click();
+      return;
+    }
+    if (e.target.closest("#fitlabUnitCm")) {
+      updateMeasurementsUnit(true);
+      SoundEngine.click();
+      return;
+    }
+  });
+
+  // Fit Lab Slider input listeners
+  document.getElementById("fitlabHeightRange")?.addEventListener("input", calculateFitLabRecommendation);
+  document.getElementById("fitlabWeightRange")?.addEventListener("input", calculateFitLabRecommendation);
+
+  // Global Keyboard Navigation (Escape, Left/Right arrows)
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (lightboxModal && lightboxModal.classList.contains("active")) {
+        closeLightbox();
+      } else if (sizeGuideModal && sizeGuideModal.classList.contains("active")) {
+        sizeGuideModal.classList.remove("active");
+      } else if (pdpModal && pdpModal.classList.contains("active")) {
+        closePdp();
+      } else if (cartDrawer && cartDrawer.classList.contains("active")) {
+        closeCart();
+      }
+    } else if (e.key === "ArrowLeft") {
+      if ((lightboxModal && lightboxModal.classList.contains("active")) || (pdpModal && pdpModal.classList.contains("active"))) {
+        switchPdpImage(activeGalleryIndex - 1);
+      }
+    } else if (e.key === "ArrowRight") {
+      if ((lightboxModal && lightboxModal.classList.contains("active")) || (pdpModal && pdpModal.classList.contains("active"))) {
+        switchPdpImage(activeGalleryIndex + 1);
+      }
     }
   });
 
@@ -2128,6 +2744,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderHomeProducts();
         renderShopCatalog();
         renderWishlist();
+        renderStorefrontRecentlyViewed();
       }
     } catch (e) {
       console.warn('[590] Storefront product sync error:', e.message);
@@ -2138,6 +2755,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderHomeProducts();
   renderWishlist();
   renderCart();
+  renderStorefrontRecentlyViewed();
   updateAuthUI();
   navigateTo(window.location.hash || "#home");
   syncProductsFromBackend();

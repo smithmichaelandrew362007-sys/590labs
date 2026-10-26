@@ -608,11 +608,36 @@
     const container = document.getElementById('imagePreviewContainer');
     if (!container) return;
     container.innerHTML = state.uploadedImages.map((url, idx) => `
-      <div style="position:relative; display:inline-block;">
-        <img src="${url}" class="image-preview-item" alt="preview" />
-        <button type="button" onclick="window.adminApp.removeUploadedImage(${idx})" style="position:absolute; top:-6px; right:-6px; background:var(--danger); color:#fff; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer;">✕</button>
+      <div class="image-preview-card" style="position:relative; display:inline-flex; flex-direction:column; gap:0.35rem; padding:0.4rem; background:var(--bg-subtle); border:1px solid ${idx === 0 ? '#111' : 'var(--border-medium)'}; border-radius:var(--radius-xs);">
+        <div style="position:relative; width:80px; height:95px; overflow:hidden; border-radius:3px;">
+          <img src="${url}" style="width:100%; height:100%; object-fit:cover;" alt="product photo ${idx + 1}" />
+          ${idx === 0 ? '<span style="position:absolute; bottom:3px; left:3px; background:#111; color:#fff; font-family:var(--font-mono); font-size:8px; font-weight:700; padding:1px 4px; border-radius:2px;">PRIMARY</span>' : ''}
+          <button type="button" onclick="window.adminApp.removeUploadedImage(${idx})" title="Remove image" style="position:absolute; top:3px; right:3px; background:var(--danger); color:#fff; border:none; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+        </div>
+        <div style="display:flex; gap:0.25rem; justify-content:center;">
+          ${idx > 0 ? `<button type="button" class="btn btn-outline btn-sm" onclick="window.adminApp.moveImage(${idx}, -1)" title="Move left" style="padding:1px 5px; font-size:9px;">←</button>` : ''}
+          ${idx > 0 ? `<button type="button" class="btn btn-sm" onclick="window.adminApp.makePrimaryImage(${idx})" title="Set as primary" style="padding:1px 5px; font-size:9px; background:#111; color:#fff;">★</button>` : ''}
+          ${idx < state.uploadedImages.length - 1 ? `<button type="button" class="btn btn-outline btn-sm" onclick="window.adminApp.moveImage(${idx}, 1)" title="Move right" style="padding:1px 5px; font-size:9px;">→</button>` : ''}
+        </div>
       </div>
     `).join('');
+  }
+
+  function makePrimaryImage(idx) {
+    if (idx <= 0 || idx >= state.uploadedImages.length) return;
+    const [img] = state.uploadedImages.splice(idx, 1);
+    state.uploadedImages.unshift(img);
+    renderImagePreviews();
+    showToast('Primary image updated.');
+  }
+
+  function moveImage(idx, direction) {
+    const targetIdx = idx + direction;
+    if (targetIdx < 0 || targetIdx >= state.uploadedImages.length) return;
+    const temp = state.uploadedImages[idx];
+    state.uploadedImages[idx] = state.uploadedImages[targetIdx];
+    state.uploadedImages[targetIdx] = temp;
+    renderImagePreviews();
   }
 
   function removeUploadedImage(idx) {
@@ -744,6 +769,8 @@
           }
         });
       });
+
+      state.inventory = rows;
 
       if (rows.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--text-muted);">No SKUs match your query.</td></tr>`;
@@ -1082,6 +1109,32 @@
               <td><strong>${formatPrice(c.revenue)}</strong></td>
             </tr>
           `).join('');
+        }
+      }
+
+      // Customer Stock Alerts & Back-in-Stock Demand Matrix
+      const alertsBody = document.getElementById('anStockAlertsBody');
+      if (alertsBody) {
+        try {
+          const alertRes = await api('/stock-alerts');
+          const alerts = alertRes.alerts || [];
+          state.stockAlerts = alerts;
+          if (alerts.length === 0) {
+            alertsBody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 1.5rem; color: var(--text-muted);">No restock alerts requested yet.</td></tr>`;
+          } else {
+            alertsBody.innerHTML = alerts.map(al => `
+              <tr>
+                <td><strong>${al.product_title || al.product_id}</strong></td>
+                <td><span class="badge" style="background:#111; color:#fff;">${al.size}</span></td>
+                <td>${al.email}</td>
+                <td><strong>${al.current_stock !== null && al.current_stock !== undefined ? `${al.current_stock} pcs` : '0 pcs'}</strong></td>
+                <td><span class="badge ${al.status === 'pending' ? 'badge-warning' : 'badge-success'}">${al.status.toUpperCase()}</span></td>
+                <td class="font-mono" style="font-size:0.75rem;">${new Date(al.created_at).toLocaleDateString('en-IN')}</td>
+              </tr>
+            `).join('');
+          }
+        } catch (alertErr) {
+          console.warn('Could not load stock alerts:', alertErr);
         }
       }
     } catch (e) {
@@ -1518,6 +1571,60 @@
       }
     });
 
+    // CSV Export Handlers
+    document.getElementById('btnExportInventoryCsv')?.addEventListener('click', () => {
+      const items = state.inventory || [];
+      if (items.length === 0) {
+        showToast('No inventory data to export.', 'warning');
+        return;
+      }
+      const headers = ['SKU', 'Product Title', 'Size', 'Color Code', 'Stock Quantity'];
+      const rows = items.map(v => [v.sku, v.productTitle, v.size, v.color_code || '', v.stock_quantity]);
+      downloadCsv(`590labs_inventory_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+    });
+
+    document.getElementById('btnExportOrdersCsv')?.addEventListener('click', () => {
+      const orders = state.orders || [];
+      if (orders.length === 0) {
+        showToast('No orders to export.', 'warning');
+        return;
+      }
+      const headers = ['Order ID', 'Customer Name', 'Email', 'Phone', 'Subtotal', 'Discount', 'Total Amount', 'Payment Method', 'Payment Status', 'Fulfillment Status', 'Date'];
+      const rows = orders.map(o => [
+        o.id,
+        o.customer_name,
+        o.customer_email,
+        o.customer_phone,
+        o.subtotal,
+        o.discount,
+        o.total_amount,
+        o.payment_method,
+        o.payment_status,
+        o.fulfillment_status,
+        new Date(o.created_at).toISOString()
+      ]);
+      downloadCsv(`590labs_orders_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+    });
+
+    document.getElementById('btnExportStockAlertsCsv')?.addEventListener('click', () => {
+      const alerts = state.stockAlerts || [];
+      if (alerts.length === 0) {
+        showToast('No stock alerts to export.', 'warning');
+        return;
+      }
+      const headers = ['Product Title', 'Product ID', 'Size', 'Customer Email', 'Current Stock', 'Status', 'Date Requested'];
+      const rows = alerts.map(a => [
+        a.product_title || a.product_id,
+        a.product_id,
+        a.size,
+        a.email,
+        a.current_stock ?? 0,
+        a.status,
+        new Date(a.created_at).toISOString()
+      ]);
+      downloadCsv(`590labs_stock_alerts_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+    });
+
     // Sidebar Logout
     document.getElementById('sidebarLogoutBtn')?.addEventListener('click', async () => {
       try {
@@ -1533,6 +1640,25 @@
       showToast('Logged out successfully.');
     });
   });
+
+  // CSV Export Utility
+  function downloadCsv(filename, headers, rows) {
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(val => `"${String(val ?? '').replace(/"/g, '""')}"`).join(','))
+    ].join('\r\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast(`Exported ${filename}`, 'success');
+  }
 
   // Debounce helper
   function debounce(func, wait) {
@@ -1555,6 +1681,8 @@
     updateProductStatus,
     deleteProduct,
     removeUploadedImage,
+    makePrimaryImage,
+    moveImage,
     editCategory,
     deleteCategory,
     updateInventoryDirect,

@@ -234,6 +234,16 @@ function initDatabase() {
       created_at TEXT DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS stock_alerts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+      product_title TEXT,
+      size TEXT NOT NULL,
+      email TEXT NOT NULL,
+      status TEXT DEFAULT 'pending', -- 'pending' | 'notified'
+      created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    );
+
     -- Indices for quick querying
     CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
     CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
@@ -249,6 +259,7 @@ function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug);
     CREATE INDEX IF NOT EXISTS idx_activity_admin ON activity_logs(admin_id);
     CREATE INDEX IF NOT EXISTS idx_activity_created ON activity_logs(created_at);
+    CREATE INDEX IF NOT EXISTS idx_stock_alerts ON stock_alerts(product_id, size);
   `);
 
   // Seed default streetwear categories if empty

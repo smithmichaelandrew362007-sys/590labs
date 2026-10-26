@@ -271,6 +271,31 @@
         </div>
       </div>
 
+      <!-- SCHEDULED DROP RADAR & LIVE LAUNCH COUNTDOWN (FEATURE 9) -->
+      <section class="drop-countdown-strip" id="dropCountdownStrip">
+        <div class="container">
+          <div class="drop-countdown-bar">
+            <div class="drop-countdown-left">
+              <span class="pulse-dot"></span>
+              <span class="drop-countdown-label font-mono">NEXT ARCHIVAL RELEASE // CONCEPT 02</span>
+              <strong class="drop-countdown-title">CYBERPUNK DISTORTION HOODIE & PARACHUTE CARGO</strong>
+            </div>
+            <div class="drop-countdown-timer" id="dropLiveCountdown">
+              <div class="countdown-unit"><span class="unit-val" id="cdDays">02</span><span class="unit-lbl">DAYS</span></div>
+              <span class="colon">:</span>
+              <div class="countdown-unit"><span class="unit-val" id="cdHours">14</span><span class="unit-lbl">HRS</span></div>
+              <span class="colon">:</span>
+              <div class="countdown-unit"><span class="unit-val" id="cdMins">38</span><span class="unit-lbl">MIN</span></div>
+              <span class="colon">:</span>
+              <div class="countdown-unit"><span class="unit-val" id="cdSecs">45</span><span class="unit-lbl">SEC</span></div>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm font-mono" id="notifyDropBtn" onclick="document.getElementById('dropRadarForm')?.scrollIntoView({behavior:'smooth'}); document.getElementById('radarEmailInput')?.focus();">
+              SET DROP REMINDER ↗
+            </button>
+          </div>
+        </div>
+      </section>
+
       <!-- NEW DROPS & BESTSELLERS (The Main Shopping Grid) -->
       <section class="section-padding container">
         <div class="section-header">
@@ -353,6 +378,25 @@
               <button type="submit" class="btn btn-lime">GET EARLY ACCESS</button>
             </form>
           </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           STOREFRONT RECENTLY VIEWED ARCHIVE (FEATURE 6)
+           ==================================================================== -->
+      <section class="section-padding container" id="storefrontRecentlyViewedSection" style="display:none; padding-bottom:1rem;">
+        <div class="section-header" style="margin-bottom:1.5rem;">
+          <div>
+            <span class="section-label">YOUR RECENT BROWSING HISTORY</span>
+            <h2 class="section-title" style="font-size:1.6rem;">RECENTLY VIEWED PIECES</h2>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm font-mono" id="clearRecentlyViewedBtn" style="font-size:0.7rem;">CLEAR HISTORY</button>
+        </div>
+        <div class="products-grid" id="storefrontRecentlyViewedGrid">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </section>
+
       <!-- ====================================================================
            CLEAR SECTION BOUNDARY
            03 // STORE INTELLIGENCE — FREQUENTLY ASKED QUESTIONS
@@ -1272,8 +1316,18 @@
       <div class="pdp-layout">
         <!-- Gallery -->
         <div class="pdp-gallery-wrap">
-          <div class="pdp-main-image-box">
-            <img class="pdp-main-img" id="pdpMainImg" src="" alt="Product View" />
+          <div class="pdp-main-image-box" id="pdpMainImageBox">
+            <img class="pdp-main-img zoomable" id="pdpMainImg" src="" alt="Product View" />
+            <span class="pdp-gallery-counter" id="pdpGalleryCounter">1 / 1</span>
+            <button type="button" class="pdp-gallery-nav pdp-gallery-prev" id="pdpGalleryPrevBtn" aria-label="Previous Image">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <button type="button" class="pdp-gallery-nav pdp-gallery-next" id="pdpGalleryNextBtn" aria-label="Next Image">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+            <button type="button" class="pdp-gallery-expand-btn" id="pdpGalleryExpandBtn" aria-label="Expand Fullscreen Lightbox">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+            </button>
           </div>
           <div class="pdp-thumbs-row" id="pdpThumbs">
             <!-- Thumbs injected by app.js -->
@@ -1305,21 +1359,48 @@
             </div>
           </div>
 
-          <!-- Sizes -->
+          <!-- Sizes & Size Finder -->
           <div class="pdp-attribute-box">
             <div class="pdp-attr-header">
               <span>CHOOSE SIZE</span>
-              <span class="pdp-size-guide-trigger">SIZE GUIDE (CM / IN)</span>
+              <div style="display:flex; gap:0.6rem; align-items:center;">
+                <button type="button" class="btn-link font-mono" id="pdpFindSizeTrigger" style="background:none; border:none; text-decoration:underline; font-size:0.7rem; cursor:pointer; font-weight:700; color:var(--text-primary); padding:0;">⚡ FIND MY SIZE</button>
+                <span style="color:var(--text-muted); font-size:0.7rem;">|</span>
+                <span class="pdp-size-guide-trigger" id="pdpSizeGuideTrigger" style="cursor:pointer; font-size:0.7rem;">SIZE CHART</span>
+              </div>
             </div>
             <div class="pdp-sizes-list" id="pdpSizes">
               <!-- Sizes injected by app.js -->
             </div>
           </div>
 
-          <!-- Add to Cart CTA -->
-          <button class="btn btn-lime btn-block btn-lg" id="pdpAddToCartBtn" style="margin-top:0.5rem;">
-            ADD TO BAG ↗
-          </button>
+          <!-- Add to Cart CTA & Wishlist Button -->
+          <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+            <button class="btn btn-lime btn-lg" id="pdpAddToCartBtn" style="flex:1;">
+              ADD TO BAG ↗
+            </button>
+            <button type="button" class="btn btn-outline btn-lg" id="pdpWishlistToggleBtn" title="Save piece to wishlist" aria-label="Save to Wishlist" style="width:54px; min-width:54px; padding:0; display:flex; align-items:center; justify-content:center;">
+              <svg id="pdpWishlistIcon" style="width:20px; height:20px; transition:transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), fill 0.2s ease;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Out of Stock Notification & Back-in-Stock Alert Form (Feature 7) -->
+          <div id="pdpStockAlertContainer" style="display:none; margin-top:0.75rem; border:1px solid var(--border-medium); background:var(--bg-subtle); padding:1rem; border-radius:var(--radius-xs);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+              <span class="font-mono" style="font-size:0.72rem; font-weight:700; color:var(--text-primary); letter-spacing:0.05em;">⚡ DROP RESTOCK ALERT</span>
+              <span class="badge font-mono" style="font-size:0.65rem; background:#111; color:#fff;" id="pdpStockAlertSizeLabel">SIZE M</span>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.6rem; line-height:1.4;">
+              This size is temporarily archived. Enter your email to receive priority drop notification before public restock.
+            </p>
+            <form id="pdpStockAlertForm" style="display:flex; gap:0.4rem;">
+              <input type="email" class="form-input" id="pdpStockAlertEmail" placeholder="ENTER YOUR EMAIL FOR RESTOCK ALERT" required style="font-size:0.75rem; padding:0.5rem 0.75rem; flex:1;" />
+              <button type="submit" class="btn btn-lime btn-sm" id="pdpStockAlertSubmitBtn" style="white-space:nowrap; padding:0.5rem 1rem;">NOTIFY ME ↗</button>
+            </form>
+            <div id="pdpStockAlertFeedback" style="display:none; margin-top:0.5rem; font-family:var(--font-mono); font-size:0.72rem; color:var(--text-primary);"></div>
+          </div>
 
           <!-- Delivery Pincode Checker -->
           <div class="pdp-pincode-box">
@@ -1437,87 +1518,228 @@
 
         </div>
       </div>
+
+      <!-- Recommendations & Recently Viewed Shelves inside PDP (Feature 6) -->
+      <div class="pdp-discovery-section" id="pdpDiscoverySection" style="margin-top:2rem; border-top:1px solid var(--border-light); padding-top:1.5rem;">
+        <!-- More From This Drop / You Might Also Like -->
+        <div style="margin-bottom:1.75rem;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.85rem;">
+            <span class="section-label" style="margin:0;">COMPLETE THE SILHOUETTE</span>
+            <span class="font-mono" style="font-size:0.7rem; color:var(--text-secondary);">MORE FROM THIS DROP</span>
+          </div>
+          <div class="pdp-recommendations-grid" id="pdpRecommendationsGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:0.85rem;">
+            <!-- Populated dynamically by app.js -->
+          </div>
+        </div>
+
+        <!-- Recently Viewed Pieces Inside PDP -->
+        <div id="pdpRecentlyViewedContainer" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.85rem;">
+            <span class="section-label" style="margin:0;">ARCHIVE HISTORY</span>
+            <span class="font-mono" style="font-size:0.7rem; color:var(--text-secondary);">RECENTLY EXPLORED</span>
+          </div>
+          <div class="pdp-recommendations-grid" id="pdpRecentlyViewedGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:0.85rem;">
+            <!-- Populated dynamically by app.js -->
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- ========================================================================
-       6. Size Guide Modal
+       6. 590 LABS FIT LAB & SMART SIZE FINDER MODAL
        ======================================================================== -->
   <div class="size-guide-modal" id="sizeGuideModal" role="dialog" aria-modal="true">
-    <div class="size-guide-card">
+    <div class="size-guide-card" style="max-width: 760px;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
         <div>
           <span class="section-label">590 LABS FIT LAB</span>
-          <h3 style="font-size:1.3rem;">GARMENT MEASUREMENTS (CM / IN)</h3>
+          <h3 style="font-size:1.3rem;">SMART SIZE FINDER & MEASUREMENTS</h3>
         </div>
         <button class="drawer-close-btn" id="sizeGuideCloseBtn" aria-label="Close Size Guide">✕</button>
       </div>
 
-      <p style="font-size:0.85rem; color:var(--text-secondary);">
-        All 590 LABS tops are cut with dropped shoulders and a boxy relaxed drape. For a true oversized aesthetic, select your standard size. For a more conventional fit, consider sizing down by one.
-      </p>
-
-      <div class="table-responsive">
-        <table class="size-table">
-          <thead>
-            <tr>
-              <th>SIZE</th>
-              <th>CHEST (IN)</th>
-              <th>LENGTH (IN)</th>
-              <th>SHOULDER (IN)</th>
-              <th>SLEEVE (IN)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>XS</strong></td>
-              <td>40"</td>
-              <td>27"</td>
-              <td>20"</td>
-              <td>8.5"</td>
-            </tr>
-            <tr>
-              <td><strong>S</strong></td>
-              <td>42"</td>
-              <td>28"</td>
-              <td>21"</td>
-              <td>9.0"</td>
-            </tr>
-            <tr>
-              <td><strong>M</strong></td>
-              <td>44"</td>
-              <td>29"</td>
-              <td>22"</td>
-              <td>9.5"</td>
-            </tr>
-            <tr>
-              <td><strong>L</strong></td>
-              <td>46"</td>
-              <td>30"</td>
-              <td>23"</td>
-              <td>10.0"</td>
-            </tr>
-            <tr>
-              <td><strong>XL</strong></td>
-              <td>48"</td>
-              <td>31"</td>
-              <td>24"</td>
-              <td>10.5"</td>
-            </tr>
-            <tr>
-              <td><strong>XXL</strong></td>
-              <td>50"</td>
-              <td>32"</td>
-              <td>25"</td>
-              <td>11.0"</td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Fit Lab Navigation Tabs -->
+      <div class="fitlab-tabs">
+        <button type="button" class="fitlab-tab-btn active" id="fitlabTabBtnRec" data-tab="rec">⚡ SMART FIT RECOMMENDER</button>
+        <button type="button" class="fitlab-tab-btn" id="fitlabTabBtnTable" data-tab="table">📏 GARMENT MEASUREMENTS</button>
       </div>
 
-      <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-primary); font-weight:600;">
-        MODEL FIT REFERENCE: Male model is 6'1" wearing size L. Female model is 5'8" wearing size M.
+      <!-- TAB 1: Smart Fit Recommender -->
+      <div class="fitlab-panel active" id="fitlabPanelRec">
+        <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:1.25rem;">
+          Our streetwear is cut with architectural dropped shoulders. Select your measurements and fit preference for an exact size calculation.
+        </p>
+
+        <div class="fitlab-grid">
+          <!-- Inputs Column -->
+          <div style="display:flex; flex-direction:column; gap:1.1rem;">
+            <div>
+              <label class="form-label font-mono" style="font-size:0.7rem;">1. PREFERRED FIT AESTHETIC</label>
+              <div class="fitlab-aesthetic-options" id="fitlabAestheticOptions">
+                <div class="fitlab-radio-card active" data-fit="boxy">
+                  <div>
+                    <strong style="font-size:0.85rem; display:block;">BOXY STREETWEAR</strong>
+                    <span style="font-size:0.72rem; color:var(--text-secondary);">True to size · Signature relaxed drop-shoulder</span>
+                  </div>
+                  <span style="font-family:var(--font-mono); font-size:0.75rem;">STD</span>
+                </div>
+                <div class="fitlab-radio-card" data-fit="oversized">
+                  <div>
+                    <strong style="font-size:0.85rem; display:block;">OVERSIZED SLOUCH</strong>
+                    <span style="font-size:0.72rem; color:var(--text-secondary);">Dramatic volume · +1 Size streetwear drape</span>
+                  </div>
+                  <span style="font-family:var(--font-mono); font-size:0.75rem;">+1</span>
+                </div>
+                <div class="fitlab-radio-card" data-fit="fitted">
+                  <div>
+                    <strong style="font-size:0.85rem; display:block;">STRUCTURED FIT</strong>
+                    <span style="font-size:0.72rem; color:var(--text-secondary);">Cleaner profile · Sits closer to torso</span>
+                  </div>
+                  <span style="font-family:var(--font-mono); font-size:0.75rem;">-1</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Height Input -->
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <label class="form-label font-mono" style="font-size:0.7rem; margin:0;">2. YOUR HEIGHT</label>
+                <span class="font-mono" id="fitlabHeightDisplay" style="font-size:0.75rem; font-weight:700;">178 CM (5'10")</span>
+              </div>
+              <input type="range" id="fitlabHeightRange" min="155" max="198" value="178" class="form-range" style="width:100%; accent-color:#111111;" />
+            </div>
+
+            <!-- Weight Input -->
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+                <label class="form-label font-mono" style="font-size:0.7rem; margin:0;">3. YOUR WEIGHT</label>
+                <span class="font-mono" id="fitlabWeightDisplay" style="font-size:0.75rem; font-weight:700;">72 KG</span>
+              </div>
+              <input type="range" id="fitlabWeightRange" min="45" max="110" value="72" class="form-range" style="width:100%; accent-color:#111111;" />
+            </div>
+          </div>
+
+          <!-- Recommendation Output Column -->
+          <div style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="fitlab-recommendation-card">
+              <span class="font-mono" style="font-size:0.68rem; color:#BDBDBD; letter-spacing:0.08em;">590 LABS ALGORITHM RESULT</span>
+              <div class="fitlab-rec-size" id="fitlabRecSize">SIZE L</div>
+              <p class="fitlab-rec-explain" id="fitlabRecExplain">
+                Based on 178 cm (5'10") and 72 kg with Boxy Streetwear preference, Size L gives the intended 590 Labs drape with relaxed dropped shoulders and a 46" chest profile.
+              </p>
+              <div style="font-family:var(--font-mono); font-size:0.68rem; color:#A1A1A1; margin-top:0.4rem;">
+                GARMENT CHEST: 46" · LENGTH: 30"
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-lime btn-block btn-lg" id="fitlabApplySizeBtn" style="margin-top:1rem;">
+              SELECT SIZE L & CLOSE ↗
+            </button>
+          </div>
+        </div>
       </div>
+
+      <!-- TAB 2: Garment Measurements Table -->
+      <div class="fitlab-panel" id="fitlabPanelTable">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; flex-wrap:wrap; gap:0.5rem;">
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin:0;">
+            All measurements represent the actual garment laid flat.
+          </p>
+          <div class="fitlab-unit-toggle">
+            <button type="button" class="fitlab-unit-btn active" id="fitlabUnitInches">INCHES (IN)</button>
+            <button type="button" class="fitlab-unit-btn" id="fitlabUnitCm">CENTIMETERS (CM)</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="size-table" id="fitlabMeasurementsTable">
+            <thead>
+              <tr>
+                <th>SIZE</th>
+                <th id="thChest">CHEST (IN)</th>
+                <th id="thLength">LENGTH (IN)</th>
+                <th id="thShoulder">SHOULDER (IN)</th>
+                <th id="thSleeve">SLEEVE (IN)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-xs="40,27,20,8.5">
+                <td><strong>XS</strong></td>
+                <td class="val-chest">40"</td>
+                <td class="val-length">27"</td>
+                <td class="val-shoulder">20"</td>
+                <td class="val-sleeve">8.5"</td>
+              </tr>
+              <tr data-s="42,28,21,9.0">
+                <td><strong>S</strong></td>
+                <td class="val-chest">42"</td>
+                <td class="val-length">28"</td>
+                <td class="val-shoulder">21"</td>
+                <td class="val-sleeve">9.0"</td>
+              </tr>
+              <tr data-m="44,29,22,9.5">
+                <td><strong>M</strong></td>
+                <td class="val-chest">44"</td>
+                <td class="val-length">29"</td>
+                <td class="val-shoulder">22"</td>
+                <td class="val-sleeve">9.5"</td>
+              </tr>
+              <tr data-l="46,30,23,10.0">
+                <td><strong>L</strong></td>
+                <td class="val-chest">46"</td>
+                <td class="val-length">30"</td>
+                <td class="val-shoulder">23"</td>
+                <td class="val-sleeve">10.0"</td>
+              </tr>
+              <tr data-xl="48,31,24,10.5">
+                <td><strong>XL</strong></td>
+                <td class="val-chest">48"</td>
+                <td class="val-length">31"</td>
+                <td class="val-shoulder">24"</td>
+                <td class="val-sleeve">10.5"</td>
+              </tr>
+              <tr data-xxl="50,32,25,11.0">
+                <td><strong>XXL</strong></td>
+                <td class="val-chest">50"</td>
+                <td class="val-length">32"</td>
+                <td class="val-shoulder">25"</td>
+                <td class="val-sleeve">11.0"</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-primary); font-weight:600; margin-top:0.75rem;">
+          MODEL REFERENCE: Male model is 6'1" wearing Size L. Female model is 5'8" wearing Size M.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       7. High-Resolution Fullscreen Lightbox Modal
+       ======================================================================== -->
+  <div class="pdp-lightbox-modal" id="pdpLightboxModal" role="dialog" aria-modal="true" aria-label="Fullscreen Product Photography">
+    <div class="pdp-lightbox-header">
+      <div class="pdp-lightbox-counter" id="lightboxCounter">IMAGE 1 OF 1</div>
+      <div class="pdp-lightbox-actions">
+        <button type="button" class="pdp-lightbox-btn" id="lightboxZoomToggleBtn" aria-label="Toggle Image Zoom" title="Toggle 2x Zoom">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+        </button>
+        <button type="button" class="pdp-lightbox-btn pdp-lightbox-close" id="lightboxCloseBtn" aria-label="Close Lightbox">✕</button>
+      </div>
+    </div>
+    <div class="pdp-lightbox-body" id="lightboxBody">
+      <button type="button" class="pdp-lightbox-nav pdp-lightbox-prev" id="lightboxPrevBtn" aria-label="Previous image">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <div class="pdp-lightbox-img-wrap" id="lightboxImgWrap">
+        <img class="pdp-lightbox-img" id="lightboxImg" src="" alt="High-Resolution Streetwear Product View" />
+      </div>
+      <button type="button" class="pdp-lightbox-nav pdp-lightbox-next" id="lightboxNextBtn" aria-label="Next image">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
     </div>
   </div>
 

@@ -378,6 +378,7 @@
             </div>
             <div style="display:flex; gap:0.5rem; align-items:center;">
               <input type="text" id="inventorySearchInput" class="form-input" placeholder="SEARCH SKU OR PRODUCT..." style="max-width: 260px;" />
+              <button type="button" class="btn btn-outline btn-sm font-mono" id="btnExportInventoryCsv">EXPORT CSV ↗</button>
             </div>
           </div>
 
@@ -410,6 +411,9 @@
             <div>
               <h1 class="admin-page-title">ORDERS FULFILLMENT</h1>
               <p class="admin-page-desc">Process orders, update tracking numbers, and manage delivery statuses.</p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-outline btn-sm font-mono" id="btnExportOrdersCsv">EXPORT ORDERS CSV ↗</button>
             </div>
           </div>
 
@@ -602,6 +606,34 @@
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+
+          <!-- Restock Alerts & Demand Forecasting (Feature 10) -->
+          <div class="admin-card" style="margin-top: 1.5rem;">
+            <div class="admin-card-header" style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h3 class="admin-card-title">RESTOCK ALERTS & BACK-IN-STOCK DEMAND FORECASTING</h3>
+                <p class="font-mono" style="font-size:0.72rem; color:var(--text-muted); margin:0.25rem 0 0;">Customer demand logged via out-of-stock PDP modal for manufacturing prioritization.</p>
+              </div>
+              <button type="button" class="btn btn-outline btn-sm font-mono" id="btnExportStockAlertsCsv">EXPORT ALERTS CSV ↗</button>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>PIECE TITLE</th>
+                    <th>SIZE</th>
+                    <th>CUSTOMER EMAIL</th>
+                    <th>CURRENT STOCK</th>
+                    <th>STATUS</th>
+                    <th>REQUESTED AT</th>
+                  </tr>
+                </thead>
+                <tbody id="anStockAlertsBody">
+                  <tr><td colspan="6" style="text-align:center; padding: 1.5rem; color: var(--text-muted);">No restock alerts requested yet.</td></tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </section>

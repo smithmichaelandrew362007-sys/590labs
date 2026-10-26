@@ -14,7 +14,8 @@
     "test:monochrome": "node test/monochrome_redesign.test.js",
     "test:clean": "node test/zero_demo_data.test.js",
     "test:domain": "node test/domain_and_admin_routing.test.js",
-    "test:all": "node test/api.test.js && node test/admin.test.js && node test/concurrency.test.js && node test/intro.test.js && node test/responsive.test.js && node test/monochrome_redesign.test.js && node test/zero_demo_data.test.js && node test/domain_and_admin_routing.test.js"
+    "test:evolution": "node test/advanced_streetwear_evolution.test.js",
+    "test:all": "node test/api.test.js && node test/admin.test.js && node test/concurrency.test.js && node test/intro.test.js && node test/responsive.test.js && node test/monochrome_redesign.test.js && node test/zero_demo_data.test.js && node test/domain_and_admin_routing.test.js && node test/advanced_streetwear_evolution.test.js"
   },
   "engines": {
     "node": "22.x"

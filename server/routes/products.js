@@ -211,15 +211,29 @@ router.get('/:id', (req, res) => {
     product.variants = variants;
     product.reviews = reviews;
 
-    // Get 3 related products from same category
-    const relatedRows = db.prepare(`
+    // Get complementary / related products (prefer same category, fallback to other published)
+    let relatedRows = db.prepare(`
       SELECT p.*, COALESCE(AVG(r.rating), 4.9) as avg_rating, COUNT(DISTINCT r.id) as reviews_count
       FROM products p
       LEFT JOIN reviews r ON p.id = r.product_id AND r.is_approved = 1
       WHERE p.category = ? AND p.id != ? AND p.status = 'published'
       GROUP BY p.id
-      LIMIT 3
+      LIMIT 4
     `).all(row.category, row.id);
+
+    if (relatedRows.length < 3) {
+      const existingIds = [row.id, ...relatedRows.map(r => r.id)];
+      const placeholders = existingIds.map(() => '?').join(',');
+      const fallbackRows = db.prepare(`
+        SELECT p.*, COALESCE(AVG(r.rating), 4.9) as avg_rating, COUNT(DISTINCT r.id) as reviews_count
+        FROM products p
+        LEFT JOIN reviews r ON p.id = r.product_id AND r.is_approved = 1
+        WHERE p.id NOT IN (${placeholders}) AND p.status = 'published'
+        GROUP BY p.id
+        LIMIT ?
+      `).all(...existingIds, 4 - relatedRows.length);
+      relatedRows = [...relatedRows, ...fallbackRows];
+    }
 
     product.related = relatedRows.map(r => {
       const vars = db.prepare('SELECT * FROM product_variants WHERE product_id = ?').all(r.id);

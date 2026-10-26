@@ -17,6 +17,7 @@ const couponsRoutes = require('./routes/coupons');
 const ordersRoutes = require('./routes/orders');
 const reviewsRoutes = require('./routes/reviews');
 const adminRoutes = require('./routes/admin');
+const stockAlertsRoutes = require('./routes/stockAlerts');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -67,6 +68,7 @@ app.use('/api/coupons', couponsRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/stock-alerts', stockAlertsRoutes);
 
 const staticDir = path.resolve(__dirname, '..');
 

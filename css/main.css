@@ -2327,6 +2327,91 @@ p, h1, h2, h3, h4, h5, h6 {
   border-color: #111111;
 }
 
+/* Gallery Navigation & Zoom Controls */
+.pdp-gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border-medium);
+  border-radius: 50%;
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: all var(--transition-fast);
+  opacity: 0;
+}
+
+.pdp-main-image-box:hover .pdp-gallery-nav,
+.pdp-gallery-nav:focus {
+  opacity: 1;
+}
+
+.pdp-gallery-prev { left: 0.75rem; }
+.pdp-gallery-next { right: 0.75rem; }
+
+.pdp-gallery-nav:hover {
+  background: #111111;
+  color: #FFFFFF;
+  border-color: #111111;
+  transform: translateY(-50%) scale(1.06);
+}
+
+.pdp-gallery-counter {
+  position: absolute;
+  bottom: 0.75rem;
+  left: 0.75rem;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.pdp-gallery-expand-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 34px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border-medium);
+  border-radius: 50%;
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: all var(--transition-fast);
+  opacity: 0.85;
+}
+
+.pdp-gallery-expand-btn:hover {
+  opacity: 1;
+  background: #111111;
+  color: #FFFFFF;
+  border-color: #111111;
+  transform: scale(1.08);
+}
+
+.pdp-main-image-box:hover .pdp-main-img.zoomable {
+  cursor: crosshair;
+}
+
 /* PDP Info */
 .pdp-info-wrap {
   padding: 2rem;
@@ -2589,6 +2674,225 @@ p, h1, h2, h3, h4, h5, h6 {
   .size-guide-card {
     padding: 1.5rem 1rem;
   }
+}
+
+/* 590 LABS FIT LAB & SMART SIZE FINDER */
+.fitlab-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 1.25rem;
+  gap: 0.5rem;
+}
+.fitlab-tab-btn {
+  padding: 0.75rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.fitlab-tab-btn.active {
+  color: var(--text-primary);
+  border-bottom-color: #111111;
+}
+.fitlab-panel {
+  display: none;
+}
+.fitlab-panel.active {
+  display: block;
+}
+.fitlab-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 1.5rem;
+}
+@media (max-width: 680px) {
+  .fitlab-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.fitlab-aesthetic-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.fitlab-radio-card {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+}
+.fitlab-radio-card:hover {
+  border-color: #111111;
+}
+.fitlab-radio-card.active {
+  border-color: #111111;
+  background: var(--bg-subtle);
+  box-shadow: 0 0 0 1px #111111;
+}
+.fitlab-recommendation-card {
+  background: #0B0B0B;
+  color: #FFFFFF;
+  padding: 1.5rem;
+  border-radius: var(--radius-xs);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.fitlab-rec-size {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+}
+.fitlab-rec-explain {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #BDBDBD;
+  line-height: 1.55;
+  margin: 0;
+}
+.fitlab-unit-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+}
+.fitlab-unit-btn {
+  padding: 0.35rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  border: none;
+  background: #FFFFFF;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+.fitlab-unit-btn.active {
+  background: #111111;
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   High-Resolution Fullscreen Lightbox
+   ========================================================================== */
+.pdp-lightbox-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(11, 11, 11, 0.96);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.pdp-lightbox-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+.pdp-lightbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.pdp-lightbox-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.pdp-lightbox-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+.pdp-lightbox-btn:hover {
+  background: #FFFFFF;
+  color: #000000;
+  border-color: #FFFFFF;
+  transform: scale(1.05);
+}
+.pdp-lightbox-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  overflow: hidden;
+  position: relative;
+}
+.pdp-lightbox-nav {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+.pdp-lightbox-nav:hover {
+  background: #FFFFFF;
+  color: #000000;
+  border-color: #FFFFFF;
+  transform: scale(1.08);
+}
+.pdp-lightbox-img-wrap {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: zoom-in;
+  transition: all 0.3s ease;
+}
+.pdp-lightbox-img-wrap.zoomed {
+  cursor: zoom-out;
+  overflow: auto;
+}
+.pdp-lightbox-img {
+  max-width: 90%;
+  max-height: 82vh;
+  object-fit: contain;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+.pdp-lightbox-img-wrap.zoomed .pdp-lightbox-img {
+  transform: scale(1.85);
+  max-width: none;
+  max-height: none;
 }
 
 .search-modal-content {
@@ -3336,6 +3640,183 @@ p, h1, h2, h3, h4, h5, h6 {
   color: #111111;
   font-size: 0.85rem;
   letter-spacing: 2px;
+}
+
+/* ==========================================================================
+   SCHEDULED DROP RADAR & LIVE COUNTDOWN (FEATURE 9)
+   ========================================================================== */
+.drop-countdown-strip {
+  background: #0B0B0B;
+  color: #FFFFFF;
+  border-top: 1px solid #222222;
+  border-bottom: 1px solid #222222;
+  padding: 0.85rem 0;
+}
+
+.drop-countdown-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.drop-countdown-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  animation: pulseGlow 1.8s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.drop-countdown-label {
+  font-size: 0.68rem;
+  color: #999999;
+  letter-spacing: 0.08em;
+}
+
+.drop-countdown-title {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #FFFFFF;
+}
+
+.drop-countdown-timer {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+}
+
+.countdown-unit {
+  background: #181818;
+  border: 1px solid #333333;
+  padding: 0.25rem 0.45rem;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 44px;
+}
+
+.countdown-unit .unit-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #FFFFFF;
+}
+
+.countdown-unit .unit-lbl {
+  font-size: 0.55rem;
+  color: #888888;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+.drop-countdown-timer .colon {
+  color: #666666;
+  font-weight: 800;
+}
+
+/* ==========================================================================
+   PERSONALIZED DISCOVERY & RECENTLY VIEWED SHELVES (FEATURE 6)
+   ========================================================================== */
+.pdp-recommendation-card {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.pdp-recommendation-card:hover {
+  transform: translateY(-2px);
+  border-color: #111111;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.pdp-rec-img-wrap {
+  aspect-ratio: 4 / 5;
+  background: var(--bg-subtle);
+  overflow: hidden;
+  position: relative;
+}
+
+.pdp-rec-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.pdp-recommendation-card:hover .pdp-rec-img {
+  transform: scale(1.04);
+}
+
+.pdp-rec-info {
+  padding: 0.65rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+}
+
+.pdp-rec-title {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pdp-rec-meta {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+.pdp-rec-price {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: auto;
+  padding-top: 0.25rem;
+}
+
+/* Wishlist Heart Active Micro-Animation */
+#pdpWishlistToggleBtn.active #pdpWishlistIcon {
+  fill: #111111;
+  stroke: #111111;
+  animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes heartPop {
+  0% { transform: scale(0.8); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
 }
 
 /* Reduced motion preference */

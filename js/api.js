@@ -251,6 +251,18 @@ const API = (function() {
       }
     },
 
+    stockAlerts: {
+      async subscribe(productId, size, email) {
+        return request('/stock-alerts', {
+          method: 'POST',
+          body: JSON.stringify({ productId, size, email })
+        });
+      },
+      async list() {
+        return request('/stock-alerts');
+      }
+    },
+
     admin: {
       async getStats() {
         return request('/admin/stats');
