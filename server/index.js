@@ -111,11 +111,16 @@ app.use((req, res, next) => {
 // Centralized safe error handler
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`  590 LABS® — Independent Unisex Streetwear Storefront`);
-  console.log(`  Server running live at: http://localhost:${PORT}`);
-  console.log(`  API Ready at:           http://localhost:${PORT}/api`);
-  console.log(`=======================================================`);
-});
+// Start server if executed directly
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`=======================================================`);
+    console.log(`  590 LABS® — Independent Unisex Streetwear Storefront`);
+    console.log(`  Server running live at: http://localhost:${PORT}`);
+    console.log(`  API Ready at:           http://localhost:${PORT}/api`);
+    console.log(`=======================================================`);
+  });
+}
+
+module.exports = app;
+

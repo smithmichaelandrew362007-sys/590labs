@@ -1,12 +1,38 @@
 const path = require('path');
+const fs = require('fs');
 const { DatabaseSync } = require('node:sqlite');
 
-const dbPath = path.resolve(__dirname, '../database.sqlite');
+let dbPath = path.resolve(__dirname, '../database.sqlite');
+
+// In serverless environments (Vercel / AWS Lambda), the root deployment filesystem is read-only.
+// We copy the database to /tmp if not already present so SQLite can read, write, and manage locks safely.
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+if (isServerless) {
+  const tmpDbPath = path.join('/tmp', 'database.sqlite');
+  try {
+    if (!fs.existsSync(tmpDbPath)) {
+      if (fs.existsSync(dbPath)) {
+        fs.copyFileSync(dbPath, tmpDbPath);
+      }
+    }
+    dbPath = tmpDbPath;
+  } catch (err) {
+    console.error('Serverless DB path initialization error:', err.message);
+  }
+}
+
 const db = new DatabaseSync(dbPath);
 
 // Enable foreign keys and WAL mode for high reliability and concurrency
 db.exec('PRAGMA foreign_keys = ON;');
-db.exec('PRAGMA journal_mode = WAL;');
+try {
+  db.exec('PRAGMA journal_mode = WAL;');
+} catch (e) {
+  // If WAL is restricted (e.g. read-only or unsupported storage), fallback to standard DELETE journal
+  try {
+    db.exec('PRAGMA journal_mode = DELETE;');
+  } catch (err) {}
+}
 
 function initDatabase() {
   db.exec(`
@@ -231,14 +257,24 @@ function initDatabase() {
     console.warn('Categories init notice:', e.message);
   }
 
-  // Ensure an Owner exists if existing database had admin@590labs.com as 'admin'
+  // Ensure an Owner account exists (auto-provision initial owner if database is freshly initialized)
   try {
     const ownerCheck = db.prepare("SELECT COUNT(*) as count FROM users WHERE role = 'owner'").get();
     if (ownerCheck.count === 0) {
-      db.prepare("UPDATE users SET role = 'owner' WHERE email = 'admin@590labs.com'").run();
+      const adminExists = db.prepare("SELECT id FROM users WHERE email = 'admin@590labs.com'").get();
+      if (adminExists) {
+        db.prepare("UPDATE users SET role = 'owner' WHERE email = 'admin@590labs.com'").run();
+      } else {
+        const bcrypt = require('bcryptjs');
+        const adminPasswordHash = bcrypt.hashSync('Admin@590Labs2026', 10);
+        db.prepare(`
+          INSERT INTO users (name, email, password_hash, role, phone)
+          VALUES (?, ?, ?, 'owner', ?)
+        `).run('590 Labs Superadmin', 'admin@590labs.com', adminPasswordHash, '+91 98765 43210');
+      }
     }
   } catch (e) {
-    console.warn('Owner migration notice:', e.message);
+    console.warn('Owner provisioning notice:', e.message);
   }
 }
 

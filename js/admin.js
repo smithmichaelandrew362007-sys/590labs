@@ -41,13 +41,15 @@
     }, 3500);
   }
 
-  // --- Fetch API Wrapper with Credentials ---
+  // --- Fetch API Wrapper with Credentials & Bearer Token ---
   async function api(path, options = {}) {
     const url = path.startsWith('/api') ? path : `/api${path}`;
+    const token = localStorage.getItem('590labs_token');
     const opts = {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...(options.headers || {})
       },
       ...options
@@ -67,14 +69,17 @@
   // Valid dashboard sections
   const VALID_SECTIONS = [
     'overview', 'products', 'categories', 'inventory',
-    'orders', 'customers', 'coupons', 'analytics',
-    'activity', 'administrators'
+    'orders', 'customers', 'discounts', 'coupons',
+    'analytics', 'merchandising', 'administrators',
+    'activity', 'settings'
   ];
 
   // Helper to extract requested section from URL subpath or hash
   function getRequestedSection() {
-    const rawPath = window.location.pathname.replace(/^\/admin\/?/, '').toLowerCase().replace(/\/$/, '');
-    const rawHash = (window.location.hash || '').replace('#', '').toLowerCase();
+    let rawPath = window.location.pathname.replace(/^\/admin(\.html)?\/?/, '').toLowerCase().replace(/\/$/, '');
+    let rawHash = (window.location.hash || '').replace('#', '').toLowerCase();
+    if (rawPath === 'coupons') rawPath = 'discounts';
+    if (rawHash === 'coupons') rawHash = 'discounts';
     if (rawPath && VALID_SECTIONS.includes(rawPath)) return rawPath;
     if (rawHash && VALID_SECTIONS.includes(rawHash)) return rawHash;
     return 'overview';
@@ -96,7 +101,8 @@
       state.user = null;
     }
 
-    if (rawPath === '/admin/login') {
+    const isLoginPage = rawPath === '/admin/login' || rawPath === '/admin/login.html';
+    if (isLoginPage) {
       if (state.user) {
         window.location.href = '/admin';
         return;
@@ -153,14 +159,21 @@
           body: { email, password }
         });
 
+        if (res.token) {
+          localStorage.setItem('590labs_token', res.token);
+          localStorage.setItem('590labs_user', JSON.stringify(res.user));
+        }
+
         alertBox.className = 'alert-box alert-success';
         alertBox.textContent = res.message || 'Authenticated successfully. Entering console...';
         alertBox.style.display = 'block';
 
         const urlParams = new URLSearchParams(window.location.search);
         const redirectSec = urlParams.get('redirect');
-        const dest = (redirectSec && VALID_SECTIONS.includes(redirectSec.toLowerCase())) 
-          ? `/admin#${redirectSec.toLowerCase()}` 
+        const targetSec = redirectSec ? redirectSec.toLowerCase() : '';
+        const mappedSec = (targetSec === 'coupons') ? 'discounts' : targetSec;
+        const dest = (mappedSec && VALID_SECTIONS.includes(mappedSec)) 
+          ? (mappedSec === 'overview' ? '/admin' : `/admin/${mappedSec}`) 
           : '/admin';
 
         setTimeout(() => {
@@ -220,8 +233,9 @@
         const sec = link.dataset.section;
         if (sec) {
           switchSection(sec);
+          const targetUrl = (sec === 'overview') ? '/admin' : `/admin/${sec}`;
           if (window.history && window.history.pushState) {
-            window.history.pushState(null, '', `/admin#${sec}`);
+            window.history.pushState(null, '', targetUrl);
           } else {
             window.location.hash = sec;
           }
@@ -248,6 +262,8 @@
       try {
         await api('/auth/logout', { method: 'POST' });
       } catch (e) {}
+      localStorage.removeItem('590labs_token');
+      localStorage.removeItem('590labs_user');
       window.location.href = '/admin/login';
     };
     document.getElementById('sidebarLogoutBtn').onclick = doLogout;

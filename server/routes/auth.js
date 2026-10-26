@@ -551,7 +551,11 @@ router.delete('/addresses/:id', requireAuth, (req, res) => {
  * POST /api/auth/logout
  */
 router.post('/logout', (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
   res.json({ success: true, message: 'Logged out successfully.' });
 });
 
