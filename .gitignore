@@ -9,16 +9,15 @@ yarn-error.log*
 .env.local
 .env.*.local
 
-# SQLite Database & Write-Ahead Logs (seeded via `npm run seed`)
-*.sqlite
+# SQLite Database & Write-Ahead Logs
 *.sqlite-journal
 *.sqlite-wal
 *.sqlite-shm
 *.sqlite.bak*
 
-# User Uploads
-assets/uploads/*
-!assets/uploads/.gitkeep
+# User Uploads (Track production product photography)
+assets/uploads/tmp_*
+assets/uploads/test_*
 
 # Operating system & IDE files
 .DS_Store

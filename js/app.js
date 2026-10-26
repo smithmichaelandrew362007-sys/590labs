@@ -101,19 +101,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const primaryImg = optimizeImageUrl(product.images[0], 500, 75);
     const secondaryImg = optimizeImageUrl(product.images[1] || product.images[0], 500, 75);
 
-    const badgesHTML = product.badges.map(badge => {
+    const badgesHTML = (product.badges || []).map(badge => {
       const isLime = badge.includes("DROP") || badge.includes("VIRAL") || badge.includes("LOW");
       return `<span class="badge ${isLime ? 'badge-lime' : ''}">${badge}</span>`;
     }).join("");
 
-    const colorsHTML = product.colors.map((c, i) => `
+    const colorsHTML = (product.colors || []).map((c, i) => `
       <span class="color-dot ${i === 0 ? 'active' : ''}" 
-            style="background-color: ${c.hex};" 
-            title="${c.name}"
-            data-color-hex="${c.hex}"></span>
+            style="background-color: ${c.hex || '#0b0b0b'};" 
+            title="${c.name || 'Standard'}"
+            data-color-hex="${c.hex || '#0b0b0b'}"></span>
     `).join("");
 
-    const sizesHTML = product.sizes.map(size => {
+    const sizesHTML = (product.sizes || []).map(size => {
       const stockQty = product.stock ? product.stock[size] : 5;
       const isOutOfStock = stockQty === 0;
       return `
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="quick-add-overlay" onclick="event.stopPropagation()">
             <div class="quick-add-title">
               <span>Quick Add Size</span>
-              <span>${product.gsm}</span>
+              <span>${product.gsm || ''}</span>
             </div>
             <div class="quick-add-sizes">
               ${sizesHTML}
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
             ${colorsHTML}
           </div>
           <h3 class="product-title" data-action="open-pdp">${product.title}</h3>
-          <p class="product-specs-line">${product.subtitle}</p>
+          <p class="product-specs-line">${product.subtitle || (product.gsm ? product.gsm : '')}</p>
           
           <div class="product-price-row">
             <span class="product-price">${Store.formatPrice(product.price)}</span>
@@ -269,16 +269,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     activePdpProduct = product;
-    activePdpSize = product.sizes[0];
-    activePdpColorHex = product.colors[0].hex;
+    activePdpSize = (product.sizes && product.sizes.length > 0) ? product.sizes[0] : 'M';
+    activePdpColorHex = (product.colors && product.colors[0] && product.colors[0].hex) ? product.colors[0].hex : '#0b0b0b';
 
     // Populate Modal Content
-    document.getElementById("pdpBreadcrumb").innerText = `590 LABS / ${product.category.toUpperCase()} / ${product.type.toUpperCase()}`;
+    const catUpper = (product.category || 'streetwear').toUpperCase();
+    const typeUpper = (product.type || product.category || 'archival').toUpperCase();
+    document.getElementById("pdpBreadcrumb").innerText = `590 LABS / ${catUpper} / ${typeUpper}`;
     document.getElementById("pdpTitle").innerText = product.title;
     document.getElementById("pdpPrice").innerText = Store.formatPrice(product.price);
     document.getElementById("pdpComparePrice").innerText = product.comparePrice ? Store.formatPrice(product.comparePrice) : "";
-    document.getElementById("pdpFitSubtitle").innerText = `${product.fit} · ${product.gsm}`;
-    document.getElementById("pdpDescription").innerText = product.description;
+    
+    const fitNotes = [product.fit, product.gsm].filter(Boolean).join(" · ");
+    document.getElementById("pdpFitSubtitle").innerText = fitNotes;
+    document.getElementById("pdpDescription").innerText = product.description || "";
 
     // Gallery
     const mainImgEl = document.getElementById("pdpMainImg");
@@ -300,14 +304,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Colors
     const colorsContainer = document.getElementById("pdpColors");
-    colorsContainer.innerHTML = product.colors.map((c, i) => `
+    const colorsList = (product.colors && product.colors.length > 0) ? product.colors : [{ name: 'Obsidian Black', hex: '#0b0b0b' }];
+    colorsContainer.innerHTML = colorsList.map((c, i) => `
       <span class="pdp-color-swatch ${i === 0 ? 'active' : ''}" 
-            style="background-color: ${c.hex};" 
-            data-hex="${c.hex}" 
-            data-name="${c.name}" 
-            title="${c.name}"></span>
+            style="background-color: ${c.hex || '#0b0b0b'};" 
+            data-hex="${c.hex || '#0b0b0b'}" 
+            data-name="${c.name || 'Standard'}" 
+            title="${c.name || 'Standard'}"></span>
     `).join("");
-    document.getElementById("pdpSelectedColorName").innerText = product.colors[0].name;
+    document.getElementById("pdpSelectedColorName").innerText = colorsList[0].name || 'Obsidian Black';
 
     // Sizes
     renderPdpSizes();
@@ -2092,19 +2097,40 @@ document.addEventListener("DOMContentLoaded", () => {
   // ==========================================================================
   async function syncProductsFromBackend() {
     try {
-      if (window.API && window.API.products) {
-        const data = await window.API.products.list({ limit: 100 });
+      const client = (typeof window !== 'undefined' && window.API) ? window.API : (typeof API !== 'undefined' ? API : null);
+      let productsList = null;
+
+      if (client && client.products && typeof client.products.list === 'function') {
+        const data = await client.products.list({ limit: 100 });
         if (data && Array.isArray(data.products)) {
-          if (typeof window.setProducts === 'function') {
-            window.setProducts(data.products);
-          }
-          renderHomeProducts();
-          renderShopCatalog();
-          renderWishlist();
+          productsList = data.products;
         }
       }
+
+      // Safe direct fallback if API client wrapper is not yet initialized
+      if (!productsList) {
+        const res = await fetch('/api/products?limit=100');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.products)) {
+            productsList = data.products;
+          }
+        }
+      }
+
+      if (Array.isArray(productsList)) {
+        if (typeof window.setProducts === 'function') {
+          window.setProducts(productsList);
+        } else if (typeof PRODUCTS !== 'undefined') {
+          PRODUCTS = productsList;
+          window.PRODUCTS = productsList;
+        }
+        renderHomeProducts();
+        renderShopCatalog();
+        renderWishlist();
+      }
     } catch (e) {
-      console.warn('[590] Storefront using offline catalog snapshot:', e.message);
+      console.warn('[590] Storefront product sync error:', e.message);
     }
   }
 

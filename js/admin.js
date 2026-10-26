@@ -282,6 +282,9 @@
     document.getElementById('sidebarLogoutBtn').onclick = doLogout;
     document.getElementById('headerLogoutBtn').onclick = doLogout;
 
+    // Prefetch categories early so dropdowns and filters are instantly ready
+    loadCategoriesData();
+
     // Load initial section from URL subpath or hash
     switchSection(getRequestedSection());
   }
@@ -324,7 +327,11 @@
         break;
       case 'products':
         loadProductsData();
-        loadCategoriesSelect();
+        if (!state.categories || state.categories.length === 0) {
+          loadCategoriesData();
+        } else {
+          loadCategoriesSelect();
+        }
         break;
       case 'categories':
         loadCategoriesData();
@@ -554,7 +561,14 @@
   }
 
   // Product Add / Edit Modal Controls
-  function openProductModal(prod = null) {
+  async function openProductModal(prod = null) {
+    // Ensure categories are loaded before rendering select options
+    if (!state.categories || state.categories.length === 0) {
+      await loadCategoriesData();
+    } else {
+      loadCategoriesSelect();
+    }
+
     const modal = document.getElementById('productModal');
     const isEdit = Boolean(prod);
     document.getElementById('pmIsEdit').value = isEdit ? 'true' : 'false';
@@ -676,8 +690,12 @@
     selects.forEach(sel => {
       if (!sel) return;
       const isFilter = sel.id === 'prodCategoryFilter';
+      const curVal = sel.value;
       sel.innerHTML = (isFilter ? '<option value="all">ALL CATEGORIES</option>' : '') +
         state.categories.map(c => `<option value="${c.slug}">${c.name.toUpperCase()}</option>`).join('');
+      if (curVal && Array.from(sel.options).some(o => o.value === curVal)) {
+        sel.value = curVal;
+      }
     });
   }
 
@@ -1294,10 +1312,28 @@
         return;
       }
 
+      const COLOR_SWATCH_MAP = {
+        'obsidian black': '#0b0b0b',
+        'black': '#111111',
+        'white': '#ffffff',
+        'cloud white': '#f4f4f4',
+        'off white': '#f0efe9',
+        'heather grey': '#9e9e9e',
+        'grey': '#757575',
+        'vintage washed black': '#242424',
+        'acid wash': '#333333',
+        'olive': '#556b2f',
+        'sage': '#8a9a86',
+        'sand': '#c2b280',
+        'charcoal': '#36454f'
+      };
+      const hex = COLOR_SWATCH_MAP[colorName.toLowerCase().trim()] || '#0b0b0b';
+
       const payload = {
         id: slug,
         title,
         category,
+        type: category,
         status,
         price: Number(price),
         comparePrice: comparePrice ? Number(comparePrice) : null,
@@ -1306,7 +1342,7 @@
         description,
         images: state.uploadedImages,
         sizes: selectedSizes,
-        colors: [{ name: colorName, code: colorName.toLowerCase().replace(/[^a-z0-9]/g, '-').substring(0, 8) }]
+        colors: [{ name: colorName, hex, code: colorName.toLowerCase().replace(/[^a-z0-9]/g, '-').substring(0, 8) }]
       };
 
       try {
