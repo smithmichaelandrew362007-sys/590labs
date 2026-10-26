@@ -104,7 +104,10 @@
     const isLoginPage = rawPath === '/admin/login' || rawPath === '/admin/login.html';
     if (isLoginPage) {
       if (state.user) {
-        window.location.href = '/admin';
+        try {
+          window.history.replaceState({}, '', '/admin');
+        } catch (e) {}
+        renderDashboardScreen();
         return;
       }
       renderLoginScreen();
@@ -113,7 +116,10 @@
       if (!state.user) {
         const targetSec = getRequestedSection();
         const redirectParam = (targetSec && targetSec !== 'overview') ? `?redirect=${encodeURIComponent(targetSec)}` : '';
-        window.location.href = `/admin/login${redirectParam}`;
+        try {
+          window.history.replaceState({}, '', `/admin/login${redirectParam}`);
+        } catch (e) {}
+        renderLoginScreen();
         return;
       }
       renderDashboardScreen();
@@ -177,7 +183,11 @@
           : '/admin';
 
         setTimeout(() => {
-          window.location.href = dest;
+          state.user = res.user;
+          try {
+            window.history.pushState({}, '', dest);
+          } catch (e) {}
+          renderDashboardScreen();
         }, 400);
       } catch (err) {
         alertBox.className = 'alert-box alert-danger';
@@ -1467,6 +1477,21 @@
           showToast(e.message, 'danger');
         }
       }
+    });
+
+    // Sidebar Logout
+    document.getElementById('sidebarLogoutBtn')?.addEventListener('click', async () => {
+      try {
+        await api('/auth/logout', { method: 'POST' });
+      } catch (e) {}
+      localStorage.removeItem('590labs_token');
+      localStorage.removeItem('590labs_user');
+      state.user = null;
+      try {
+        window.history.replaceState({}, '', '/admin/login');
+      } catch (e) {}
+      renderLoginScreen();
+      showToast('Logged out successfully.');
     });
   });
 

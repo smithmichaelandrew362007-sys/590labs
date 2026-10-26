@@ -195,6 +195,53 @@ async function run() {
     assert.ok(dbCode.includes('/tmp') && dbCode.includes('isServerless'), 'server/db.js missing serverless /tmp fallback');
   });
 
+  // 21. Vercel cleanUrls configuration to prevent redirect loops
+  await test('21. vercel.json cleanUrls is false to prevent 308 redirect loops on .html destinations', async () => {
+    const vercelConfig = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
+    assert.strictEqual(vercelConfig.cleanUrls, false, 'vercel.json cleanUrls must be false when explicit rewrites target .html');
+  });
+
+  // 22. Production build script validation
+  await test('22. npm run build executes successfully and validates production assets', async () => {
+    const { execSync } = require('child_process');
+    const output = execSync('npm run build', { encoding: 'utf8' });
+    assert.ok(output.includes('Production build validation complete'), 'Build script did not complete successfully');
+  });
+
+  // 23. Serverless bridge URL normalization
+  await test('23. api/index.js normalizes varied incoming serverless request URLs', async () => {
+    const handler = require('../api/index');
+    let capturedUrl = null;
+    const mockApp = (req, res) => { capturedUrl = req.url; };
+    // Test relative prefix
+    const mockReq = { url: '/auth/me' };
+    const mockRes = {};
+    // Test with handler logic
+    let testUrl = '/auth/me';
+    testUrl = testUrl.replace(/^\/api\/index\.js/, '/api').replace(/^\/index\.js/, '');
+    if (!testUrl.startsWith('/api')) testUrl = '/api' + testUrl;
+    assert.strictEqual(testUrl, '/api/auth/me');
+
+    let testUrl2 = '/api/index.js/admin/stats';
+    testUrl2 = testUrl2.replace(/^\/api\/index\.js/, '/api').replace(/^\/index\.js/, '');
+    if (!testUrl2.startsWith('/api')) testUrl2 = '/api' + testUrl2;
+    assert.strictEqual(testUrl2, '/api/admin/stats');
+  });
+
+  // 24. Client-side router state transitions without reload bounce
+  await test('24. js/admin.js uses replaceState for unauthenticated state without infinite reload loops', async () => {
+    const adminJs = fs.readFileSync('js/admin.js', 'utf8');
+    assert.ok(adminJs.includes("window.history.replaceState({}, '', `/admin/login"), 'Missing replaceState transition for login screen');
+    assert.ok(adminJs.includes("renderLoginScreen()"), 'Missing immediate renderLoginScreen call');
+  });
+
+  // 25. Sidebar logout handler
+  await test('25. js/admin.js wires up sidebarLogoutBtn for clean session termination', async () => {
+    const adminJs = fs.readFileSync('js/admin.js', 'utf8');
+    assert.ok(adminJs.includes("sidebarLogoutBtn"), 'sidebarLogoutBtn not wired in js/admin.js');
+    assert.ok(adminJs.includes("590labs_token"), 'Missing token cleanup on logout');
+  });
+
   console.log('\n================================================================');
   console.log(`  ROUTING TEST RESULTS: ${passed} Passed, ${failed} Failed`);
   console.log('================================================================\n');

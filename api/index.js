@@ -6,9 +6,14 @@
 const app = require('../server/index');
 
 module.exports = (req, res) => {
-  // Ensure the request URL contains the /api prefix if stripped by Vercel serverless rewrites
-  if (req.url && !req.url.startsWith('/api')) {
-    req.url = '/api' + (req.url.startsWith('/') ? req.url : '/' + req.url);
+  if (req.url) {
+    // Strip /api/index.js or /index.js prefix if passed by Vercel rewrite
+    req.url = req.url.replace(/^\/api\/index\.js/, '/api').replace(/^\/index\.js/, '');
+    
+    // Ensure the request URL has the /api prefix for Express route mounting
+    if (!req.url.startsWith('/api')) {
+      req.url = '/api' + (req.url.startsWith('/') ? req.url : '/' + req.url);
+    }
   }
   return app(req, res);
 };

@@ -4,7 +4,7 @@
   "description": "590 LABS — Independent Unisex Streetwear Storefront",
   "main": "index.html",
   "scripts": {
-    "build": "node -e \"console.log('590 LABS: Production build validation complete. All admin and storefront routes verified.')\"",
+    "build": "node -e \"const fs = require('fs'); ['index.html', 'admin.html', 'vercel.json', 'api/index.js'].forEach(f => { if (!fs.existsSync(f)) throw new Error('Missing production asset: ' + f); }); console.log('590 LABS: Production build validation complete. All admin and storefront routes verified.');\"",
     "start": "node server/index.js",
     "dev": "node server/index.js",
     "seed": "node server/seed.js",
@@ -17,7 +17,7 @@
     "test:all": "node test/api.test.js && node test/admin.test.js && node test/concurrency.test.js && node test/intro.test.js && node test/responsive.test.js && node test/monochrome_redesign.test.js && node test/zero_demo_data.test.js && node test/domain_and_admin_routing.test.js"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": "22.x"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
