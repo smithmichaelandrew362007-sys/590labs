@@ -624,7 +624,7 @@ router.delete('/products/:id', (req, res) => {
  * Secure image upload with size restriction (5MB), MIME verification,
  * and safe random filename generation.
  */
-router.post('/upload-image', (req, res) => {
+router.post('/upload-image', async (req, res) => {
   try {
     const { data, filename, originalName } = req.body;
 
@@ -663,18 +663,80 @@ router.post('/upload-image', (req, res) => {
       return res.status(400).json({ success: false, error: 'Image exceeds maximum allowable size of 5MB.' });
     }
 
-    const uploadsDir = path.resolve(__dirname, '../../assets/uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-
     const ext = allowedMimeTypes[mimeType];
     const uniqueName = `img_${Date.now()}_${crypto.randomBytes(6).toString('hex')}${ext}`;
-    const filePath = path.join(uploadsDir, uniqueName);
+    let publicUrl = null;
 
-    fs.writeFileSync(filePath, buffer);
+    // 1. Option C: Cloudinary persistent cloud storage (if environment variables are provided)
+    let cldConfig = null;
+    if (process.env.CLOUDINARY_URL) {
+      try {
+        const parsed = new URL(process.env.CLOUDINARY_URL);
+        cldConfig = {
+          cloudName: parsed.hostname,
+          apiKey: parsed.username,
+          apiSecret: parsed.password
+        };
+      } catch (e) {}
+    } else if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+      cldConfig = {
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+        apiKey: process.env.CLOUDINARY_API_KEY,
+        apiSecret: process.env.CLOUDINARY_API_SECRET
+      };
+    }
 
-    const publicUrl = `/assets/uploads/${uniqueName}`;
+    if (cldConfig && cldConfig.cloudName && cldConfig.apiKey && cldConfig.apiSecret) {
+      try {
+        const timestamp = Math.floor(Date.now() / 1000);
+        const folder = '590labs';
+        const signatureString = `folder=${folder}&timestamp=${timestamp}${cldConfig.apiSecret}`;
+        const signature = crypto.createHash('sha1').update(signatureString).digest('hex');
+
+        const cldRes = await fetch(`https://api.cloudinary.com/v1_1/${cldConfig.cloudName}/image/upload`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            file: data,
+            api_key: cldConfig.apiKey,
+            timestamp,
+            signature,
+            folder
+          })
+        });
+
+        const cldJson = await cldRes.json();
+        if (cldJson && cldJson.secure_url) {
+          publicUrl = cldJson.secure_url;
+        } else {
+          console.warn('Cloudinary upload warning:', cldJson?.error?.message || 'Unknown response');
+        }
+      } catch (cldErr) {
+        console.error('Cloudinary upload error:', cldErr.message);
+      }
+    }
+
+    // 2. Local disk or serverless /tmp fallback (Option A + B)
+    if (!publicUrl) {
+      const uploadsDir = path.resolve(__dirname, '../../assets/uploads');
+      try {
+        if (!fs.existsSync(uploadsDir)) {
+          fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        const filePath = path.join(uploadsDir, uniqueName);
+        fs.writeFileSync(filePath, buffer);
+        publicUrl = `/assets/uploads/${uniqueName}`;
+      } catch (fsErr) {
+        // Fallback for serverless read-only root filesystems
+        const tmpUploadsDir = path.join('/tmp', 'uploads');
+        if (!fs.existsSync(tmpUploadsDir)) {
+          fs.mkdirSync(tmpUploadsDir, { recursive: true });
+        }
+        const tmpFilePath = path.join(tmpUploadsDir, uniqueName);
+        fs.writeFileSync(tmpFilePath, buffer);
+        publicUrl = `/assets/uploads/${uniqueName}`;
+      }
+    }
 
     if (db.logActivity) {
       db.logActivity(req.user, 'IMAGE_UPLOADED', 'image', uniqueName, {

@@ -11,8 +11,19 @@ if (isServerless) {
   const tmpDbPath = path.join('/tmp', 'database.sqlite');
   try {
     if (!fs.existsSync(tmpDbPath)) {
-      if (fs.existsSync(dbPath)) {
-        fs.copyFileSync(dbPath, tmpDbPath);
+      const candidatePaths = [
+        dbPath,
+        path.join(process.cwd(), 'database.sqlite'),
+        path.resolve(__dirname, 'database.sqlite'),
+        path.resolve(__dirname, '../../database.sqlite'),
+        path.join(process.cwd(), 'public', 'database.sqlite')
+      ];
+      const sourceDb = candidatePaths.find(p => fs.existsSync(p));
+      if (sourceDb) {
+        fs.copyFileSync(sourceDb, tmpDbPath);
+        console.log(`Serverless DB initialized in /tmp from: ${sourceDb}`);
+      } else {
+        console.warn('Serverless DB: source database.sqlite not found in bundle, initializing in /tmp');
       }
     }
     dbPath = tmpDbPath;

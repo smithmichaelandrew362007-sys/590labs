@@ -80,6 +80,15 @@ app.use((req, res, next) => {
   next();
 });
 
+// Serverless temporary uploads fallback (allows serving newly uploaded images in ephemeral environments)
+app.use('/assets/uploads', (req, res, next) => {
+  const tmpFilePath = path.join('/tmp', 'uploads', req.path);
+  if (fs.existsSync(tmpFilePath)) {
+    return res.sendFile(tmpFilePath);
+  }
+  next();
+});
+
 // Serve static frontend files with intelligent asset caching
 app.use(express.static(staticDir, {
   maxAge: '1d',
