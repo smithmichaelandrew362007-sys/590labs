@@ -114,10 +114,13 @@ app.use(errorHandler);
 // Start server if executed directly
 if (require.main === module) {
   app.listen(PORT, () => {
+    const liveUrl = process.env.APP_URL 
+      || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '')
+      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${PORT}`);
     console.log(`=======================================================`);
     console.log(`  590 LABS® — Independent Unisex Streetwear Storefront`);
-    console.log(`  Server running live at: http://localhost:${PORT}`);
-    console.log(`  API Ready at:           http://localhost:${PORT}/api`);
+    console.log(`  Server running live at: ${liveUrl}`);
+    console.log(`  API Ready at:           ${liveUrl}/api`);
     console.log(`=======================================================`);
   });
 }

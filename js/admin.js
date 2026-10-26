@@ -43,7 +43,10 @@
 
   // --- Fetch API Wrapper with Credentials & Bearer Token ---
   async function api(path, options = {}) {
-    const url = path.startsWith('/api') ? path : `/api${path}`;
+    // Resolve base URL: defaults to origin-relative '/api', or uses window.API_BASE_URL if configured
+    const customBase = (typeof window !== 'undefined' && window.API_BASE_URL) ? window.API_BASE_URL.replace(/\/$/, '') : '';
+    const cleanPath = path.startsWith('/api') ? path : `/api${path}`;
+    const url = customBase ? `${customBase}${cleanPath}` : cleanPath;
     const token = localStorage.getItem('590labs_token');
     const opts = {
       credentials: 'include',

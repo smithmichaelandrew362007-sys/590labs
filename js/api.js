@@ -4,7 +4,9 @@
  */
 
 const API = (function() {
-  const BASE_URL = '/api';
+  const BASE_URL = (typeof window !== 'undefined' && window.API_BASE_URL)
+    ? window.API_BASE_URL.replace(/\/$/, '') + '/api'
+    : '/api';
 
   // Helper for requests
   async function request(endpoint, options = {}) {
@@ -25,7 +27,7 @@ const API = (function() {
       const res = await fetch(`${BASE_URL}${endpoint}`, {
         ...options,
         headers,
-        credentials: 'same-origin'
+        credentials: 'include'
       });
 
       const data = await res.json().catch(() => ({}));

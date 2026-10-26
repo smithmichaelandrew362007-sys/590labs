@@ -146,11 +146,26 @@ async function run() {
   });
 
   // 15. Origin-relative API clients in frontend code (no hardcoded localhost)
-  await test('15. Frontend clients use origin-relative URLs without hardcoded localhost', async () => {
+  await test('15. Frontend clients and HTML documents use origin-relative URLs without hardcoded localhost', async () => {
     const adminJs = fs.readFileSync('js/admin.js', 'utf8');
     const apiJs = fs.readFileSync('js/api.js', 'utf8');
-    assert.ok(!adminJs.includes('http://localhost:3000'), 'js/admin.js contains hardcoded localhost');
-    assert.ok(!apiJs.includes('http://localhost:3000'), 'js/api.js contains hardcoded localhost');
+    const appJs = fs.readFileSync('js/app.js', 'utf8');
+    const cartJs = fs.readFileSync('js/cart.js', 'utf8');
+    const adminHtml = fs.readFileSync('admin.html', 'utf8');
+    const indexHtml = fs.readFileSync('index.html', 'utf8');
+    
+    assert.ok(!adminJs.includes('localhost'), 'js/admin.js contains hardcoded localhost');
+    assert.ok(!apiJs.includes('localhost'), 'js/api.js contains hardcoded localhost');
+    assert.ok(!appJs.includes('localhost'), 'js/app.js contains hardcoded localhost');
+    assert.ok(!cartJs.includes('localhost'), 'js/cart.js contains hardcoded localhost');
+    assert.ok(!adminHtml.includes('localhost'), 'admin.html contains hardcoded localhost');
+    assert.ok(!indexHtml.includes('localhost'), 'index.html contains hardcoded localhost');
+
+    // Verify dynamic liveUrl resolution in server scripts
+    const serverIndex = fs.readFileSync('server/index.js', 'utf8');
+    assert.ok(serverIndex.includes('liveUrl'), 'server/index.js missing dynamic liveUrl resolution');
+    const setupOwner = fs.readFileSync('server/setup-owner.js', 'utf8');
+    assert.ok(setupOwner.includes('appUrl'), 'server/setup-owner.js missing dynamic appUrl resolution');
   });
 
   // 16. Secure cookie clearing on logout in auth.js

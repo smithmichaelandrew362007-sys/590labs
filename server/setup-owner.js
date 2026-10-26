@@ -86,8 +86,11 @@ function setupOwner() {
     console.log(`✓ New store Owner created successfully: ${cleanEmail} (ID: ${newId}).`);
   }
 
+  const appUrl = process.env.APP_URL 
+    || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '')
+    || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : `http://localhost:${process.env.PORT || 3000}`);
   console.log('\n--- SETUP PERMANENTLY LOCKED ---');
-  console.log('You can now log in securely at: http://localhost:3000/admin/login\n');
+  console.log(`You can now log in securely at: ${appUrl}/admin/login\n`);
 }
 
 if (require.main === module) {
