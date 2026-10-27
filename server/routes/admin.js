@@ -7,6 +7,12 @@ const bcrypt = require('bcryptjs');
 const db = require('../db');
 const { requireAdmin, requireOwner } = require('../middleware/auth');
 
+function checkpointWal() {
+  try {
+    db.exec('PRAGMA wal_checkpoint(PASSIVE);');
+  } catch (e) {}
+}
+
 /**
  * ============================================================================
  * UNGUARDED / PUBLIC SETUP ENDPOINT (LOCKED ONCE OWNER IS ESTABLISHED)
@@ -363,6 +369,8 @@ router.post('/products', (req, res) => {
       });
     }
 
+    checkpointWal();
+
     res.status(201).json({
       success: true,
       message: `Product "${title.trim()}" created successfully.`,
@@ -471,6 +479,7 @@ router.put('/products/:id', (req, res) => {
     params.push(productId);
 
     db.prepare(`UPDATE products SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+    checkpointWal();
 
     if (db.logActivity) {
       db.logActivity(req.user, 'PRODUCT_UPDATED', 'product', productId, {
@@ -512,6 +521,8 @@ router.patch('/products/:id/status', (req, res) => {
         title: product.title
       });
     }
+
+    checkpointWal();
 
     res.json({ success: true, message: `Product status changed to ${status.toUpperCase()}.` });
   } catch (err) {
@@ -555,6 +566,8 @@ router.patch('/products/:id/stock', (req, res) => {
       });
     }
 
+    checkpointWal();
+
     res.json({ success: true, message: `Stock for ${variant.sku} updated to ${qty}.`, newStock: qty });
   } catch (err) {
     console.error('Update stock error:', err);
@@ -590,6 +603,8 @@ router.delete('/products/:id', (req, res) => {
         });
       }
 
+      checkpointWal();
+
       return res.json({
         success: true,
         archived: true,
@@ -604,6 +619,8 @@ router.delete('/products/:id', (req, res) => {
     if (db.logActivity) {
       db.logActivity(req.user, 'PRODUCT_DELETED', 'product', productId, { title: product.title });
     }
+
+    checkpointWal();
 
     res.json({
       success: true,

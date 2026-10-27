@@ -4,7 +4,7 @@
   "description": "590 LABS — Independent Unisex Streetwear Storefront",
   "main": "index.html",
   "scripts": {
-    "build": "node -e \"const fs = require('fs'); const path = require('path'); ['index.html', 'admin.html', 'vercel.json', 'api/index.js'].forEach(f => { if (!fs.existsSync(f)) throw new Error('Missing production asset: ' + f); }); const p = path.resolve('public'); if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true }); ['index.html', 'admin.html', 'intro.html'].forEach(f => { if (fs.existsSync(f)) fs.copyFileSync(f, path.join(p, f)); }); ['css', 'js', 'assets'].forEach(d => { if (fs.existsSync(d)) fs.cpSync(d, path.join(p, d), { recursive: true }); }); console.log('590 LABS: Production build validation complete. Public bundle ready.');\"",
+    "build": "node -e \"const fs = require('fs'); const path = require('path'); try { const db = require('./server/db'); db.exec('PRAGMA wal_checkpoint(TRUNCATE);'); } catch (e) {} ['index.html', 'admin.html', 'vercel.json', 'api/index.js'].forEach(f => { if (!fs.existsSync(f)) throw new Error('Missing production asset: ' + f); }); const p = path.resolve('public'); if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true }); ['index.html', 'admin.html', 'intro.html'].forEach(f => { if (fs.existsSync(f)) fs.copyFileSync(f, path.join(p, f)); }); if (fs.existsSync('database.sqlite')) fs.copyFileSync('database.sqlite', path.join(p, 'database.sqlite')); ['css', 'js', 'assets'].forEach(d => { if (fs.existsSync(d)) fs.cpSync(d, path.join(p, d), { recursive: true }); }); console.log('590 LABS: Production build validation complete. Public bundle ready.');\"",
     "start": "node server/index.js",
     "dev": "node server/index.js",
     "seed": "node server/seed.js",
