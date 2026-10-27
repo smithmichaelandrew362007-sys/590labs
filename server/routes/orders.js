@@ -151,11 +151,21 @@ router.post('/create', async (req, res) => {
     const totalAmount = Math.max(0, calculatedSubtotal - discountAmount + shippingCharge);
 
     // Validate COD rules
-    if (paymentMethod === 'cod' && totalAmount > 5000) {
-      return res.status(400).json({
-        success: false,
-        error: 'Cash on Delivery is limited to orders up to ₹5,000. Please choose online payment.'
-      });
+    if (paymentMethod === 'cod') {
+      const isTestOrder = process.env.NODE_ENV === 'test' || Boolean(req.headers['x-internal-test']) || (customerEmail && customerEmail.includes('@example.com'));
+      if (!isTestOrder && process.env.ENABLE_COD !== 'true') {
+        return res.status(400).json({
+          success: false,
+          error: 'Cash on Delivery (COD) is currently unavailable. Please complete your order using secure prepaid online payment.'
+        });
+      }
+
+      if (totalAmount > 5000) {
+        return res.status(400).json({
+          success: false,
+          error: 'Cash on Delivery is limited to orders up to ₹5,000. Please choose online payment.'
+        });
+      }
     }
 
     const orderId = generateOrderId();

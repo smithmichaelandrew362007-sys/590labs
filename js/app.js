@@ -799,6 +799,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const activeTab = document.querySelector("#chkPaymentTabs .payment-tab.active");
     const paymentMethod = activeTab ? (activeTab.dataset.method || "razorpay") : "razorpay";
 
+    if (paymentMethod === "cod") {
+      showToast("Cash on Delivery (COD) is currently unavailable. Please complete checkout with online payment.", "warning");
+      return;
+    }
+
     submitBtn.disabled = true;
     submitBtn.innerText = "PROCESSING ORDER...";
 
@@ -1562,7 +1567,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const res = document.getElementById("pdpPincodeResult");
         const val = (input.value || "").trim();
         if (val.length === 6 && /^\d+$/.test(val)) {
-          res.innerHTML = `✓ Delivery available to <strong>${val}</strong> in 2-3 business days. Free shipping eligible.`;
+          res.innerHTML = `✓ Delivery available to <strong>${val}</strong> in 2-3 business days. Free shipping eligible. <strong>(Prepaid Only — No COD)</strong>`;
           res.classList.add("valid");
           res.style.display = "block";
           SoundEngine.success();
@@ -1739,6 +1744,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Payment Tabs
   document.querySelectorAll(".payment-tab").forEach(tab => {
     tab.addEventListener("click", () => {
+      if (tab.classList.contains("disabled")) {
+        showToast("Cash on Delivery (COD) is currently unavailable. Please pay securely online via UPI or Cards.", "warning");
+        return;
+      }
       document.querySelectorAll(".payment-tab").forEach(t => t.classList.remove("active"));
       tab.classList.add("active");
       SoundEngine.click();
